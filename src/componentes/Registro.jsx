@@ -23,7 +23,7 @@ const Registro = () => {
     e.preventDefault();
 
     // Validar campos requeridos
-    if (!userData.primerNombre || !userData.primerApellido || !userData.pasaporte || !userData.rol) {
+   if (!userData.primerNombre || !userData.primerApellido || !userData.pasaporte || !userData.email || !userData.telefono) {
       setMensaje("Todos los campos son obligatorios");
       setTimeout(() => {
         setMensaje("");
@@ -107,6 +107,28 @@ const Registro = () => {
                 required
                 margin="normal"
               />
+               <TextField
+              label="Email"
+              type="email"
+              variant="outlined"
+              fullWidth
+              name="email"
+              value={userData.email}
+              onChange={cambio}
+              required
+              margin="normal"
+            />
+            <TextField
+              label="Teléfono"
+              type="tel"
+              variant="outlined"
+              fullWidth
+              name="telefono"
+              value={userData.telefono}
+              onChange={cambio}
+              required
+              margin="normal"
+            />
               <TextField
                 label="Rol"
                 variant="outlined"
@@ -140,4 +162,3 @@ const Registro = () => {
 };
 
 export default Registro;
-
