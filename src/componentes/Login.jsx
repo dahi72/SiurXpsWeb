@@ -8,10 +8,9 @@ import { UsuarioContext } from '../hooks/UsuarioContext';
 
 const Login = () => {
   const passwordRef = useRef(null);
-  const pasaporteRef = useRef(null);  // Referencia para el campo de pasaporte
+  const pasaporteRef = useRef(null);  
   const navigate = useNavigate();
   const baseUrl = process.env.REACT_APP_API_URL;
-  //console.log("baseUrl:", baseUrl);
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const {isXs} = useScreenSize();
   const [mensaje, setMensaje] = useState("");

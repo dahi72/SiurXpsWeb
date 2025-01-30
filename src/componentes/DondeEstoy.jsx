@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { Box, Button, Typography, CircularProgress } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography, CircularProgress } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Arreglo para el ícono del marcador
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -14,7 +11,6 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-// Componente para centrar el mapa en la ubicación actual
 function LocationMarker() {
     const [position, setPosition] = useState(null);
     const [error, setError] = useState(null);
@@ -39,7 +35,6 @@ function LocationMarker() {
 }
 
 const DondeEstoy = () => {
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [center, setCenter] = useState([0, 0]);
@@ -89,7 +84,8 @@ const DondeEstoy = () => {
                     flexDirection: 'column', 
                     justifyContent: 'center', 
                     alignItems: 'center', 
-                    height: '100vh' 
+                    height: '100vh',
+                     backgroundColor: '#f0f0f0'
                 }}>
                     <CircularProgress />
                     <Typography sx={{ mt: 2 }}>
@@ -101,19 +97,6 @@ const DondeEstoy = () => {
 
     return (
             <Box sx={{ p: 2 }}>
-                <Button
-                    onClick={() => navigate('/dashboard')}
-                    startIcon={<ArrowBackIcon />}
-                    sx={{
-                        mb: 2,
-                        backgroundColor: '#E3F2FD',
-                        color: 'primary.main',
-                        '&:hover': { backgroundColor: '#BBDEFB' }
-                    }}
-                >
-                    Volver
-                </Button>
-
                 {error ? (
                     <Typography color="error" sx={{ mb: 2 }}>
                         {error}
