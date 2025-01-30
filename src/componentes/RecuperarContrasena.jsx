@@ -27,14 +27,23 @@ const RecuperarContrasena = () => {
         if (data.mensaje) {
           setMensaje(data.mensaje);
           setError('');
+          setTimeout(() => {
+            setMensaje('');
+          }, 3000);
         } else {
           setError(data.mensaje || 'Error al enviar el enlace de recuperación.');
           setMensaje('');
+          setTimeout(() => {
+            setMensaje('');
+          }, 3000);
         }
       })
       .catch(() => {
         setError('Ocurrió un error al enviar la solicitud.');
         setMensaje('');
+        setTimeout(() => {
+          setMensaje('');
+        }, 3000);
       });
   };
 
