@@ -7,29 +7,28 @@ const RecuperarContrasena = () => {
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
   const baseUrl = process.env.REACT_APP_API_URL;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validar el correo electrónico
+  
     if (!email) {
       setError('Por favor, ingresa tu correo electrónico.');
       return;
     }
-
-    // Enviar solicitud a la API
-    fetch(`${baseUrl}/Usuario/RecuperarContrasena`, {
+  
+    fetch(`${baseUrl}/Usuario/RecuperarContrasena?email=${encodeURIComponent(email)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email }),
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.success) {
-          setMensaje('Se ha enviado un enlace de recuperación a tu correo electrónico.');
+        if (data.mensaje) {
+          setMensaje(data.mensaje);
           setError('');
         } else {
-          setError(data.message || 'Error al enviar el enlace de recuperación.');
+          setError(data.mensaje || 'Error al enviar el enlace de recuperación.');
           setMensaje('');
         }
       })
