@@ -16,7 +16,7 @@ const RecuperarContrasena = () => {
     }
 
     // Enviar solicitud a la API
-    fetch(`${process.env.REACT_APP_API_URL}/Usuario/recuperar-contrasena`, {
+    fetch(`${process.env.REACT_APP_API_URL}/Usuario/RecuperarContrasena`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
