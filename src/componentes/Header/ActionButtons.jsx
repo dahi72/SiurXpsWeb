@@ -70,11 +70,17 @@ export const ActionButtons = () => {
             setSnackbarSeverity('success');
             setOpenSnackbar(true);
             handleMenuClose();
+            setTimeout(() => {
+                setOpenSnackbar(false);
+            }, 3000);
         } catch (error) {
             console.error('Error:', error);
             setSnackbarMessage(error.message || 'Error al actualizar el estado');
             setSnackbarSeverity('error');
             setOpenSnackbar(true);
+            setTimeout(() => {
+                setOpenSnackbar(false);
+            }, 3000);
         }
     };
 
