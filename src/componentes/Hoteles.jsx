@@ -15,8 +15,10 @@ import {
   TableHead,
   TableRow
 } from "@mui/material";
+import { useNavigate } from "react-router-dom"; 
 
 const Hoteles = () => {
+  const navigate = useNavigate(); 
   const [tabValue, setTabValue] = useState(0);
   const [nombre, setNombre] = useState('');
   const [checkIn, setCheckIn] = useState('');
@@ -27,7 +29,7 @@ const Hoteles = () => {
   const [ciudades, setCiudades] = useState([]);
   const [paisId, setPaisId] = useState('');
   const [ciudadId, setCiudadId] = useState('');
-  const [hoteles, setHoteles] = useState([]); // Estado para almacenar los hoteles
+  const [hoteles, setHoteles] = useState([]); 
 
   const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -321,6 +323,11 @@ const Hoteles = () => {
                   Agregar Hotel
                 </Button>
               </Box>
+              <Box>
+                <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+                  Volver a Catálogos
+                </Button>
+               </Box>
             </form>
           </Box>
         )}

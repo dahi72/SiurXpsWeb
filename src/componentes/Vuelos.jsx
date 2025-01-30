@@ -15,14 +15,14 @@ import {
   Tab,
   Grid
 } from "@mui/material";
-
-
 import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from "react-router-dom"; 
+
 
 
 
 const Vuelos = () => {
-  
+  const navigate = useNavigate(); 
   const [tabValue, setTabValue] = useState(0);
   const [vuelos, setVuelos] = useState([]);
   const [nombre, setNombre] = useState('');
@@ -200,6 +200,11 @@ const Vuelos = () => {
               <Button variant="contained" color="primary" type="submit">
                 {vueloEditando ? 'Actualizar' : 'Cargar'}
               </Button>
+            </Box>
+            <Box>
+                <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+                  Volver a Catálogos
+                </Button>
             </Box>
           </form>
         </Box>

@@ -19,29 +19,41 @@ const MisGrupos = () => {
     const [grupos, setGrupos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [ setMensaje] = useState('');
     const [success, setSuccess] = useState(false);
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
 
-    const cargarGrupos = useCallback(() => {
-     
+    const cargarGrupos = useCallback(async () => {
         setLoading(true);
-        fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+        setError(null);
+    
+        try {
+            const response = await fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: No se pudieron cargar los grupos`);
             }
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('Error al cargar los grupos');
-                return response.json();
-            })
-            .then(data => setGrupos(data))
-            .catch(error => {
-                console.error('Error:', error);
-                setError('No se pudieron cargar los grupos');
-            })
-            .finally(() => setLoading(false));
-    }, [baseUrl]);
+    
+            const data = await response.json();
+    
+            if (data.length === 0) {
+                setMensaje('No hay grupos de viaje.');
+            } else {
+                setMensaje('Grupos cargados exitosamente.');
+                setGrupos(data);
+            }
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }, [baseUrl, setMensaje]);
+    
 
     useEffect(() => {
         cargarGrupos();
@@ -73,7 +85,7 @@ const MisGrupos = () => {
     return (
     <Container maxWidth="lg">
         <Box sx={{ py: 4 }}>
-            {/* Header */}
+          
             <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -90,7 +102,6 @@ const MisGrupos = () => {
         </Typography>
     </Box>
 
-    {/* Estado de carga y errores */}
     {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
             <CircularProgress />
@@ -111,7 +122,7 @@ const MisGrupos = () => {
         </Alert>
     </Snackbar>
 
-    {/* Lista de Grupos */}
+   
     {!loading && grupos.length === 0 ? (
         <Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'grey.50' }}>
             <Typography variant="h6" color="text.secondary">
@@ -176,51 +187,41 @@ const MisGrupos = () => {
         ))}
     </Typography>
 
-                                 <Box sx={{ 
-                                    display: 'flex', 
-                                    gap: 1,
-                                    flexWrap: 'wrap',
-                                    mt: 'auto' 
-                                }}>
-                                    <Button
-                                        variant="outlined"
-                                        startIcon={<PersonAddIcon />}
-                                        onClick={() => navigate(`/agregarViajeroAGrupo/${grupo.id}`)}
-                                        size="small"
-                                        fullWidth
-                                    >
-                                        Agregar Viajero
-                                    </Button>
-                                    {/* <Button
-                                        variant="outlined"
-                                        startIcon={<EditIcon />}
-                                        onClick={() => navigate('/crearGrupoDeViaje', {
-                                            state: { nombre: grupo.nombre, id: grupo.id }
-                                        })}
-                                        size="small"
-                                        fullWidth
-                                    >
-                                        Editar
-                                    </Button> */}
-                                     <Button
-                                        variant="outlined"
-                                        startIcon={<DeleteIcon />}
-                                        color="error"
-                                        onClick={() => handleDelete(grupo.id)}
-                                        disabled={isGrupoEnViaje(grupo.fechaInicio)}
-                                        size="small"
-                                        fullWidth
-                                    >
-                                        Eliminar
-                                    </Button> 
-                                </Box> 
-                            </Paper>
-                        ))}
-                    </Box>
-                )}
-            </Box>
-        </Container>
-    );
+    <Box sx={{ 
+        display: 'flex', 
+        gap: 1,
+        flexWrap: 'wrap',
+        mt: 'auto' 
+    }}>
+    <Button
+        variant="outlined"
+        startIcon={<PersonAddIcon />}
+        onClick={() => navigate(`/agregarViajeroAGrupo/${grupo.id}`)}
+        size="small"
+        fullWidth
+    >
+        Agregar Viajero
+    </Button>
+                                    
+    <Button
+        variant="outlined"
+        startIcon={<DeleteIcon />}
+        color="error"
+        onClick={() => handleDelete(grupo.id)}
+        disabled={isGrupoEnViaje(grupo.fechaInicio)}
+        size="small"
+        fullWidth
+    >
+        Eliminar
+    </Button> 
+</Box> 
+</Paper>
+))}
+</Box>
+)}
+</Box>
+</Container>
+);
 };
 
 export default MisGrupos;

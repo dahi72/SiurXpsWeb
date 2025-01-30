@@ -16,8 +16,10 @@ import {
   Tab
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from "react-router-dom"; 
 
 const Aeropuertos = () => {
+  const navigate = useNavigate(); 
   const [tabValue, setTabValue] = useState(0);
   const [aeropuertos, setAeropuertos] = useState([]);
   const [paises, setPaises] = useState([]);
@@ -338,6 +340,11 @@ const Aeropuertos = () => {
               <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
                 <Button variant="contained" color="primary" type="submit">
                   {aeropuertoEditando ? 'Actualizar' : 'Cargar'}
+                </Button>
+              </Box>
+              <Box>
+                <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+                  Volver a Catálogos
                 </Button>
               </Box>
             </form>

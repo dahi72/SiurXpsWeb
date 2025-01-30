@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   Hotel,
   TravelExplore,
@@ -12,9 +11,7 @@ import {
 
 const Catalogos = () => {
   const navigate = useNavigate();
-  const handleBackClick = () => {
-    navigate('/dashboard');
-  };
+
   
   const options = [
     { 
@@ -54,31 +51,7 @@ const Catalogos = () => {
           minHeight: '100%'
         }}
       >
-        <Button
-          onClick={handleBackClick} 
-          startIcon={<ArrowBackIcon />}
-          sx={{
-            alignSelf: 'flex-start',
-            color: 'primary.main',
-            backgroundColor: '#E3F2FD',
-            mb: 2,
-            px: 3,
-            py: 1,
-            borderRadius: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            fontWeight: 'bold',
-            textTransform: 'none',  // Evita que el texto esté en mayúsculas
-            '&:hover': {
-              backgroundColor: '#BBDEFB',
-              transform: 'translateY(-2px)',
-              transition: 'all 0.2s',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-            }
-          }}
-        >
-          Volver
-        </Button>
-
+      
         <Box
           sx={{
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
