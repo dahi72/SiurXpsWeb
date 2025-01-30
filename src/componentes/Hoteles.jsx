@@ -34,13 +34,9 @@ const Hoteles = () => {
     cargarPaises();
   }, [baseUrl]);
 
-  const handleCiudadChange = async (e) => {
-    const selectedPais = JSON.parse(e.target.value);
-    setPaisId(selectedPais.id);
-    setCiudades([]); // Reiniciar ciudades al cambiar de país
-
+  const handleCiudadChange = async (codigoIso) => {
     try {
-      const response = await fetch(`${baseUrl}/Ciudad/${selectedPais.codigoIso}/ciudades`);
+      const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`);
       const data = await response.json();
       setCiudades(data);
     } catch (error) {
@@ -143,7 +139,12 @@ const Hoteles = () => {
               variant="outlined" 
               select
               value={paisId}
-              onChange={handleCiudadChange}
+              onChange={(e) => {
+                const selectedPais = JSON.parse(e.target.value);
+                setPaisId(selectedPais.id);
+                setCiudades([]); // Reiniciar ciudades al cambiar de país
+                handleCiudadChange(selectedPais.codigoIso); // Call the function to load cities
+              }}
               SelectProps={{
                 native: true,
               }}

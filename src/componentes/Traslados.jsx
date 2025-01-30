@@ -36,7 +36,6 @@ const Traslados = () => {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          backgroundImage: 'url(/Fondo.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           padding: '2rem'
