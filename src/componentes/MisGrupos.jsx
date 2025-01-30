@@ -35,10 +35,6 @@ const MisGrupos = () => {
                 }
             });
     
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: No se pudieron cargar los grupos`);
-            }
-    
             const data = await response.json();
     
             if (data.length === 0) {

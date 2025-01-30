@@ -234,21 +234,18 @@ const Aerolineas = () => {
                 </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-                <Button variant="outlined" color="secondary" onClick={() => navigate("/")}>
-                  Volver
-                </Button>
                 <Button variant="contained" color="primary" type="submit">
                   {aerolineaEditando ? 'Actualizar' : 'Cargar'}
-                </Button>
-              </Box>
-              <Box>
-                <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
-                  Volver a Catálogos
                 </Button>
               </Box>
             </form>
           </Box>
         )}
+      </Box>
+      <Box>
+        <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+            Volver a Catálogos
+        </Button>
       </Box>
     </Box>
   );

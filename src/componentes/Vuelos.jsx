@@ -201,14 +201,14 @@ const Vuelos = () => {
                 {vueloEditando ? 'Actualizar' : 'Cargar'}
               </Button>
             </Box>
-            <Box>
-                <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
-                  Volver a Catálogos
-                </Button>
-            </Box>
           </form>
         </Box>
       )}
+       <Box>
+          <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+            Volver a Catálogos
+          </Button>
+        </Box>
     </Box>
   );
 };
