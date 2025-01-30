@@ -37,7 +37,7 @@ const Vuelos = () => {
       try {
         const response = await fetch(`${baseUrl}/Vuelo/vuelos`);
         const data = await response.json();
-        setVuelos(data);
+        setVuelos(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error al cargar los vuelos:', error);
       }
@@ -146,16 +146,24 @@ const Vuelos = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredVuelos.map((vuelo) => (
-                  <TableRow key={vuelo.id}>
-                    <TableCell>{vuelo.nombre}</TableCell>
-                    <TableCell>{vuelo.horario}</TableCell>
-                    <TableCell>
-                      <Button onClick={() => handleEditar(vuelo)}>Editar</Button>
-                      <Button onClick={() => handleEliminar(vuelo.id)}>Eliminar</Button>
+                {filteredVuelos.length > 0 ? (
+                  filteredVuelos.map((vuelo) => (
+                    <TableRow key={vuelo.id}>
+                      <TableCell>{vuelo.nombre}</TableCell>
+                      <TableCell>{vuelo.horario}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleEditar(vuelo)}>Editar</Button>
+                        <Button onClick={() => handleEliminar(vuelo.id)}>Eliminar</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} style={{ textAlign: 'center' }}>
+                      No hay vuelos disponibles.
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>

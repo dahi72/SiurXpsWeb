@@ -34,9 +34,9 @@ const Aeropuertos = () => {
   useEffect(() => {
     const cargarAeropuertos = async () => {
       try {
-        const response = await  fetch(`${baseUrl}/Aeropuerto/aeropuertos`);
+        const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`);
         const data = await response.json();
-        setAeropuertos(data);
+        setAeropuertos(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error al cargar los aeropuertos:', error);
       }
@@ -164,7 +164,7 @@ const Aeropuertos = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        backgroundImage: 'url(/src/Imagenes/Fondo.jpeg)',
+        backgroundImage: 'url(/Fondo.jpeg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '2rem'
@@ -232,23 +232,31 @@ const Aeropuertos = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredAeropuertos.map((aeropuerto) => (
-                    <TableRow key={aeropuerto.id}>
-                      <TableCell>{aeropuerto.nombre}</TableCell>
-                      <TableCell>
-                        <a href={aeropuerto.paginaWeb} target="_blank" rel="noopener noreferrer">
-                          {aeropuerto.paginaWeb}
-                        </a>
-                      </TableCell>
-                      <TableCell>{aeropuerto.pais}</TableCell>
-                      <TableCell>{aeropuerto.ciudad}</TableCell>
-                      <TableCell>{aeropuerto.direccion}</TableCell>
-                      <TableCell>
-                        <Button size="small" color="primary" onClick={() => handleEditar(aeropuerto)}>Editar</Button>
-                        <Button size="small" color="error" onClick={() => handleEliminar(aeropuerto.id)}>Eliminar</Button>
+                  {filteredAeropuertos.length > 0 ? (
+                    filteredAeropuertos.map((aeropuerto) => (
+                      <TableRow key={aeropuerto.id}>
+                        <TableCell>{aeropuerto.nombre}</TableCell>
+                        <TableCell>
+                          <a href={aeropuerto.paginaWeb} target="_blank" rel="noopener noreferrer">
+                            {aeropuerto.paginaWeb}
+                          </a>
+                        </TableCell>
+                        <TableCell>{aeropuerto.pais}</TableCell>
+                        <TableCell>{aeropuerto.ciudad}</TableCell>
+                        <TableCell>{aeropuerto.direccion}</TableCell>
+                        <TableCell>
+                          <Button size="small" color="primary" onClick={() => handleEditar(aeropuerto)}>Editar</Button>
+                          <Button size="small" color="error" onClick={() => handleEliminar(aeropuerto.id)}>Eliminar</Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} style={{ textAlign: 'center' }}>
+                        No hay aeropuertos disponibles.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>

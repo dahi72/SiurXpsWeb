@@ -6,7 +6,7 @@ const RecuperarContrasena = () => {
   const [email, setEmail] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const handleSubmit = (e) => {
     e.preventDefault();
     // Validar el correo electrónico
@@ -16,7 +16,7 @@ const RecuperarContrasena = () => {
     }
 
     // Enviar solicitud a la API
-    fetch(`${process.env.REACT_APP_API_URL}/Usuario/RecuperarContrasena`, {
+    fetch(`${baseUrl}/Usuario/RecuperarContrasena`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

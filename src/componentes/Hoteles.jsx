@@ -41,9 +41,17 @@ const Hoteles = () => {
       try {
         const response = await fetch(`${baseUrl}/Hotel/hoteles`);
         const data = await response.json();
-        setHoteles(data);
+
+        // Verifica si la respuesta es un array
+        if (Array.isArray(data)) {
+          setHoteles(data);
+        } else {
+          console.warn(data.message || 'No se encontraron hoteles.');
+          setHoteles([]); // Establece hoteles como un array vacío
+        }
       } catch (error) {
         console.error('Error al cargar los hoteles:', error);
+        setHoteles([]); // Establece hoteles como un array vacío en caso de error
       }
     };
 
@@ -165,17 +173,18 @@ const Hoteles = () => {
       }
     }
   };
-
-  const filteredHoteles = hoteles.filter(hotel => 
-    hotel.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+ 
+ // console.log('Tipo de hoteles:', Array.isArray(hoteles), hoteles);
+  // const filteredHoteles = Array.isArray(hoteles) ? hoteles.filter(hotel => 
+  //   hotel.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  // ) : [];
 
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        backgroundImage: 'url(/src/Imagenes/Fondo.jpeg)',
+        backgroundImage: 'url(/Fondo.jpeg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '2rem'
@@ -240,18 +249,27 @@ const Hoteles = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredHoteles.map(hotel => (
-                    <TableRow key={hotel.id}>
-                      <TableCell>{hotel.nombre}</TableCell>
-                      <TableCell>{hotel.ciudadId}</TableCell>
-                      <TableCell>{hotel.checkIn}</TableCell>
-                      <TableCell>{hotel.checkOut}</TableCell>
-                      <TableCell>
-                        <Button size="small" color="primary" onClick={() => handleEditar(hotel)}>Editar</Button>
-                        <Button size="small" color="error" onClick={() => handleEliminar(hotel.id)}>Eliminar</Button>
+            
+                  {/* {filteredHoteles.length > 0 ? (
+                    filteredHoteles.map(hotel => (
+                      <TableRow key={hotel.id}>
+                        <TableCell>{hotel.nombre}</TableCell>
+                        <TableCell>{hotel.ciudadId}</TableCell>
+                        <TableCell>{hotel.checkIn}</TableCell>
+                        <TableCell>{hotel.checkOut}</TableCell>
+                        <TableCell>
+                          <Button size="small" color="primary" onClick={() => handleEditar(hotel)}>Editar</Button>
+                          <Button size="small" color="error" onClick={() => handleEliminar(hotel.id)}>Eliminar</Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : ( */}
+                    <TableRow>
+                      <TableCell colSpan={5} style={{ textAlign: 'center' }}>
+                        No hay hoteles disponibles.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  {/* )} */}
                 </TableBody>
               </Table>
             </TableContainer>

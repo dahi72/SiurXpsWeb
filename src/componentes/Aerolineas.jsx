@@ -37,9 +37,10 @@ const Aerolineas = () => {
     // Cargar aerolíneas al montar el componente
     const cargarAerolineas = async () => {
       try {
-        const response = await  fetch(`${baseUrl}/Aerolinea/aerolineas`);
+        const response = await fetch(`${baseUrl}/Aerolinea/aerolineas`);
         const data = await response.json();
-        setAerolineas(data);
+        // Asegúrate de que data sea un array
+        setAerolineas(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error al cargar las aerolíneas:', error);
       }
@@ -114,7 +115,7 @@ const Aerolineas = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        backgroundImage: 'url(/src/Imagenes/Fondo.jpeg)',
+        backgroundImage: 'url(/Fondo.jpeg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '2rem'
@@ -181,20 +182,28 @@ const Aerolineas = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredAerolineas.map((aerolinea) => (
-                    <TableRow key={aerolinea.id}>
-                      <TableCell>{aerolinea.nombre}</TableCell>
-                      <TableCell>
-                        <a href={aerolinea.paginaWeb} target="_blank" rel="noopener noreferrer">
-                          {aerolinea.paginaWeb}
-                        </a>
-                      </TableCell>
-                      <TableCell>
-                        <Button size="small" color="primary" onClick={() => handleEditar(aerolinea)}>Editar</Button>
-                        <Button size="small" color="error" onClick={() => handleEliminar(aerolinea.id)}>Eliminar</Button>
+                  {filteredAerolineas.length > 0 ? (
+                    filteredAerolineas.map((aerolinea) => (
+                      <TableRow key={aerolinea.id}>
+                        <TableCell>{aerolinea.nombre}</TableCell>
+                        <TableCell>
+                          <a href={aerolinea.paginaWeb} target="_blank" rel="noopener noreferrer">
+                            {aerolinea.paginaWeb}
+                          </a>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="small" color="primary" onClick={() => handleEditar(aerolinea)}>Editar</Button>
+                          <Button size="small" color="error" onClick={() => handleEliminar(aerolinea.id)}>Eliminar</Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} style={{ textAlign: 'center' }}>
+                        No hay aerolíneas disponibles.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>

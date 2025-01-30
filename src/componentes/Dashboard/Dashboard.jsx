@@ -19,7 +19,7 @@ const Dashboard = () => {
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    backgroundImage: 'url(/src/Imagenes/Fondo.jpeg)', 
+                    backgroundImage: 'url(/Fondo.jpeg)', 
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     padding: '2rem'
