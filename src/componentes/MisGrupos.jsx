@@ -76,7 +76,7 @@ const MisGrupos = () => {
                     setError('No se pudo eliminar el grupo');
                 });
         }
-    }, [baseUrl, cargarGrupos]);
+    }, [baseUrl, cargarGrupos, setError]);
 
     const formatFechaCorta = (fecha) => format(new Date(fecha), 'dd MMM yyyy');
     const isGrupoEnViaje = (fechaInicio) => new Date(fechaInicio) <= new Date();
@@ -106,11 +106,6 @@ const MisGrupos = () => {
             <CircularProgress />
         </Box>
     )}
-    {/* {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-            {error}
-        </Alert>
-    )} */}
     <Snackbar
         open={success}
         autoHideDuration={3000}
