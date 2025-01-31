@@ -18,7 +18,7 @@ import { format } from 'date-fns';
 const MisGrupos = () => {
     const [grupos, setGrupos] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [ setError] = useState(null);
     const [ setMensaje] = useState('');
     const [success, setSuccess] = useState(false);
     const baseUrl = process.env.REACT_APP_API_URL;
@@ -50,7 +50,7 @@ const MisGrupos = () => {
                 setError(error.message || 'Ocurrió un error al cargar los grupos.'); 
             })
             .finally(() => setLoading(false));
-    }, [baseUrl, setMensaje]);
+    }, [baseUrl, setMensaje, setError]);
 
 
 
