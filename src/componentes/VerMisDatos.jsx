@@ -1,9 +1,9 @@
-import { Container, Typography, Box, Button, Paper, IconButton } from '@mui/material';
+import { Container, Typography, Box, Button, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import React, { useContext } from 'react';
 import dayjs from 'dayjs';
 import { UsuarioContext } from '../hooks/UsuarioContext';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 
 const VerMisDatos = () => {
   const navigate = useNavigate();
@@ -13,28 +13,9 @@ const VerMisDatos = () => {
   const handleEditClick = () => {
     navigate('/misDatos');
   };
-  const handleBackClick = () => {
-    navigate(-1);
-  };
 
   return (
     <>
-      <IconButton 
-        onClick={handleBackClick} 
-        sx={{
-          color: 'rgb(25, 118, 210)', 
-          display: 'flex', 
-          alignItems: 'center',
-          gap: 1,
-          '&:hover': {
-            color: 'rgb(21, 101, 192)',
-            cursor: 'pointer',
-          }
-        }}
-      >
-        <ArrowBackIcon />
-        <Typography variant="body1">Volver</Typography>
-      </IconButton>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 'auto' }}>
         <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>

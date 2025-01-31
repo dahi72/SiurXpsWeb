@@ -23,33 +23,36 @@ const MisGrupos = () => {
     const [success, setSuccess] = useState(false);
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
-
-    const cargarGrupos = useCallback(async () => {
+    
+    const cargarGrupos = useCallback(() => {
         setLoading(true);
-        setError(null);
-    
-        try {
-            const response = await fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-    
-            const data = await response.json();
-    
-            if (data.length === 0) {
-                setMensaje('No hay grupos de viaje.');
-            } else {
-                setMensaje('Grupos cargados exitosamente.');
-                setGrupos(data);
+        fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        if (data.length === 0) {
+                            setMensaje('No hay grupos para mostrar.');                       
+                            return []; 
+                        }
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                setGrupos(data);
+                setMensaje('Grupos cargados correctamente.');
+            })
+            .catch(error => {
+                setError(error.message || 'Ocurrió un error al cargar los grupos.'); 
+            })
+            .finally(() => setLoading(false));
     }, [baseUrl, setMensaje]);
-    
+
+
 
     useEffect(() => {
         cargarGrupos();

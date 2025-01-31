@@ -26,11 +26,10 @@ const CrearItinerario = () => {
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(data => {
-                        // Si no hay grupos, podemos manejarlo aquí
                         if (data.length === 0) {
                             setSnackbarMessage('No hay grupos para mostrar.');
                             setOpenSnackbar(true);
-                            return []; // Retornamos un array vacío
+                            return []; 
                         }
                     });
                 }
@@ -43,7 +42,7 @@ const CrearItinerario = () => {
                 setOpenSnackbar(true);
             })
             .catch(error => {
-                setError(error.message || 'Ocurrió un error al cargar los grupos.'); // Establece el mensaje de error
+                setError(error.message || 'Ocurrió un error al cargar los grupos.'); 
                 setOpenSnackbar(true);
             })
             .finally(() => setLoading(false));

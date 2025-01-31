@@ -100,7 +100,8 @@ const Login = () => {
           flexDirection: 'column',
           justifyContent: 'center',
           gap: 2, 
-          height:'60vh',
+          height: '60vh',
+          backgroundColor: '#cfeaf1'
         }}>
           <Box sx={{ textAlign: 'center', mb: 2 }}>
             <Typography variant="h5" gutterBottom>Inicio de Sesión</Typography>

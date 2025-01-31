@@ -37,7 +37,6 @@ export const ActionButtons = () => {
     const menuItems = [
         { label: 'Mis datos', action: '/verMisDatos' },
         { label: 'Cambiar contraseña', action: '/cambiar-contrasena' },
-        { label: 'Asignar nuevo coordinador', action: '/asignar-coordinador' },
     ];
 
     const getEstadoColor = () => {
