@@ -163,7 +163,7 @@ const Registro = () => {
             variant="outlined"
             onClick={() => navigate('/')}
             sx={{
-              mt: 2, backgroundColor: 'blue', // Cambia 'blue' por el color que desees
+              mt: 2, backgroundColor: '#1976d2', // Cambia 'blue' por el color que desees
               color: 'white', // Cambia el color del texto
               '&:hover': {
                 backgroundColor: 'darkblue'

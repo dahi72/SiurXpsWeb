@@ -63,7 +63,7 @@ const VerItinerario = () => {
     };
 
     return (
-        <div>
+        <div >
             <Header />
             <div style={{ padding: '20px', textAlign: 'center' }}>
                 <Typography variant="h4" gutterBottom>

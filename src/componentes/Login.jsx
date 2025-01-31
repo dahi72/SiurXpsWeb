@@ -101,7 +101,7 @@ const Login = () => {
           justifyContent: 'center',
           gap: 2, 
           height: '60vh',
-          backgroundColor: '#cfeaf1'
+          backgroundColor: 'rgb(227, 242, 253)'
         }}>
           <Box sx={{ textAlign: 'center', mb: 2 }}>
             <Typography variant="h5" gutterBottom>Inicio de Sesión</Typography>
@@ -148,14 +148,14 @@ const Login = () => {
               Ingresar
             </Button>
             
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <Box sx={{ mt: 2, color: 'black', textAlign: 'center' }}>
               <Link to="/recuperar-contrasena" className="link">
                 ¿Olvidaste la contraseña?
               </Link>
             </Box>
           </form>
 
-          <Box sx={{ mt: 2, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Box sx={{ mt: 2, textAlign: 'center', display: 'flex', flexDirection: 'column', color: 'black', gap: 1 }}>
             <Link to="/registro" className="link">
               ¿Aún no estás registrado?
             </Link>
