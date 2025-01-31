@@ -34,6 +34,7 @@ import CrearEvento from './componentes/CrearEvento';
 import AgregarActividad from './componentes/AgregarActividad';
 import DetallesItinerario from './componentes/DetallesItinerario';
 import DondeEstoy2 from './componentes/DondeEstoy2';
+import EditarItinerario from './componentes/EditarItinerario';
 
 const App = () => {
 
@@ -75,7 +76,8 @@ const App = () => {
                     </CiudadProvider>
                   </PaisProvider>
               } />
-
+              
+              <Route path="/itinerario/:id/editarItinerario" element={<EditarItinerario />} /> 
               <Route path="/donde-estoy2" element={<DondeEstoy2 />} /> 
               <Route path="/cambiar-contrasena" element={<CambiarContrasena />} />
               <Route path="/registro" element={<Registro />} />

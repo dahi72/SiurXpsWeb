@@ -27,12 +27,10 @@ const VerItinerario = () => {
     }, [baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
     const handleVerDetalles = (id) => {
-        // setSnackbarMessage(`Viendo detalles del itinerario ${id}`);
-        // setOpenSnackbar(true);
         navigate(`/itinerario/${id}/eventos`);
     };
     const handleEditar = (id) => {
-        navigate(`/itinerario/${id}/editar`); // Redirigir a la página de edición
+        navigate(`/itinerario/${id}/editarItinerario`); // Redirigir a la página de edición
     };
 
     const handleEliminar = async (id) => {
@@ -71,21 +69,22 @@ const VerItinerario = () => {
                 <Typography variant="h4" gutterBottom>
                     Mis Itinerarios
                 </Typography>
-                {itinerarios.length === 0 ? (
+                <div container spacing={2} justifyContent="flex-start">
+                    {itinerarios.length === 0 ? (
                     <Typography variant="body1">No hay itinerarios para mostrar.</Typography>
                 ) : (
                     <div container spacing={2} justifyContent="center">
                         {itinerarios.map((itinerario) => (
                             <div item xs={12} sm={6} md={4} key={itinerario.id}>
                                 <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
-                                    <Typography variant="h6">{itinerario.descripcion}</Typography>
+                                <Typography variant="h6">Itinerario {itinerario.id}</Typography> 
                                     <Typography variant="body1">Fecha de Inicio: {formatDate(itinerario.fechaInicio)}</Typography>
                                     <Typography variant="body1">Fecha de Fin: {formatDate(itinerario.fechaFin)}</Typography>
                                     <Button
                                         variant="contained"
                                         color="primary"
                                         onClick={() => handleVerDetalles(itinerario.id)}
-                                        sx={{ marginTop: 2 }}
+                                        sx={{ marginTop: 2,  marginRight: 1 }}
                                     >
                                         Ver Detalles
                                     </Button>
@@ -109,8 +108,10 @@ const VerItinerario = () => {
                             </div>
                         ))}
                     </div>
-                )}
+                    )}
+                    </div>
             </div>
+            
         </div>
     );
 };
