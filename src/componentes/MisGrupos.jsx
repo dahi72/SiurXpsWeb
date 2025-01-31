@@ -106,11 +106,11 @@ const MisGrupos = () => {
             <CircularProgress />
         </Box>
     )}
-    {error && (
+    {/* {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
             {error}
         </Alert>
-    )}
+    )} */}
     <Snackbar
         open={success}
         autoHideDuration={3000}
