@@ -330,7 +330,17 @@ const Hoteles = () => {
         )}
       </Box>
       <Box>
-        <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+        <Button variant="outlined" 
+          onClick={() => navigate('/catalogos')} 
+          sx={{ 
+          mb: 2, 
+          backgroundColor: 'blue', // Cambia 'blue' por el color que desees
+          color: 'white', // Cambia el color del texto
+          '&:hover': {
+          backgroundColor: 'darkblue', // Color al pasar el mouse
+      }
+    }}
+  >
           Volver a Catálogos
         </Button>
       </Box>

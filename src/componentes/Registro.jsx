@@ -64,7 +64,8 @@ const Registro = () => {
   return (
       <Container maxWidth="sm">
         <Box
-          sx={{
+        sx={{
+            height: '100vh', 
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -157,13 +158,15 @@ const Registro = () => {
               </Button>
             </form>
         </Paper>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', p: 2 }}>
         <Button 
             variant="outlined" 
             onClick={() => navigate('/')} 
             sx={{ mt: 2 }}
           >
             Volver al Login
-        </Button>
+          </Button>
+          </Box>
         </Box>
       </Container>
   );
