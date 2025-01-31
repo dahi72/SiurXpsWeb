@@ -166,6 +166,7 @@ const Aeropuertos = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
+        minHeight: '100vh',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '2rem'
@@ -175,6 +176,7 @@ const Aeropuertos = () => {
         sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           borderRadius: '10px',
+          flexGrow: 1,
           padding: '2rem',
           textAlign: 'center'
         }}

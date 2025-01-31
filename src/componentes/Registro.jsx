@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Container, Paper } from "@mui/material";
 
+
 const Registro = () => {
   const [userData, setUserData] = useState({
     primerNombre: "",
@@ -13,7 +14,7 @@ const Registro = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const baseUrl = process.env.REACT_APP_API_URL;
-
+  
   const cambio = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
@@ -155,7 +156,14 @@ const Registro = () => {
                 Registrar
               </Button>
             </form>
-          </Paper>
+        </Paper>
+        <Button 
+            variant="outlined" 
+            onClick={() => navigate('/')} 
+            sx={{ mt: 2 }}
+          >
+            Volver al Login
+        </Button>
         </Box>
       </Container>
   );
