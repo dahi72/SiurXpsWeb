@@ -99,47 +99,51 @@ const DondeEstoy = () => {
     }
 
     return (
-            <Box sx={{ p: 2 }}>
-                {error ? (
-                    <Typography color="error" sx={{ mb: 2 }}>
-                        {error}
-                    </Typography>
-                ) : (
-                    <Box sx={{ 
-                        height: '70vh', 
-                        width: '100%',
-                        borderRadius: '10px',
-                        overflow: 'hidden',
-                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                    }}>
-                        <MapContainer
-                            center={center}
-                            zoom={13}
-                            style={{ height: '100%', width: '100%' }}
-                            scrollWheelZoom={true}
-                            doubleClickZoom={true}
-                            zoomControl={true}
-                        >
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
-                            <LocationMarker />
-                        </MapContainer>
-                    </Box>
-            )}
-             <Button 
+    
+        <Box sx={{ p: 2 }}>
+            <Box>
+                <Button 
                     variant="contained" 
                     onClick={() => navigate('/donde-estoy2')} // Redirigir a DondeEstoy2
                     sx={{ 
-                    position: 'absolute', 
-                    bottom: 16, // Ajusta según sea necesario
-                    right: 16 // Ajusta según sea necesario
+                        position: 'absolute', 
+                        bottom: 16, // Ajusta según sea necesario
+                        right: 16 // Ajusta según sea necesario
                     }}
                 >
                     Ir a Donde Estoy 2
-             </Button>
+                </Button>
             </Box>
+            {error ? (
+                <Typography color="error" sx={{ mb: 2 }}>
+                    {error}
+                </Typography>
+            ) : (
+                <Box sx={{ 
+                   /* height: '70vh', 
+                    width: '100%',*/
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                }}>
+                    <MapContainer
+                        center={center}
+                        zoom={13}
+                        style={{ height: '100%', width: '100%' }}
+                        scrollWheelZoom={true}
+                        doubleClickZoom={true}
+                        zoomControl={true}
+                    >
+                        <TileLayer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        />
+                        <LocationMarker />
+                    </MapContainer>
+                </Box>
+            )}
+        </Box>
+            
     );
 };
 

@@ -160,13 +160,19 @@ const Registro = () => {
         </Paper>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', p: 2 }}>
         <Button 
-            variant="outlined" 
-            onClick={() => navigate('/')} 
-            sx={{ mt: 2 }}
+            variant="outlined"
+            onClick={() => navigate('/')}
+            sx={{
+              mt: 2, backgroundColor: 'blue', // Cambia 'blue' por el color que desees
+              color: 'white', // Cambia el color del texto
+              '&:hover': {
+                backgroundColor: 'darkblue'
+              }
+            }}
           >
             Volver al Login
-          </Button>
-          </Box>
+        </Button>
+        </Box>
         </Box>
       </Container>
   );

@@ -116,7 +116,6 @@ const Aerolineas = () => {
         display: 'flex',
         flexDirection: 'column',
         backgroundSize: 'cover',
-        minHeight: '100vh',
         backgroundPosition: 'center',
         padding: '2rem'
       }}

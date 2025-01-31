@@ -165,9 +165,7 @@ const Aeropuertos = () => {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        backgroundSize: 'cover',
+        flexDirection: 'column',        backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '2rem'
       }}

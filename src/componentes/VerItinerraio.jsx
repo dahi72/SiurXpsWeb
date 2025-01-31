@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Button, Grid } from '@mui/material';
+import { Paper, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { useSnackbar } from '../hooks/useSnackbar';
@@ -31,6 +31,32 @@ const VerItinerario = () => {
         // setOpenSnackbar(true);
         navigate(`/itinerario/${id}/eventos`);
     };
+    const handleEditar = (id) => {
+        navigate(`/itinerario/${id}/editar`); // Redirigir a la página de edición
+    };
+
+    const handleEliminar = async (id) => {
+        if (window.confirm('¿Estás seguro de que deseas eliminar este itinerario?')) {
+            try {
+                const response = await fetch(`${baseUrl}/Itinerario/${id}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    setItinerarios(itinerarios.filter(itinerario => itinerario.id !== id));
+                    setSnackbarMessage('Itinerario eliminado exitosamente');
+                    setOpenSnackbar(true);
+                } else {
+                    setSnackbarMessage('Error al eliminar el itinerario');
+                    setOpenSnackbar(true);
+                }
+            } catch (error) {
+                console.error('Error al eliminar itinerario:', error);
+                setSnackbarMessage('Error al eliminar el itinerario');
+                setOpenSnackbar(true);
+            }
+        }
+    };
 
     // Función para formatear la fecha
     const formatDate = (dateString) => {
@@ -45,25 +71,45 @@ const VerItinerario = () => {
                 <Typography variant="h4" gutterBottom>
                     Mis Itinerarios
                 </Typography>
-                <Grid container spacing={2} justifyContent="center">
-                    {itinerarios.map((itinerario) => (
-                        <Grid item xs={12} sm={6} md={4} key={itinerario.id}>
-                            <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
-                                <Typography variant="h6">{itinerario.descripcion}</Typography>
-                                <Typography variant="body1">Fecha de Inicio: {formatDate(itinerario.fechaInicio)}</Typography>
-                                <Typography variant="body1">Fecha de Fin: {formatDate(itinerario.fechaFin)}</Typography>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => handleVerDetalles(itinerario.id)}
-                                    sx={{ marginTop: 2 }}
-                                >
-                                    Ver Detalles
-                                </Button>
-                            </Paper>
-                        </Grid>
-                    ))}
-                </Grid>
+                {itinerarios.length === 0 ? (
+                    <Typography variant="body1">No hay itinerarios para mostrar.</Typography>
+                ) : (
+                    <div container spacing={2} justifyContent="center">
+                        {itinerarios.map((itinerario) => (
+                            <div item xs={12} sm={6} md={4} key={itinerario.id}>
+                                <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                                    <Typography variant="h6">{itinerario.descripcion}</Typography>
+                                    <Typography variant="body1">Fecha de Inicio: {formatDate(itinerario.fechaInicio)}</Typography>
+                                    <Typography variant="body1">Fecha de Fin: {formatDate(itinerario.fechaFin)}</Typography>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleVerDetalles(itinerario.id)}
+                                        sx={{ marginTop: 2 }}
+                                    >
+                                        Ver Detalles
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="secondary"
+                                        onClick={() => handleEditar(itinerario.id)}
+                                        sx={{ marginTop: 2, marginRight: 1 }}
+                                    >
+                                        Editar
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        onClick={() => handleEliminar(itinerario.id)}
+                                        sx={{ marginTop: 2 }}
+                                    >
+                                        Eliminar
+                                    </Button>
+                                </Paper>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
