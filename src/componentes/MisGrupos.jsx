@@ -181,8 +181,8 @@ const MisGrupos = () => {
                     </Typography>
                     <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
                         <strong>Destinos:</strong><br />
-                            {grupo.PaisesDestino /*&& Array.isArray(grupo.PaisesDestino) */&& grupo.PaisesDestino.length > 0 ? (
-                                grupo.PaisesDestino.map((pais, index) => (
+                            {grupo.paisesDestinoIds /*&& Array.isArray(grupo.PaisesDestino) */&& grupo.paisesDestinoIds.length > 0 ? (
+                                grupo.paisesDestinoIds.map((pais, index) => (
                                     <Box key={index} sx={{ ml: 1, mb: 1 }}>
                                         • {pais.nombre}
                                     </Box>
@@ -193,8 +193,8 @@ const MisGrupos = () => {
                                 </Typography>
                             )}
                         
-                        {grupo.CiudadesDestino /*&& Array.isArray(grupo.CiudadesDestino)*/ && grupo.CiudadesDestino.length > 0 ? (
-                            grupo.CiudadesDestino.map((ciudad, cidx) => (
+                        {grupo.ciudadesDestinoIds /*&& Array.isArray(grupo.CiudadesDestino)*/ && grupo.ciudadesDestinoIds.length > 0 ? (
+                            grupo.ciudadesDestinoIds.map((ciudad, cidx) => (
                                 <Typography 
                                     key={cidx} 
                                     variant="body2" 
