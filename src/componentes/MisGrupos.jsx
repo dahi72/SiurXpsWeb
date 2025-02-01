@@ -184,6 +184,7 @@ const MisGrupos = () => {
                             {grupo.paisesDestinoIds /*&& Array.isArray(grupo.PaisesDestino) */&& grupo.paisesDestinoIds.length > 0 ? (
                                 grupo.paisesDestinoIds.map((pais, index) => (
                                     <Box key={index} sx={{ ml: 1, mb: 1 }}>
+                                        • {pais.codigoIso}
                                         • {pais.nombre}
                                     </Box>
                                 ))
@@ -205,6 +206,7 @@ const MisGrupos = () => {
                                         ml: 2
                                     }}
                                 >
+                                    - {ciudad.id}
                                     - {ciudad.nombre}
                                 </Typography>
                             ))
