@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Snackbar, Alert, Box } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { Container, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Snackbar, Alert, Box, Button } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+
 
 const Viajeros = () => {
   const { grupoId } = useParams(); 
@@ -9,7 +10,8 @@ const Viajeros = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const baseUrl = process.env.REACT_APP_API_URL;
-
+  const navigate = useNavigate();
+    
   useEffect(() => {
     const obtenerViajeros = async () => {
       try {
@@ -47,6 +49,11 @@ const Viajeros = () => {
     obtenerViajeros();
   }, [grupoId, baseUrl]);
 
+
+  const handleRedirect = () => {
+    navigate('/misGrupos'); // Redirigir a la ruta '/misGrupos'
+  };
+    
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
@@ -90,7 +97,15 @@ const Viajeros = () => {
             </Table>
           </TableContainer>
         )}
-
+         <Box sx={{ my: 4 }}>
+          <Button
+            variant="contained"
+            onClick={handleRedirect} // Llamar a la función de redirección
+            sx={{ bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}
+          >
+            Volver a Mis Grupos
+          </Button>
+        </Box>
         <Snackbar
           open={success}
           autoHideDuration={3000}

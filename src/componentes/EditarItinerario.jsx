@@ -10,7 +10,7 @@ import FormularioVuelo from './FormularioVuelo';
 
 
 const EditarItinerario = () => {
-    const { id } = useParams(); // Obtener el ID del itinerario desde los parámetros de la URL
+    const { id } = useParams(); 
     const navigate = useNavigate();
     const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -24,7 +24,6 @@ const EditarItinerario = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [mostrarFormulario, setMostrarFormulario] = useState(null);
 
-    // Cargar el itinerario y sus datos relacionados cuando el componente se monta
     useEffect(() => {
         const fetchItinerario = async () => {
             try {
@@ -238,6 +237,8 @@ const EditarItinerario = () => {
                             onClick={() => handleFormularioClick('actividad')}
                             variant="contained"
                             fullWidth
+                            disabled={!actividad} 
+                            title={!actividad ? "No hay actividades disponibles" : ""}
                             sx={{ bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Actividad
@@ -248,7 +249,9 @@ const EditarItinerario = () => {
                             onClick={() => handleFormularioClick('traslado')}
                             variant="contained"
                             fullWidth
-                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'secondary.dark' } }}
+                            disabled={!traslado} 
+                            title={!traslado ? "No hay traslados disponibles" : ""}
+                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Traslado
                         </Button>
@@ -258,7 +261,9 @@ const EditarItinerario = () => {
                             onClick={() => handleFormularioClick('vuelo')}
                             variant="contained"
                             fullWidth
-                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'secondary.dark' } }}
+                            disabled={!vuelo} 
+                            title={!vuelo ? "No hay vuelos disponibles" : ""}
+                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Vuelo
                         </Button>
@@ -268,7 +273,9 @@ const EditarItinerario = () => {
                             onClick={() => handleFormularioClick('hotel')}
                             variant="contained"
                             fullWidth
-                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'secondary.dark' } }}
+                            disabled={!hotel} 
+                            title={!hotel ? "No hay hoteles disponibles" : ""}
+                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Hotel
                         </Button>
@@ -278,7 +285,9 @@ const EditarItinerario = () => {
                             onClick={() => handleFormularioClick('aerolinea')}
                             variant="contained"
                             fullWidth
-                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'secondary.dark' } }}
+                            disabled={!aerolinea} 
+                            title={!aerolinea ? "No hay aerolineas disponibles" : ""}
+                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Aerolinea
                         </Button>
@@ -288,7 +297,9 @@ const EditarItinerario = () => {
                             onClick={() => handleFormularioClick('aeropuerto')}
                             variant="contained"
                             fullWidth
-                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'secondary.dark' } }}
+                            disabled={!aeropuerto} 
+                            title={!aeropuerto ? "No hay aeropuertos disponibles" : ""}
+                            sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Aeropuerto
                         </Button>
