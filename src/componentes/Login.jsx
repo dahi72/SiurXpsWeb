@@ -159,15 +159,6 @@ const Login = () => {
                     ¿Olvidaste la contraseña?
                   </Link>
                 </Box>
-                <Box sx={{
-                  mt: 2, textAlign: 'center',
-                  display: 'flex', flexDirection: 'column',
-                  gap: 1
-                }}>
-                  <Link to="/registro" className="link" style={{ color: 'black', textDecoration: 'none' }}>
-                    ¿Aún no estás registrado?
-                  </Link>
-                </Box>
           </Box>
       </form>
     </Paper>

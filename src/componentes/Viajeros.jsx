@@ -11,7 +11,7 @@ const Viajeros = () => {
   const [success, setSuccess] = useState(false);
   const baseUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
-    
+
   useEffect(() => {
     const obtenerViajeros = async () => {
       try {
@@ -53,7 +53,9 @@ const Viajeros = () => {
   const handleRedirect = () => {
     navigate('/misGrupos'); 
   };
-    
+  
+
+  
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>

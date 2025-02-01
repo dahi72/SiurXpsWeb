@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Snackbar, Container, Grid } from '@mui/material';
+import { Button, Snackbar, Container, Grid, Typography, Paper } from '@mui/material';
 import FormularioActividad from './FormularioActividad';
 import FormularioTraslado from './FormularioTraslado';
 import FormularioHotel from './FormularioHotel';
@@ -227,9 +227,26 @@ const EditarItinerario = () => {
         }
     };
 
+   
+
     return (
         <Container maxWidth="sm" sx={{ mt: 4 }}>
             <h1>Editar Itinerario</h1>
+            <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={() => navigate('/VerItinerario')} 
+                sx={{ mb: 2 }} 
+            >
+                Ver Itinerario
+            </Button>
+            {!actividad && !hotel && !aerolinea && !traslado && !aeropuerto && !vuelo && (
+                <Paper elevation={3} sx={{ p: 2, textAlign: "center" }}>
+                    <Typography variant="h6" color="text.secondary">
+                        No hay registros para mostrar.
+                    </Typography>
+                </Paper>
+            )}
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                     <Grid item xs={12}>

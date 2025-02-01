@@ -37,7 +37,7 @@ export const ActionButtons = () => {
     const menuItems = [
         { label: 'Mis datos', action: '/verMisDatos' },
         { label: 'Cambiar contraseña', action: '/cambiar-contrasena' },
-        { label: 'Registrar coordinador', action: '/registrar' }
+        { label: 'Registrar coordinador', action: '/registro' }
     ];
 
     const getEstadoColor = () => {
