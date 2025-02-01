@@ -178,30 +178,65 @@ const MisGrupos = () => {
     <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
         <strong>Fechas:</strong><br />
         {formatFechaCorta(grupo.fechaInicio)} - {formatFechaCorta(grupo.fechaFin)}
-    </Typography>
-    console.log(grupo);                 
-    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-    <strong>Destinos:</strong><br />
-    {grupo.paises && grupo.paises.map((pais, index) => (
-        <Box key={index} sx={{ ml: 1, mb: 1 }}>
-            • {pais.Nombre}
-        </Box>
-    ))}
-    {grupo.ciudades && grupo.ciudades.map((ciudad, cidx) => (
-        <Typography 
-            key={cidx} 
-            variant="body2" 
-            component="div"
-            sx={{ 
-                fontSize: '0.9em',
-                color: 'text.secondary',
-                ml: 2
-            }}
-        >
-            - {ciudad.Nombre}
-        </Typography>
-    ))}
+         </Typography>
+         <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+            <strong>Destinos:</strong><br />
+            {grupo.paises && Array.isArray(grupo.paises) && grupo.paises.length > 0 ? (
+                grupo.paises.map((pais, index) => (
+                    <Box key={index} sx={{ ml: 1, mb: 1 }}>
+                        • {pais.nombre}
+                    </Box>
+                ))
+            ) : (
+                <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary' }}>
+                    No hay países disponibles.
+                </Typography>
+            )}
+            
+            {grupo.ciudades && Array.isArray(grupo.ciudades) && grupo.ciudades.length > 0 ? (
+                grupo.ciudades.map((ciudad, cidx) => (
+                    <Typography 
+                        key={cidx} 
+                        variant="body2" 
+                        component="div"
+                        sx={{ 
+                            fontSize: '0.9em',
+                            color: 'text.secondary',
+                            ml: 2
+                        }}
+                    >
+                        - {ciudad.nombre}
+                    </Typography>
+                ))
+            ) : (
+                <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary' }}>
+                    No hay ciudades disponibles.
+                </Typography>
+            )}
 </Typography>
+
+    {/* <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+            <strong>Destinos:</strong><br />
+            {grupo.paises && grupo.paises.map((pais, index) => (
+                <Box key={index} sx={{ ml: 1, mb: 1 }}>
+                    • {pais.Nombre}
+                </Box>
+            ))}
+            {grupo.ciudades && grupo.ciudades.map((ciudad, cidx) => (
+                <Typography 
+                    key={cidx} 
+                    variant="body2" 
+                    component="div"
+                    sx={{ 
+                        fontSize: '0.9em',
+                        color: 'text.secondary',
+                        ml: 2
+                    }}
+                >
+                    - {ciudad.Nombre}
+                </Typography>
+            ))}
+</Typography> */}
 <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
 <Button onClick={() => handleClick(grupo.id)} sx={{ mt: 2 }}>
                 Ver viajeros
