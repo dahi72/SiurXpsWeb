@@ -84,6 +84,24 @@ const MisGrupos = () => {
         navigate(`/viajeros/${grupoId}`);
     };
    
+    const handleConfirmarGrupo = (grupoId) => {
+        fetch(`${baseUrl}/api/GrupoDeViaje/${grupoId}/confirmar`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Error al confirmar el grupo');
+                setSuccess(true);
+                cargarGrupos();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setError('No se pudo confirmar el grupo');
+            });
+    };
 
     const formatFechaCorta = (fecha) => format(new Date(fecha), 'dd MMM yyyy');
     const isGrupoEnViaje = (fechaInicio) => new Date(fechaInicio) <= new Date();
@@ -152,7 +170,8 @@ const MisGrupos = () => {
             boxShadow: 8
             }
         }}
-    >
+        >
+        console.log( grupo);
     <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
         {grupo.nombre}
     </Typography>
@@ -166,7 +185,7 @@ const MisGrupos = () => {
     <strong>Destinos:</strong><br />
     {grupo.paises && grupo.paises.map((pais, index) => (
         <Box key={index} sx={{ ml: 1, mb: 1 }}>
-            • {pais.nombre}
+            • {pais.Nombre}
         </Box>
     ))}
     {grupo.ciudades && grupo.ciudades.map((ciudad, cidx) => (
@@ -180,7 +199,7 @@ const MisGrupos = () => {
                 ml: 2
             }}
         >
-            - {ciudad.nombre}
+            - {ciudad.Nombre}
         </Typography>
     ))}
 </Typography>
@@ -217,6 +236,15 @@ const MisGrupos = () => {
     >
         Eliminar
     </Button> 
+    <Button
+        variant="outlined"
+        onClick={() => handleConfirmarGrupo(grupo.id)}
+        disabled={isGrupoEnViaje(grupo.fechaInicio)}
+        size="small"
+        fullWidth
+    >
+        Confirmar grupo
+    </Button>            
 </Box> 
 </Paper>
 ))}

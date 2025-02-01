@@ -157,18 +157,6 @@ const Registro = () => {
               </Button>
             </form>
         </Paper>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', p: 2 }}>
-        <Button 
-            variant="outlined"
-            onClick={() => navigate('/')}
-            sx={{
-              mt: 2, backgroundColor: '#1976d2', 
-              color: 'white'
-            }}
-          >
-            Volver al Login
-        </Button>
-        </Box>
         </Box>
       </Container>
   );

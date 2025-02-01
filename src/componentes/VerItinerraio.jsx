@@ -100,7 +100,6 @@ const VerItinerario = () => {
                                 </Typography>
                                 <Button
                                     variant="contained"
-                                    color="primary"
                                     onClick={() => handleVerDetalles(itinerario.id)}
                                     sx={{ marginTop: 2, marginRight: 1 }}
                                 >

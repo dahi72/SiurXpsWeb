@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Snackbar, Alert, Box, Button } from '@mui/material';
+import { Container, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Snackbar, Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-
 
 const Viajeros = () => {
   const { grupoId } = useParams(); 
@@ -9,6 +8,8 @@ const Viajeros = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedViajero, setSelectedViajero] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
@@ -49,12 +50,39 @@ const Viajeros = () => {
     obtenerViajeros();
   }, [grupoId, baseUrl]);
 
+  const handleDeleteClick = (viajero) => {
+    setSelectedViajero(viajero);
+    setOpenDialog(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedViajero) return;
+
+    try {
+      const response = await fetch(`${baseUrl}/GrupoDeViaje/${grupoId}/viajeros/${selectedViajero.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar el viajero');
+      }
+
+      setViajeros(viajeros.filter(v => v.id !== selectedViajero.id));
+      setSuccess(true);
+    } catch (error) {
+      setError('Hubo un error al eliminar el viajero.');
+    } finally {
+      setOpenDialog(false);
+      setSelectedViajero(null);
+    }
+  };
 
   const handleRedirect = () => {
     navigate('/misGrupos'); 
   };
-  
-
   
   return (
     <Container maxWidth="lg">
@@ -83,6 +111,7 @@ const Viajeros = () => {
                   <TableCell>Pasaporte</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Teléfono</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -93,16 +122,21 @@ const Viajeros = () => {
                     <TableCell>{viajero.pasaporte}</TableCell>
                     <TableCell>{viajero.email}</TableCell>
                     <TableCell>{viajero.telefono}</TableCell>
+                    <TableCell>
+                      <Button variant="contained" color="secondary" onClick={() => handleDeleteClick(viajero)}>
+                        Eliminar
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
         )}
-         <Box sx={{ my: 4 }}>
+        <Box sx={{ my: 4 }}>
           <Button
             variant="contained"
-            onClick={handleRedirect} // Llamar a la función de redirección
+            onClick={handleRedirect}
             sx={{ bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}
           >
             Volver a Mis Grupos
@@ -117,6 +151,18 @@ const Viajeros = () => {
             Operación realizada con éxito
           </Alert>
         </Snackbar>
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+          <DialogTitle>Confirmar eliminación</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              ¿Está seguro de que desea eliminar a este viajero del grupo?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
+            <Button onClick={handleDeleteConfirm} color="error">Eliminar</Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Container>
   );
