@@ -44,7 +44,10 @@ export const UsuarioProvider = ({ children }) => {
                estado: data.estado,
                pasaporte: data.pasaporte,
                email: data.email,
-               documentoPasaporteRuta: data.documentoPasaporteRuta,
+               pasaporteDocumentoRuta: data.pasaporteDocumentoRuta,
+               telefono: data.telefono,
+               fechaNac: data.fechaNac,
+               
              });
            } else {
              throw new Error("Estructura de datos inesperada");
