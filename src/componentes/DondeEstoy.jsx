@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { Box, Typography, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, CircularProgress } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+
 
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -40,7 +40,7 @@ const DondeEstoy = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [center, setCenter] = useState([0, 0]);
-    const navigate = useNavigate(); // Inicializar useNavigate
+    
 
     useEffect(() => {
         if (!navigator.geolocation) {
@@ -101,19 +101,6 @@ const DondeEstoy = () => {
     return (
     
         <Box sx={{ p: 2 }}>
-            <Box>
-                <Button 
-                    variant="contained" 
-                    onClick={() => navigate('/donde-estoy2')} // Redirigir a DondeEstoy2
-                    sx={{ 
-                        position: 'absolute', 
-                        bottom: 16, // Ajusta según sea necesario
-                        right: 16 // Ajusta según sea necesario
-                    }}
-                >
-                    Ir a Donde Estoy 2
-                </Button>
-            </Box>
             {error ? (
                 <Typography color="error" sx={{ mb: 2 }}>
                     {error}

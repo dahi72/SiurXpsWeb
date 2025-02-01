@@ -333,11 +333,8 @@ const Hoteles = () => {
           onClick={() => navigate('/catalogos')} 
           sx={{ 
           mb: 2, 
-          backgroundColor: 'blue', // Cambia 'blue' por el color que desees
-          color: 'white', // Cambia el color del texto
-          '&:hover': {
-          backgroundColor: 'darkblue', // Color al pasar el mouse
-      }
+          backgroundColor: 'rgb(227, 242, 253)', // Cambia 'blue' por el color que desees
+          color: '#1976d2'
     }}
   >
           Volver a Catálogos

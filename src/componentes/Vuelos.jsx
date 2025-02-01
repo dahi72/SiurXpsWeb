@@ -205,7 +205,8 @@ const Vuelos = () => {
         </Box>
       )}
        <Box>
-          <Button variant="outlined" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+          <Button variant="outlined"   backgroundColor="rgb(227, 242, 253)"
+          color= "#1976d2" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
             Volver a Catálogos
           </Button>
         </Box>
