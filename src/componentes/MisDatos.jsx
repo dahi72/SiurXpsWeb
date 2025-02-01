@@ -154,7 +154,6 @@ const MisDatos = () => {
         </Typography>
         
         <form onSubmit={handleSubmit}>
-          {/* Primer y Segundo Nombre */}
           <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2} mb={2}>
             <TextField
               label="Primer Nombre"

@@ -1,31 +1,11 @@
 import React from 'react';
-import { Container, Typography, List, ListItem, Link, Box, IconButton } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Container, Typography, List, ListItem, Link, Box } from '@mui/material';
+
 
 const PoliticaPrivacidad = () => {
-    const navigate = useNavigate();
-    const handleBackClick = () => {
-        navigate(-1); 
-      };
+    
   return (
     <>
-        <IconButton 
-  onClick={handleBackClick} 
-  sx={{
-    color: 'rgb(25, 118, 210)', 
-    display: 'flex', 
-    alignItems: 'center',
-    gap: 1, 
-    '&:hover': {
-      color: 'rgb(21, 101, 192)',
-      cursor: 'pointer',
-    }
-  }}
->
-  <ArrowBackIcon />
-  <Typography variant="body1">Volver</Typography>
-</IconButton>
       <Container maxWidth="md" sx={{ py: 4, backgroundColor: 'white', textAlign: 'justify' }}>
         <Typography variant="h4" gutterBottom align="center">
           Política de Privacidad de la plataforma SiurXp

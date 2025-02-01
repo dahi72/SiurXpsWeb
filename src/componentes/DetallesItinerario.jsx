@@ -16,6 +16,8 @@ import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import EventIcon from '@mui/icons-material/Event';
 import { useParams } from 'react-router-dom';
 import Header from './Header';
+import { Button } from '@mui/material'; 
+import { useNavigate } from 'react-router-dom';
 
 const DetallesItinerario = () => {
     const { id } = useParams();
@@ -23,6 +25,7 @@ const DetallesItinerario = () => {
     const [detalles, setDetalles] = useState([]);
     const [filter, setFilter] = useState("");
     const baseUrl = process.env.REACT_APP_API_URL;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchEventos = async () => {
@@ -121,6 +124,14 @@ const DetallesItinerario = () => {
             <Typography variant="h4" gutterBottom>
                 Eventos del Itinerario
             </Typography>
+            <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={() => navigate('/ver-itinerario')} 
+                sx={{ mb: 2 }} 
+            >
+                Volver a Ver Itinerario
+            </Button>
             <Box sx={{ mb: 2 }}>
                 <TextField
                     label="Filtrar eventos"

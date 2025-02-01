@@ -149,7 +149,7 @@ const Login = () => {
             </Button>
             
             <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Link to="/recuperar-contrasena" className="link" color="black" text-decoration="none">
+              <Link to="/recuperar-contrasena" className="link" style={{ color: 'black', textDecoration: 'none' }}>
                 ¿Olvidaste la contraseña?
               </Link>
             </Box>
@@ -160,7 +160,7 @@ const Login = () => {
           display: 'flex', flexDirection: 'column',
           gap: 1
         }}>
-            <Link to="/registro" className="link" color="black" text-decoration="none">
+            <Link to="/registro" className="link" style={{ color: 'black', textDecoration: 'none' }}>
               ¿Aún no estás registrado?
             </Link>
           </Box>

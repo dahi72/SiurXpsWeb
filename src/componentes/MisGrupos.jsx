@@ -18,41 +18,43 @@ import { format } from 'date-fns';
 const MisGrupos = () => {
     const [grupos, setGrupos] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [ setError] = useState(null);
-    const [ setMensaje] = useState('');
+    const [setError] = useState(null);
+    const [setMensaje] = useState('');
     const [success, setSuccess] = useState(false);
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     
     const cargarGrupos = useCallback(() => {
         setLoading(true);
-        fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+        
+   
+
+    fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    if (data.length === 0) {
+                        setMensaje('No hay grupos para mostrar.');                       
+                        return []; 
+                    }
+                });
             }
+            return response.json();
         })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        if (data.length === 0) {
-                            setMensaje('No hay grupos para mostrar.');                       
-                            return []; 
-                        }
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                setGrupos(data);
-                setMensaje('Grupos cargados correctamente.');
-            })
-            .catch(error => {
-                setError(error.message || 'Ocurrió un error al cargar los grupos.'); 
-            })
-            .finally(() => setLoading(false));
+        .then(data => {
+            setGrupos(data);
+            setMensaje('Grupos cargados correctamente.');
+          
+        })
+        .catch(error => {
+            setError(error.message || 'Ocurrió un error al cargar los grupos.'); 
+        })
+        .finally(() => setLoading(false));
     }, [baseUrl, setMensaje, setError]);
-
-
 
     useEffect(() => {
         cargarGrupos();
@@ -78,6 +80,10 @@ const MisGrupos = () => {
         }
     }, [baseUrl, cargarGrupos, setError]);
 
+    const handleClick = (grupoId) => {
+        navigate('/viajeros', { state: { grupoId } });
+    };
+
     const formatFechaCorta = (fecha) => format(new Date(fecha), 'dd MMM yyyy');
     const isGrupoEnViaje = (fechaInicio) => new Date(fechaInicio) <= new Date();
 
@@ -99,7 +105,7 @@ const MisGrupos = () => {
         <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
             Mis grupos de viaje
         </Typography>
-    </Box>
+        </Box>
 
     {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
@@ -141,8 +147,8 @@ const MisGrupos = () => {
             p: 3,
             transition: 'transform 0.2s, box-shadow 0.2s',
             '&:hover': {
-                transform: 'translateY(-4px)',
-                boxShadow: 8
+            transform: 'translateY(-4px)',
+            boxShadow: 8
             }
         }}
     >
@@ -156,30 +162,32 @@ const MisGrupos = () => {
     </Typography>
                             
     <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-        <strong>Destinos:</strong><br />
-        {grupo.paises && grupo.paises.map((pais, index) => (
-            <Box key={index} sx={{ ml: 1, mb: 1 }}>
-                • {pais.nombre}
-                {pais.ciudades && (
-                    <Box sx={{ ml: 2 }}>
-                        {pais.ciudades.map((ciudad, cidx) => (
-                            <Typography 
-                                key={cidx} 
-                                variant="body2" 
-                                component="div"
-                                sx={{ 
-                                    fontSize: '0.9em',
-                                    color: 'text.secondary'
-                                }}
-                            >
-                                - {ciudad.nombre}
-                            </Typography>
-                        ))}
-                    </Box>
-                )}
-            </Box>
-        ))}
-    </Typography>
+    <strong>Destinos:</strong><br />
+    {grupo.paises && grupo.paises.map((pais, index) => (
+        <Box key={index} sx={{ ml: 1, mb: 1 }}>
+            • {pais.nombre}
+        </Box>
+    ))}
+    {grupo.ciudades && grupo.ciudades.map((ciudad, cidx) => (
+        <Typography 
+            key={cidx} 
+            variant="body2" 
+            component="div"
+            sx={{ 
+                fontSize: '0.9em',
+                color: 'text.secondary',
+                ml: 2
+            }}
+        >
+            - {ciudad.nombre}
+        </Typography>
+    ))}
+</Typography>
+<Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+<Button onClick={() => handleClick(grupo.id)} sx={{ mt: 2 }}>
+                Ver viajeros
+</Button>
+</Typography>
 
     <Box sx={{ 
         display: 'flex', 

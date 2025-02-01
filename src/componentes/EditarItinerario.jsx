@@ -48,7 +48,7 @@ const EditarItinerario = () => {
             if (response.ok) {
                 setSnackbarMessage('Itinerario actualizado exitosamente');
                 setOpenSnackbar(true);
-                navigate('/VerItinerario'); // Redirigir a la lista de itinerarios
+                navigate('/VerItinerario'); 
             } else {
                 setSnackbarMessage('Error al actualizar el itinerario');
                 setOpenSnackbar(true);
@@ -61,7 +61,7 @@ const EditarItinerario = () => {
     };
 
     if (!itinerario) {
-        return <Typography>Cargando...</Typography>; // O un spinner
+        return <Typography>Cargando...</Typography>; 
     }
 
     return (
@@ -69,6 +69,14 @@ const EditarItinerario = () => {
             <Typography variant="h4" gutterBottom>
                 Editar Itinerario
             </Typography>
+            <Button 
+                variant="outlined" 
+                color="secondary" 
+                onClick={() => navigate('/VerItinerario')} 
+                sx={{ mb: 2 }} 
+            >
+                Volver a Ver Itinerario
+            </Button>
             <form onSubmit={handleSubmit}>
                 <TextField
                     fullWidth
@@ -92,7 +100,7 @@ const EditarItinerario = () => {
                     label="Fecha de Fin"
                     type="date"
                     variant="outlined"
-                    value={fechaFin.split('T')[0]} // Formato de fecha
+                    value={fechaFin.split('T')[0]} 
                     onChange={(e) => setFechaFin(e.target.value)}
                     sx={{ mb: 2 }}
                 />

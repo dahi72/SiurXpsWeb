@@ -46,10 +46,9 @@ const CrearGrupoDeViaje = () => {
 
   const handleAddPais = () => {
     if (paisSeleccionado && !paisesSeleccionados.find(p => p.id === paisSeleccionado.id)) {
-      // Aseguramos que el código ISO se guarde en el mismo formato que se usa en la base de datos
       const paisConCodigoIsoNormalizado = {
         ...paisSeleccionado,
-        codigoIso: paisSeleccionado.codigoIso.trim().toUpperCase(), // Normalizamos el código ISO
+        codigoIso: paisSeleccionado.codigoIso.trim().toUpperCase(), 
       };
       setPaisesSeleccionados([...paisesSeleccionados, paisConCodigoIsoNormalizado]);
       setPaisSeleccionado(null);
@@ -58,7 +57,6 @@ const CrearGrupoDeViaje = () => {
 
   const handleAddCiudad = () => {
     if (ciudadSeleccionada && !ciudadesSeleccionadas.find(c => c.id === ciudadSeleccionada.id)) {
-      // Verificamos que el país de la ciudad esté en la lista de países seleccionados
       const paisDeLaCiudad = paisesSeleccionados.find(
         p => p.codigoIso.trim().toUpperCase() === ciudadSeleccionada.paisCodigoIso.trim().toUpperCase()
       );
@@ -68,7 +66,6 @@ const CrearGrupoDeViaje = () => {
         return;
       }
   
-      // Normalizamos el código ISO de la ciudad
       const ciudadNormalizada = {
         ...ciudadSeleccionada,
         paisCodigoIso: ciudadSeleccionada.paisCodigoIso.trim().toUpperCase()
@@ -140,7 +137,6 @@ const CrearGrupoDeViaje = () => {
                 margin="normal"
               />
 
-              {/* Selección de País */}
               <FormControl fullWidth margin="normal">
                 <InputLabel>País</InputLabel>
                 <Select
@@ -167,7 +163,7 @@ const CrearGrupoDeViaje = () => {
                 ))}
               </List>
 
-              {/* Selección de Ciudad */}
+        
               <FormControl fullWidth margin="normal">
                 <InputLabel>Ciudad</InputLabel>
                 <Select
