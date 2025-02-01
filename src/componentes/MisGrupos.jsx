@@ -171,7 +171,6 @@ const MisGrupos = () => {
             }
         }}
         >
-        console.log( grupo);
     <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
         {grupo.nombre}
     </Typography>
@@ -180,7 +179,7 @@ const MisGrupos = () => {
         <strong>Fechas:</strong><br />
         {formatFechaCorta(grupo.fechaInicio)} - {formatFechaCorta(grupo.fechaFin)}
     </Typography>
-                            
+    console.log(grupo);                 
     <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
     <strong>Destinos:</strong><br />
     {grupo.paises && grupo.paises.map((pais, index) => (
