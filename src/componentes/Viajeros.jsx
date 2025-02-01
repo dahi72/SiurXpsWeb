@@ -51,7 +51,7 @@ const Viajeros = () => {
 
 
   const handleRedirect = () => {
-    navigate('/misGrupos'); // Redirigir a la ruta '/misGrupos'
+    navigate('/misGrupos'); 
   };
     
   return (

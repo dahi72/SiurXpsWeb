@@ -9,6 +9,7 @@ const VerMisDatos = () => {
   const navigate = useNavigate();
   const { usuario, error } = useContext(UsuarioContext);
   const fechaNacFormateada = usuario && usuario.fechaNac ? dayjs(usuario.fechaNac).format('DD/MM/YYYY') : '';
+  const baseUrl = process.env.REACT_APP_API_URL;
 
   const handleEditClick = () => {
     navigate('/misDatos');
@@ -66,7 +67,7 @@ const VerMisDatos = () => {
                 <Box sx={{ flexBasis: '50%', p: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary">Vacunaciones:</Typography>
                      {usuario?.vacunasDocumentoRuta ? (
-                    <img src={`http://localhost:5112/${usuario.vacunasDocumentoRuta}`} alt="Documento de Vacunas" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`${baseUrl}/${usuario.vacunasDocumentoRuta}`} alt="Documento de Vacunas" style={{ width: '200px', height: 'auto' }} />
                   ) : (
                     <Typography>No cargado</Typography>
                   )}
@@ -74,7 +75,7 @@ const VerMisDatos = () => {
                 <Box sx={{ flexBasis: '50%', p: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary">Pasaporte:</Typography>
                      {usuario?.pasaporteDocumentoRuta ? (
-                    <img src={`http://localhost:5112/${usuario.pasaporteDocumentoRuta}`} alt="Documento de Pasaporte" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`${baseUrl}/${usuario.pasaporteDocumentoRuta}`} alt="Documento de Pasaporte" style={{ width: '200px', height: 'auto' }} />
                   ) : (
                     <Typography>No cargado</Typography>
                   )}
@@ -82,7 +83,7 @@ const VerMisDatos = () => {
                 <Box sx={{ flexBasis: '50%', p: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary">Visa:</Typography>
                    {usuario?.visaDocumentoRuta ? (
-                    <img src={`http://localhost:5112/${usuario.visaDocumentoRuta}`} alt="Documento de Visa" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`${baseUrl}/${usuario.visaDocumentoRuta}`} alt="Documento de Visa" style={{ width: '200px', height: 'auto' }} />
                   ) : (
                     <Typography>No cargado</Typography>
                   )}
@@ -90,7 +91,7 @@ const VerMisDatos = () => {
                 <Box sx={{ flexBasis: '50%', p: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary">Seguro de Viaje:</Typography>
                     {usuario?.seguroDeViajeDocumentoRuta ? (
-                    <img src={`http://localhost:5112/${usuario.seguroDeViajeDocumentoRuta}`} alt="Documento de Seguro de Viaje" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`${baseUrl}/${usuario.seguroDeViajeDocumentoRuta}`} alt="Documento de Seguro de Viaje" style={{ width: '200px', height: 'auto' }} />
                   ) : (
                     <Typography>No cargado</Typography>
                   )}

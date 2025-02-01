@@ -238,7 +238,6 @@ const EditarItinerario = () => {
                             variant="contained"
                             fullWidth
                             disabled={!actividad} 
-                            title={!actividad ? "No hay actividades disponibles" : ""}
                             sx={{ bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Actividad
@@ -250,7 +249,6 @@ const EditarItinerario = () => {
                             variant="contained"
                             fullWidth
                             disabled={!traslado} 
-                            title={!traslado ? "No hay traslados disponibles" : ""}
                             sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Traslado
@@ -262,7 +260,6 @@ const EditarItinerario = () => {
                             variant="contained"
                             fullWidth
                             disabled={!vuelo} 
-                            title={!vuelo ? "No hay vuelos disponibles" : ""}
                             sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Vuelo
@@ -274,7 +271,6 @@ const EditarItinerario = () => {
                             variant="contained"
                             fullWidth
                             disabled={!hotel} 
-                            title={!hotel ? "No hay hoteles disponibles" : ""}
                             sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Hotel
@@ -286,7 +282,6 @@ const EditarItinerario = () => {
                             variant="contained"
                             fullWidth
                             disabled={!aerolinea} 
-                            title={!aerolinea ? "No hay aerolineas disponibles" : ""}
                             sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Aerolinea
@@ -298,7 +293,6 @@ const EditarItinerario = () => {
                             variant="contained"
                             fullWidth
                             disabled={!aeropuerto} 
-                            title={!aeropuerto ? "No hay aeropuertos disponibles" : ""}
                             sx={{ bgcolor: 'secondary.main', '&:hover': { bgcolor: 'primary.dark' } }}
                         >
                             Editar Aeropuerto
@@ -335,6 +329,7 @@ const EditarItinerario = () => {
                     type="submit"
                     variant="contained"
                     fullWidth
+                    disabled={!aeropuerto && !aerolinea && !vuelo && !hotel && !traslado && !actividad  } 
                     sx={{ mt: 2, bgcolor: 'success.main', '&:hover': { bgcolor: 'success.dark' } }}
                 >
                     Guardar Cambios

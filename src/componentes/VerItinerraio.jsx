@@ -17,22 +17,6 @@ const VerItinerario = () => {
                 const response = await fetch(`${baseUrl}/Itinerario/listado`); 
                 const data = await response.json();
                 setItinerarios(data); 
-            } catch (error) {
-                console.error('Error al obtener itinerarios:', error);
-                setSnackbarMessage('Error al cargar itinerarios');
-                setOpenSnackbar(true);
-            }
-        };
-
-        fetchItinerarios();
-    }, [baseUrl, setOpenSnackbar, setSnackbarMessage]);
-
-    useEffect(() => {
-        const fetchItinerarios = async () => {
-            try {
-                const response = await fetch(`${baseUrl}/Itinerario/listado`); 
-                const data = await response.json();
-                setItinerarios(data); 
                 
                 for (const itinerario of data) {
                     if (itinerario.grupoDeViajeId) {
@@ -53,7 +37,6 @@ const VerItinerario = () => {
 
         fetchItinerarios();
     }, [baseUrl, setOpenSnackbar, setSnackbarMessage]);
-
 
     const handleVerDetalles = (id) => {
         navigate(`/itinerario/${id}/eventos`);
@@ -104,13 +87,17 @@ const VerItinerario = () => {
                     ) : (
                         itinerarios.map((itinerario) => (
                             <Paper key={itinerario.id} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
-                            <Typography variant="h6">
+                                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2', marginBottom: 1 }}>
                                     {gruposDeViaje[itinerario.grupoDeViajeId]
                                         ? `Itinerario del grupo de viaje: ${gruposDeViaje[itinerario.grupoDeViajeId]}`
                                         : 'Cargando nombre del grupo...'}
                                 </Typography>
-                                <Typography variant="body1">Fecha de Inicio: {formatDate(itinerario.fechaInicio)}</Typography>
-                                <Typography variant="body1">Fecha de Fin: {formatDate(itinerario.fechaFin)}</Typography>
+                                <Typography variant="body1" sx={{ color: '#666', marginBottom: 1 }}>
+                                    <strong>Fecha de Inicio:</strong> {formatDate(itinerario.fechaInicio)}
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666', marginBottom: 2 }}>
+                                    <strong>Fecha de Fin:</strong> {formatDate(itinerario.fechaFin)}
+                                </Typography>
                                 <Button
                                     variant="contained"
                                     color="primary"
