@@ -75,7 +75,7 @@ const EditarItinerario = () => {
                 onClick={() => navigate('/VerItinerario')} 
                 sx={{ mb: 2 }} 
             >
-                Volver a Ver Itinerario
+                Ver Itinerario
             </Button>
             <form onSubmit={handleSubmit}>
                 <TextField

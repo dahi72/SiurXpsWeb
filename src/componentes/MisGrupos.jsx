@@ -81,8 +81,9 @@ const MisGrupos = () => {
     }, [baseUrl, cargarGrupos, setError]);
 
     const handleClick = (grupoId) => {
-        navigate('/viajeros', { state: { grupoId } });
+        navigate(`/viajeros/${grupoId}`);
     };
+   
 
     const formatFechaCorta = (fecha) => format(new Date(fecha), 'dd MMM yyyy');
     const isGrupoEnViaje = (fechaInicio) => new Date(fechaInicio) <= new Date();

@@ -147,25 +147,31 @@ const Login = () => {
             >
               Ingresar
             </Button>
-            
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Link to="/recuperar-contrasena" className="link" style={{ color: 'black', textDecoration: 'none' }}>
-                ¿Olvidaste la contraseña?
-              </Link>
-            </Box>
-          </form>
-
-        <Box sx={{
-          mt: 2, textAlign: 'center',
-          display: 'flex', flexDirection: 'column',
-          gap: 1
-        }}>
-            <Link to="/registro" className="link" style={{ color: 'black', textDecoration: 'none' }}>
-              ¿Aún no estás registrado?
-            </Link>
+            <Box sx={{
+                      mt: 3, 
+                      textAlign: 'center',
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: 2
+                    }}>
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                  <Link to="/recuperar-contrasena" className="link" style={{ color: 'black', textDecoration: 'none' }}>
+                    ¿Olvidaste la contraseña?
+                  </Link>
+                </Box>
+                <Box sx={{
+                  mt: 2, textAlign: 'center',
+                  display: 'flex', flexDirection: 'column',
+                  gap: 1
+                }}>
+                  <Link to="/registro" className="link" style={{ color: 'black', textDecoration: 'none' }}>
+                    ¿Aún no estás registrado?
+                  </Link>
+                </Box>
           </Box>
-        </Paper>
-      </Box>
+      </form>
+    </Paper>
+</Box>
   );
 };
 

@@ -9,6 +9,7 @@ const VerItinerario = () => {
     const { setOpenSnackbar, setSnackbarMessage } = useSnackbar();
     const navigate = useNavigate();
     const baseUrl = process.env.REACT_APP_API_URL;
+    const [gruposDeViaje, setGruposDeViaje] = useState({});
 
     useEffect(() => {
         const fetchItinerarios = async () => {
@@ -26,11 +27,39 @@ const VerItinerario = () => {
         fetchItinerarios();
     }, [baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
+    useEffect(() => {
+        const fetchItinerarios = async () => {
+            try {
+                const response = await fetch(`${baseUrl}/Itinerario/listado`); 
+                const data = await response.json();
+                setItinerarios(data); 
+                
+                for (const itinerario of data) {
+                    if (itinerario.grupoDeViajeId) {
+                        const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`);
+                        const grupoData = await grupoResponse.json();
+                        setGruposDeViaje(prev => ({
+                            ...prev,
+                            [itinerario.grupoDeViajeId]: grupoData.nombre
+                        }));
+                    }
+                }
+            } catch (error) {
+                console.error('Error al obtener itinerarios:', error);
+                setSnackbarMessage('Error al cargar itinerarios');
+                setOpenSnackbar(true);
+            }
+        };
+
+        fetchItinerarios();
+    }, [baseUrl, setOpenSnackbar, setSnackbarMessage]);
+
+
     const handleVerDetalles = (id) => {
         navigate(`/itinerario/${id}/eventos`);
     };
     const handleEditar = (id) => {
-        navigate(`/itinerario/${id}/editarItinerario`); // Redirigir a la página de edición
+        navigate(`/itinerario/${id}/editarItinerario`); 
     };
 
     const handleEliminar = async (id) => {
@@ -75,7 +104,11 @@ const VerItinerario = () => {
                     ) : (
                         itinerarios.map((itinerario) => (
                             <Paper key={itinerario.id} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
-                                <Typography variant="h6">Itinerario de grupo de viaje {itinerario.grupoDeViajeId}</Typography> 
+                            <Typography variant="h6">
+                                    {gruposDeViaje[itinerario.grupoDeViajeId]
+                                        ? `Itinerario del grupo de viaje: ${gruposDeViaje[itinerario.grupoDeViajeId]}`
+                                        : 'Cargando nombre del grupo...'}
+                                </Typography>
                                 <Typography variant="body1">Fecha de Inicio: {formatDate(itinerario.fechaInicio)}</Typography>
                                 <Typography variant="body1">Fecha de Fin: {formatDate(itinerario.fechaFin)}</Typography>
                                 <Button

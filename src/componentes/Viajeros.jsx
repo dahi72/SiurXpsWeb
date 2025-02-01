@@ -8,11 +8,12 @@ const Viajeros = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const baseUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const obtenerViajeros = async () => {
       try {
-        const grupoResponse = await fetch(`${process.env.REACT_APP_API_URL}/GrupoDeViaje/${grupoId}`, {
+        const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${grupoId}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -21,7 +22,7 @@ const Viajeros = () => {
 
         if (grupoData.viajerosIds.length > 0) {
           const viajerosData = await Promise.all(grupoData.viajerosIds.map(async (id) => {
-            const viajeroResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/Usuario/${id}`, {
+            const viajeroResponse = await fetch(`${baseUrl}/Usuario/${id}`, {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
               }
@@ -44,7 +45,7 @@ const Viajeros = () => {
     };
 
     obtenerViajeros();
-  }, [grupoId]);
+  }, [grupoId, baseUrl]);
 
   return (
     <Container maxWidth="lg">

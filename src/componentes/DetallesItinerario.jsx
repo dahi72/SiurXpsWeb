@@ -127,10 +127,10 @@ const DetallesItinerario = () => {
             <Button 
                 variant="contained" 
                 color="primary" 
-                onClick={() => navigate('/ver-itinerario')} 
+                onClick={() => navigate('/VerItinerario')} 
                 sx={{ mb: 2 }} 
             >
-                Volver a Ver Itinerario
+                Ver Itinerario
             </Button>
             <Box sx={{ mb: 2 }}>
                 <TextField
