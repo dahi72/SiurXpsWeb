@@ -171,49 +171,49 @@ const MisGrupos = () => {
             }
         }}
         >
-    <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-        {grupo.nombre}
-    </Typography>
-    <Divider sx={{ mb: 2 }} />
-    <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
-        <strong>Fechas:</strong><br />
-        {formatFechaCorta(grupo.fechaInicio)} - {formatFechaCorta(grupo.fechaFin)}
-         </Typography>
-         <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-            <strong>Destinos:</strong><br />
-            {grupo.paises && Array.isArray(grupo.paises) && grupo.paises.length > 0 ? (
-                grupo.paises.map((pais, index) => (
-                    <Box key={index} sx={{ ml: 1, mb: 1 }}>
-                        • {pais.nombre}
-                    </Box>
-                ))
-            ) : (
-                <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary' }}>
-                    No hay países disponibles.
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+                    {grupo.nombre}
                 </Typography>
-            )}
-            
-            {grupo.ciudades && Array.isArray(grupo.ciudades) && grupo.ciudades.length > 0 ? (
-                grupo.ciudades.map((ciudad, cidx) => (
-                    <Typography 
-                        key={cidx} 
-                        variant="body2" 
-                        component="div"
-                        sx={{ 
-                            fontSize: '0.9em',
-                            color: 'text.secondary',
-                            ml: 2
-                        }}
-                    >
-                        - {ciudad.nombre}
+                <Divider sx={{ mb: 2 }} />
+                <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+                    <strong>Fechas:</strong><br />
+                    {formatFechaCorta(grupo.fechaInicio)} - {formatFechaCorta(grupo.fechaFin)}
                     </Typography>
-                ))
-            ) : (
-                <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary' }}>
-                    No hay ciudades disponibles.
-                </Typography>
-            )}
-</Typography>
+                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                        <strong>Destinos:</strong><br />
+                            {grupo.PaisesDestino /*&& Array.isArray(grupo.PaisesDestino) */&& grupo.PaisesDestino.length > 0 ? (
+                                grupo.PaisesDestino.map((pais, index) => (
+                                    <Box key={index} sx={{ ml: 1, mb: 1 }}>
+                                        • {pais.nombre}
+                                    </Box>
+                                ))
+                            ) : (
+                                <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary' }}>
+                                    No hay países disponibles.
+                                </Typography>
+                            )}
+                        
+                        {grupo.CiudadesDestino /*&& Array.isArray(grupo.CiudadesDestino)*/ && grupo.CiudadesDestino.length > 0 ? (
+                            grupo.CiudadesDestino.map((ciudad, cidx) => (
+                                <Typography 
+                                    key={cidx} 
+                                    variant="body2" 
+                                    component="div"
+                                    sx={{ 
+                                        fontSize: '0.9em',
+                                        color: 'text.secondary',
+                                        ml: 2
+                                    }}
+                                >
+                                    - {ciudad.nombre}
+                                </Typography>
+                            ))
+                        ) : (
+                            <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary' }}>
+                                No hay ciudades disponibles.
+                            </Typography>
+                        )}
+            </Typography>
 
     {/* <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
             <strong>Destinos:</strong><br />
