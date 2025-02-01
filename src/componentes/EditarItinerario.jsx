@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from '../hooks/useSnackbar';
 
 const EditarItinerario = () => {
-    const { id } = useParams(); // Obtener el ID del itinerario de la URL
+    const { id } = useParams(); 
     const [itinerario, setItinerario] = useState(null);
     const [descripcion, setDescripcion] = useState('');
     const [fechaInicio, setFechaInicio] = useState('');
@@ -65,7 +65,7 @@ const EditarItinerario = () => {
     }
 
     return (
-        <Box sx={{ padding: 2 }}>
+        <Box sx={{ padding: 2, backgroundColor:'rgb(227, 242, 253)' }}>
             <Typography variant="h4" gutterBottom>
                 Editar Itinerario
             </Typography>

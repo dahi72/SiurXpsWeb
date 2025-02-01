@@ -148,15 +148,19 @@ const Login = () => {
               Ingresar
             </Button>
             
-            <Box sx={{ mt: 2, color: 'black', textAlign: 'center' }}>
-              <Link to="/recuperar-contrasena" className="link">
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Link to="/recuperar-contrasena" className="link" color='black' textDecoration='none'>
                 ¿Olvidaste la contraseña?
               </Link>
             </Box>
           </form>
 
-          <Box sx={{ mt: 2, textAlign: 'center', display: 'flex', flexDirection: 'column', color: 'black', gap: 1 }}>
-            <Link to="/registro" className="link">
+        <Box sx={{
+          mt: 2, textAlign: 'center',
+          display: 'flex', flexDirection: 'column',
+          gap: 1
+        }}>
+            <Link to="/registro" className="link" color='black' textDecoration='none'>
               ¿Aún no estás registrado?
             </Link>
           </Box>

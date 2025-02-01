@@ -8,7 +8,8 @@ const AgregarViajeroAGrupo = () => {
   const { grupoId, grupoNombre } = state || {};
   const [grupoSeleccionado, setGrupoSeleccionado] = useState(grupoId || "");
   const [nombreGrupo, setNombreGrupo] = useState(grupoNombre || "");
-  const [viajero, setViajero] = useState({ primerNombre: "", primerApellido: "", pasaporte: "" });
+  const [viajero, setViajero] = useState({ primerNombre: "", primerApellido: "", pasaporte: "",  email: "", 
+    telefono: "" });
   const [grupos, setGrupos] = useState([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
@@ -16,12 +17,10 @@ const AgregarViajeroAGrupo = () => {
 
   useEffect(() => {
     if (state?.grupoId) {
-        // Si se pasa un grupo desde el estado, solo carga ese grupo
         setGrupos([{ id: state.grupoId, nombre: state.grupoNombre }]);
         setGrupoSeleccionado(state.grupoId);
         setNombreGrupo(state.grupoNombre);
     } else {
-        // Si no, carga la lista de grupos de la API
         fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -37,13 +36,13 @@ const AgregarViajeroAGrupo = () => {
             .catch((error) => {
                 console.error('Error:', error);
                 setError("Error al cargar los grupos disponibles.");
-                setGrupos([]); // Aseguramos que grupos sea un array vacío en caso de error
+                setGrupos([]); 
             });
     }
-}, [state, baseUrl]); // Removemos grupoSeleccionado de las dependencias
+}, [state, baseUrl]); 
 
   useEffect(() => {
-    // Actualiza `nombreGrupo` cada vez que `grupoSeleccionado` cambia y `grupos` tiene datos
+  
     if (grupoSeleccionado && grupos.length > 0) {
       const grupo = grupos.find(g => g.id === grupoSeleccionado);
       if (grupo) {
@@ -78,7 +77,7 @@ const AgregarViajeroAGrupo = () => {
       .then((data) => {
         setSuccess(true);
         setError(null);
-        setViajero({ primerNombre: "", primerApellido: "", pasaporte: "" });
+        setViajero({ primerNombre: "", primerApellido: "", pasaporte: "", email: "", telefono: "" });
       })
       .catch((err) => {
         setError(err.message);
@@ -141,6 +140,24 @@ const AgregarViajeroAGrupo = () => {
               onChange={(e) => setViajero({ ...viajero, pasaporte: e.target.value })}
               required
               margin="normal"
+            />
+             <TextField
+              fullWidth
+              label="Correo Electrónico"
+              value={viajero.email}
+              onChange={(e) => setViajero({ ...viajero, email: e.target.value })}
+              required
+              margin="normal"
+              type="email" // Asegúrate de que sea un campo de tipo email
+            />
+            <TextField
+              fullWidth
+              label="Teléfono"
+              value={viajero.telefono}
+              onChange={(e) => setViajero({ ...viajero, telefono: e.target.value })}
+              required
+              margin="normal"
+              type="tel" // Asegúrate de que sea un campo de tipo tel
             />
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
               Agregar Pasajero

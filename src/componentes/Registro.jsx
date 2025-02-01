@@ -23,7 +23,6 @@ const Registro = () => {
   const registrar = (e) => {
     e.preventDefault();
 
-    // Validar campos requeridos
    if (!userData.primerNombre || !userData.primerApellido || !userData.pasaporte || !userData.email || !userData.telefono) {
       setMensaje("Todos los campos son obligatorios");
       setTimeout(() => {
@@ -48,7 +47,7 @@ const Registro = () => {
         } else {
           setMensaje('Usuario creado exitosamente.');
           setTimeout(() => {
-            navigate("/"); // Redirigir al login o página principal después de 2 segundos
+            navigate("/"); 
           }, 2000);
         }
       })
@@ -163,11 +162,8 @@ const Registro = () => {
             variant="outlined"
             onClick={() => navigate('/')}
             sx={{
-              mt: 2, backgroundColor: '#1976d2', // Cambia 'blue' por el color que desees
-              color: 'white', // Cambia el color del texto
-              '&:hover': {
-                backgroundColor: 'darkblue'
-              }
+              mt: 2, backgroundColor: '#1976d2', 
+              color: 'white'
             }}
           >
             Volver al Login
