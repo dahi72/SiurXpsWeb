@@ -238,7 +238,7 @@ const MisDatos = () => {
     {pasaporte ? (
       <Typography>{pasaporte.name}</Typography>
     ) : usuario?.pasaporteDocumentoRuta ? (
-      <a href={`https://siurxpss.azurewebsites.net/uploads/${usuario.pasaporteDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+      <a href={`https://siurxpss.azurewebsites.net${usuario.pasaporteDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
         Ver pasaporte actual
       </a>
     ) : (
@@ -256,7 +256,7 @@ const MisDatos = () => {
     {visa ? (
       <Typography>{visa.name}</Typography>
     ) : usuario?.visaDocumentoRuta ? (
-      <a href={`https://siurxpss.azurewebsites.net/uploads/${usuario.visaDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+      <a href={`https://siurxpss.azurewebsites.net${usuario.visaDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
         Ver visa actual
       </a>
     ) : (
@@ -276,7 +276,7 @@ const MisDatos = () => {
     {vacuna ? (
       <Typography>{vacuna.name}</Typography>
     ) : usuario?.vacunasDocumentoRuta ? (
-      <a href={`https://siurxpss.azurewebsites.net/uploads/${usuario.vacunasDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+      <a href={`https://siurxpss.azurewebsites.net${usuario.vacunasDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
         Ver certificado de vacunas actual
       </a>
     ) : (
@@ -294,7 +294,7 @@ const MisDatos = () => {
     {seguro ? (
       <Typography>{seguro.name}</Typography>
     ) : usuario?.seguroDeViajeDocumentoRuta ? (
-      <a href={`https://siurxpss.azurewebsites.net/uploads/${usuario.seguroDeViajeDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+      <a href={`https://siurxpss.azurewebsites.net${usuario.seguroDeViajeDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
         Ver seguro actual
       </a>
     ) : (
