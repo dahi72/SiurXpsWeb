@@ -246,7 +246,7 @@ const MisDatos = () => {
     )}
     <Input
       type="file"
-      onChange={(e) => handleFileChange(e, "pasaporte")}
+      onChange={(e) => handleFileChange(e, "pasaporteDocumentoRuta")}
       inputProps={{ accept: '.jpg,.png,.pdf' }}
     />
   </FormControl>
