@@ -18,7 +18,7 @@ const MisDatos = () => {
   const [visa, setVisa] = useState(null);
   const [vacuna, setVacuna] = useState(null);
   const [seguro, setSeguro] = useState(null);
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   
   const handleFileChange = (e, tipoDocumento) => {
     const file = e.target.files[0];
@@ -75,7 +75,7 @@ const MisDatos = () => {
     if (visa) formData.append("visaDocumento", visa);
     if (vacuna) formData.append("vacunasDocumento", vacuna);
     if (seguro) formData.append("seguroDeViajeDocumento", seguro);
-    const baseUrl = process.env.REACT_APP_API_URL;
+    
 
     const token = localStorage.getItem("token");
     const id = localStorage.getItem("id");
