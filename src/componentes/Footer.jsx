@@ -45,10 +45,10 @@ export const Footer = () => {
             Código Postal: 11200
           </Typography>
           <Typography variant="body2" sx={{ color: 'white', textAlign: isDownMd ? 'center' : 'left' }}>
-            Tel: +598 1234 5678
+            Tel: 097381870
           </Typography>
           <Typography variant="body2" sx={{ color: 'white', textAlign: isDownMd ? 'center' : 'left' }}>
-            Email: contacto@siurviajes.com
+            Email: siur@gmail.com
           </Typography>
         </Box>
 

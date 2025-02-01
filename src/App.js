@@ -36,6 +36,12 @@ import DetallesItinerario from './componentes/DetallesItinerario';
 import DondeEstoy2 from './componentes/DondeEstoy2';
 import EditarItinerario from './componentes/EditarItinerario';
 import Viajeros from './componentes/Viajeros';
+import FormularioActividad from './componentes/FormularioActividad';
+import FormularioTraslado from './componentes/FormularioTraslado';
+import FormularioHotel from './componentes/FormularioHotel';
+import FormularioAeropuerto from './componentes/FormularioAeropuerto';
+import FormularioAerolinea from './componentes/FormularioAerolinea';
+import FormularioVuelo from './componentes/FormularioVuelo';
 
 const App = () => {
 
@@ -67,7 +73,14 @@ const App = () => {
               <Route path="/crear-eventos/:itinerarioId" element={<CrearEvento />} />
               <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
               <Route path="/agregar-actividad/:itinerarioId" element={<AgregarActividad />} />
-              <Route path="/itinerario/:id/eventos" element={<DetallesItinerario/>} />
+              <Route path="/itinerario/:id/eventos" element={<DetallesItinerario />} />
+              <Route path="/editar-actividad/:id" element={<FormularioActividad />} />
+              <Route path="/editar-traslado/:id" element={<FormularioTraslado />} />
+              <Route path="/editar-hotel/:id" element={<FormularioHotel />} />
+              <Route path="/editar-aerolinea/:id" element={<FormularioAerolinea />} />
+              <Route path="/editar-vuelo/:id" element={<FormularioVuelo />} />
+              <Route path="/editar-aeropuerto/:id" element={<FormularioAeropuerto />} />
+
               {/* Aquí solo el componente CrearGrupoDeViaje tiene acceso a los contextos de Pais y Ciudad */}
               <Route path="/crearGrupo" element={
                   <PaisProvider>
