@@ -18,7 +18,8 @@ const MisDatos = () => {
   const [visa, setVisa] = useState(null);
   const [vacuna, setVacuna] = useState(null);
   const [seguro, setSeguro] = useState(null);
-
+  const baseUrl = process.env.REACT_APP_API_URL;
+  
   const handleFileChange = (e, tipoDocumento) => {
     const file = e.target.files[0];
     if (file) {
@@ -74,7 +75,7 @@ const MisDatos = () => {
     if (visa) formData.append("visaDocumento", visa);
     if (vacuna) formData.append("vacunasDocumento", vacuna);
     if (seguro) formData.append("seguroDeViajeDocumento", seguro);
-    const baseUrl = process.env.REACT_APP_API_URL;
+    
 
     const token = localStorage.getItem("token");
     const id = localStorage.getItem("id");
@@ -237,7 +238,7 @@ const MisDatos = () => {
     {pasaporte ? (
       <Typography>{pasaporte.name}</Typography>
     ) : usuario?.pasaporteDocumentoRuta ? (
-      <a href={`http://localhost:5112/${usuario.pasaporteDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+      <a href={`${baseUrl}/${usuario.pasaporteDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
         Ver pasaporte actual
       </a>
     ) : (
@@ -255,7 +256,7 @@ const MisDatos = () => {
     {visa ? (
       <Typography>{visa.name}</Typography>
     ) : usuario?.visaDocumentoRuta ? (
-      <a href={`http://localhost:5112/${usuario.visaDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+      <a href={`${baseUrl}/${usuario.visaDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
         Ver visa actual
       </a>
     ) : (
@@ -275,7 +276,7 @@ const MisDatos = () => {
     {vacuna ? (
       <Typography>{vacuna.name}</Typography>
     ) : usuario?.vacunasDocumentoRuta ? (
-      <a href={`http://localhost:5112/${usuario.vacunasDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+      <a href={`${baseUrl}/${usuario.vacunasDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
         Ver certificado de vacunas actual
       </a>
     ) : (
@@ -293,7 +294,7 @@ const MisDatos = () => {
     {seguro ? (
       <Typography>{seguro.name}</Typography>
     ) : usuario?.seguroDeViajeDocumentoRuta ? (
-      <a href={`http://localhost:5112/${usuario.seguroDeViajeDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+      <a href={`${baseUrl}/${usuario.seguroDeViajeDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
         Ver seguro actual
       </a>
     ) : (
