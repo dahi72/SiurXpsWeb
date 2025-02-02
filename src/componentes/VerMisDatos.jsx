@@ -9,7 +9,7 @@ const VerMisDatos = () => {
   const navigate = useNavigate();
   const { usuario, error } = useContext(UsuarioContext);
   const fechaNacFormateada = usuario && usuario.fechaNac ? dayjs(usuario.fechaNac).format('DD/MM/YYYY') : '';
-  const baseUrl = process.env.REACT_APP_API_URL;
+
 
   const handleEditClick = () => {
     navigate('/misDatos');
