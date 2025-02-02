@@ -18,7 +18,7 @@ const MisDatos = () => {
   const [visa, setVisa] = useState(null);
   const [vacuna, setVacuna] = useState(null);
   const [seguro, setSeguro] = useState(null);
-  const baseUrl = process.env.REACT_APP_API_URL;
+  
   
   const handleFileChange = (e, tipoDocumento) => {
     const file = e.target.files[0];
