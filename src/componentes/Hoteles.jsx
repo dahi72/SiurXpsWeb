@@ -13,7 +13,11 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from "@mui/material";
 import { useNavigate } from "react-router-dom"; 
 
@@ -36,13 +40,13 @@ const Hoteles = () => {
   useEffect(() => {
     const cargarPaises = async () => {
         try {
-            const response = await fetch(`${baseUrl}/Pais/listado`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+          const response = await fetch(`${baseUrl}/Pais/listado`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
 
             if (!response.ok) throw new Error('Error al obtener los países');
 
@@ -77,7 +81,6 @@ const Hoteles = () => {
 
         const data = await response.json();
         
-        // Ordenar ciudades alfabéticamente
         const ciudadesOrdenadas = data.sort((a, b) => {
             if (a.nombre < b.nombre) return -1;
             if (a.nombre > b.nombre) return 1;
@@ -98,7 +101,7 @@ const Hoteles = () => {
       checkOut,
       paginaWeb,
       direccion,
-      paisId : paisId.id,
+      paisId ,
       ciudadId
     };
     console.log("Nuevo hotel:", nuevoHotel);
@@ -107,7 +110,7 @@ const Hoteles = () => {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          //'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
       },
         body: JSON.stringify(nuevoHotel),
       });
@@ -275,65 +278,63 @@ const Hoteles = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    fullWidth 
-                    label="País" 
-                    variant="outlined" 
-                    select
-                    value={paisId}
+                <Grid item xs={12} sm={6}>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel>País</InputLabel>
+                  <Select
+                    value={paisId?.id || ""}  // El value es solo el id del país
                     onChange={(e) => {
-                      const selectedPais = JSON.parse(e.target.value);
-                      setPaisId(selectedPais.id);
-                      setCiudades([]);
-                      handleCiudadChange(selectedPais.codigoIso); 
-                    }}
-                    SelectProps={{
-                      native: true,
+                      const selectedPais = paises.find(p => p.id === e.target.value);  // Buscamos el país completo por id
+                      if (selectedPais) {
+                        setPaisId(selectedPais);  // Guardamos el país completo en el estado
+                        setCiudades([]);  // Limpiamos las ciudades al cambiar de país
+                        handleCiudadChange(selectedPais.codigoIso);  // Usamos codigoIso para cargar las ciudades
+                      }
                     }}
                   >
-                    <option value="">Seleccione un país</option>
+                    <MenuItem value="">Seleccione un país</MenuItem>  {/* Opción por defecto */}
                     {paises.map(p => (
-                      <option key={p.id} value={p}>{p.nombre}</option>
+                      <MenuItem key={p.id} value={p.id}>{p.nombre}</MenuItem>  // El value de cada opción es el id del país
                     ))}
-                  </TextField>
+                  </Select>
+                </FormControl>
+                </Grid>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    fullWidth 
-                    label="Ciudad" 
-                    variant="outlined" 
-                    select
-                    value={ciudadId}
-                    onChange={(e) => setCiudadId(e.target.value)}
-                    SelectProps={{
-                      native: true,
-                    }}
-                    disabled={ciudades.length === 0}
+                <FormControl fullWidth margin="normal" disabled={ciudades.length === 0}>
+                  <InputLabel>Ciudad</InputLabel>
+                  <Select
+                    value={ciudadId || ""}  // El valor es el id de la ciudad
+                    onChange={(e) => setCiudadId(e.target.value)}  // Actualiza el estado con el id de la ciudad
                   >
-                    <option value="">Seleccione una ciudad</option>
+                    <MenuItem value="">Seleccione una ciudad</MenuItem>  {/* Opción por defecto */}
                     {ciudades.map(c => (
-                      <option key={c.id} value={c.id}>{c.nombre}</option>
+                      <MenuItem key={c.id} value={c.id}>{c.nombre}</MenuItem>  // El value de cada opción es el id de la ciudad
                     ))}
-                  </TextField>
+                  </Select>
+                </FormControl>
                 </Grid>
                 <Grid item xs={12}>
+                <FormControl fullWidth margin="normal">
                   <TextField 
-                    fullWidth 
-                    label="Dirección" 
-                    variant="outlined" 
+                    label="Dirección"
+                    variant="outlined"
                     value={direccion}
                     onChange={(e) => setDireccion(e.target.value)}
+                    fullWidth
                   />
-                </Grid>
-                <Grid item xs={12}>
+                </FormControl>
+
+                <FormControl fullWidth margin="normal">
                   <Button 
-                    fullWidth 
                     variant="contained" 
                     color="primary" 
-                    type="submit"
+                    type="submit" 
+                    fullWidth
                   >
                     Agregar Hotel
                   </Button>
+                </FormControl>
                 </Grid>
               </Grid>
             </form>
