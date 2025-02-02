@@ -93,7 +93,7 @@ const TerminosYCondiciones = () => {
             9. Contacto
           </Typography>
           <Typography variant="body1" paragraph>
-          Para cualquier consulta relacionada con estos Términos y Condiciones, puede contactarnos a través del correo electrónico: <Link href="mailto:contacto@siurxp.com">contacto@siurxp.com</Link> o visitarnos en nuestra oficina en Plaza Independencia 831, 11100 Montevideo.
+          Para cualquier consulta relacionada con estos Términos y Condiciones, puede contactarnos a través del correo electrónico: <Link href="mailto:siurxps@gmail.com">siurxps@gmail.com</Link> o visitarnos en nuestra oficina en Plaza Independencia 831, 11100 Montevideo.
           </Typography>
         </Box>
 

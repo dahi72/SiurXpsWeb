@@ -9,13 +9,14 @@ import { useUsuario } from '../hooks/UsuarioContext';
 export const Header = ({ handleDrawerToggle }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { usuario } = useUsuario();
   
   return (
     <>
       <AppBar>
         <Toolbar sx={{ width: '100%', padding: { xs: '0 16px', sm: '0 32px' } }}>
-          {/* Icono de hamburguesa solo en pantallas pequeñas */}
+          
           {!usuario && isSmallScreen && (
             <IconButton
               color="inherit"
@@ -28,35 +29,40 @@ export const Header = ({ handleDrawerToggle }) => {
             </IconButton>
           )}
 
-          {/* Contenedor para mostrar las imágenes en columna */}
           <Box
             sx={{
               display: 'flex',
+              flexDirection: isVerySmallScreen ? 'column' : 'row',
+              alignItems: 'center',
               flexGrow: 1,
-              flexDirection: 'column', 
-              marginLeft: '150px'
+              justifyContent: isSmallScreen ? 'center' : 'flex-start',
+              gap: 1, 
             }}
-          >
-            {/* Logo Siur */}
-            <img
-              src={siurBlanco}
-              alt="Siur Logo"
-              style={{ width: '150px', margin: '4px' }}
-            />
-            {/* Logo Xperiencias */}
-            <img
-              src={xperiencias}
-              alt="Xperiencias Logo"
-              style={{ width: '150px', margin: '4px' }}
-            />
-          </Box>
+        >
+          <img
+            src={siurBlanco}
+            alt="Siur Logo"
+            style={{
+              width: isVerySmallScreen ? '100px' : '150px',
+              margin: '4px',
+            }}
+          />
+          <img
+            src={xperiencias}
+            alt="Xperiencias Logo"
+            style={{
+              width: isVerySmallScreen ? '100px' : '150px',
+              margin: '4px',
+            }}
+          />
+        </Box>
 
-          {/* Botón de Logout */}
-          {usuario && (
-            <>
-              <ActionButtons />
-              <Logout />
-           </>
+        {usuario && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ActionButtons />
+            <Logout />
+          </Box>
+         
           )}
         </Toolbar>
       </AppBar>

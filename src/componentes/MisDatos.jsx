@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { Container, TextField, Button, Typography, FormControl, Alert, Box,Input, IconButton } from '@mui/material';
+import { Container, TextField, Button, Typography, FormControl, Alert, Box,Input } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useNavigate } from 'react-router-dom';
 import { UsuarioContext } from '../hooks/UsuarioContext';
 import dayjs from 'dayjs';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 
 const MisDatos = () => {
   const { usuario, setUsuario } = useContext(UsuarioContext);
@@ -41,9 +41,7 @@ const MisDatos = () => {
       }
     }
   };
-  const handleBackClick = () => {
-    navigate(-1); 
-  };
+
 
   const handleDateChange = (date) => {
     if (date) {
@@ -133,22 +131,7 @@ const MisDatos = () => {
 
   return (
     <>
-    <IconButton 
-  onClick={handleBackClick} 
-  sx={{
-    color: 'rgb(25, 118, 210)', 
-    display: 'flex', 
-    alignItems: 'center',
-    gap: 1, 
-    '&:hover': {
-      color: 'rgb(21, 101, 192)',
-      cursor: 'pointer',
-    }
-  }}
->
-  <ArrowBackIcon />
-  <Typography variant="body1">Volver</Typography>
-    </IconButton>
+
       <Container maxWidth="md" sx={{ mt: 5, p: 4, boxShadow: 3, borderRadius: 2, backgroundColor: '#fff' }}>
         <Typography variant="h4" align="center" gutterBottom>
           Mis Datos

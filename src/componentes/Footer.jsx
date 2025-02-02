@@ -48,7 +48,7 @@ export const Footer = () => {
             Tel: 097381870
           </Typography>
           <Typography variant="body2" sx={{ color: 'white', textAlign: isDownMd ? 'center' : 'left' }}>
-            Email: siur@gmail.com
+            Email: siurxps@gmail.com
           </Typography>
         </Box>
 

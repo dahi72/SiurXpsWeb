@@ -53,7 +53,7 @@ const PoliticaPrivacidad = () => {
                    
           <Typography variant="body1" paragraph>
             Para ejercer estos derechos, puede contactarnos a través de nuestro correo electrónico: 
-            <Link href="mailto:contacto@siurxp.com">contacto@siurxp.com</Link>.
+            <Link href="mailto:siurxps@gmail.com">siurxps@gmail.com</Link>.
           </Typography>
         </Box>
 
@@ -80,7 +80,7 @@ const PoliticaPrivacidad = () => {
             7. Contacto
           </Typography>
           <Typography variant="body1" paragraph>
-            Para cualquier consulta o inquietud sobre esta Política de Privacidad o el manejo de sus datos, puede contactarnos en <Link href="mailto:contacto@siurxp.com">contacto@siurxp.com</Link> o visitarnos en nuestra oficina en Plaza Independencia 831, 11100 Montevideo.
+            Para cualquier consulta o inquietud sobre esta Política de Privacidad o el manejo de sus datos, puede contactarnos en <Link href="mailto:siurxps@gmail.com">siurxps@gmail.com</Link> o visitarnos en nuestra oficina en Plaza Independencia 831, 11100 Montevideo.
           </Typography>
         </Box>
 

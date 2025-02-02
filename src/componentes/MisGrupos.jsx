@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { 
     Box, 
     Typography, 
@@ -8,14 +8,22 @@ import {
     Alert,
     Container,
     Divider,
-    CircularProgress
+    CircularProgress,
+    ListItemText,
+    ListItem,
+    List
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { format } from 'date-fns';
+import { PaisContext } from "../hooks/PaisContext"; 
+import { CiudadContext } from "../hooks/CiudadContext";
+
 
 const MisGrupos = () => {
+    const { paises } = useContext(PaisContext); 
+    const { ciudades } = useContext(CiudadContext);
     const [grupos, setGrupos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [setError] = useState(null);
@@ -26,35 +34,45 @@ const MisGrupos = () => {
     
     const cargarGrupos = useCallback(() => {
         setLoading(true);
-        
-   
-
-    fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-    })
+        fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
         .then(response => {
             if (!response.ok) {
                 return response.json().then(data => {
                     if (data.length === 0) {
-                        setMensaje('No hay grupos para mostrar.');                       
-                        return []; 
+                        setMensaje('No hay grupos para mostrar.');
+                        return []; // Retorna un array vacío para que el siguiente .then() lo procese correctamente
                     }
+                    throw new Error('Error al obtener los grupos');
                 });
             }
             return response.json();
         })
         .then(data => {
-            setGrupos(data);
+            // Transformar los datos correctamente antes de asignarlos a setGrupos
+            const gruposConNombres = data.map(grupo => ({
+                ...grupo,
+                paisesDestino: grupo.paisesDestinoIds.map(id => 
+                    paises.find(p => p.id === id)?.nombre || `ID ${id}`
+                ),
+                ciudadesDestino: grupo.ciudadesDestinoIds.map(id => 
+                    ciudades.find(c => c.id === id)?.nombre || `ID ${id}`
+                )
+            }));
+    
+            setGrupos(gruposConNombres);
             setMensaje('Grupos cargados correctamente.');
-          
         })
         .catch(error => {
-            setError(error.message || 'Ocurrió un error al cargar los grupos.'); 
+            setError(error.message || 'Ocurrió un error al cargar los grupos.');
         })
-        .finally(() => setLoading(false));
-    }, [baseUrl, setMensaje, setError]);
+        .finally(() => {
+            setLoading(false);
+        });
+    }, [baseUrl, paises, ciudades, setError, setMensaje]);
 
     useEffect(() => {
         cargarGrupos();
@@ -103,6 +121,7 @@ const MisGrupos = () => {
             });
     };
 
+    const tieneViajeros = (grupo) => grupo.viajerosIds && grupo.viajerosIds.length > 0;
     const formatFechaCorta = (fecha) => format(new Date(fecha), 'dd MMM yyyy');
     const isGrupoEnViaje = (fechaInicio) => new Date(fechaInicio) <= new Date();
 
@@ -181,40 +200,18 @@ const MisGrupos = () => {
                     </Typography>
                     <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
                         <strong>Destinos:</strong><br />
-                            {grupo.paisesDestinoIds /*&& Array.isArray(grupo.PaisesDestino) */&& grupo.paisesDestinoIds.length > 0 ? (
-                                grupo.paisesDestinoIds.map((pais, index) => (
-                                    <Box key={index} sx={{ ml: 1, mb: 1 }}>
-                                        • {pais.codigoIso}
-                                        • {pais.nombre}
-                                    </Box>
-                                ))
-                            ) : (
-                                <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary' }}>
-                                    No hay países disponibles.
-                                </Typography>
-                            )}
-                        
-                        {grupo.ciudadesDestinoIds /*&& Array.isArray(grupo.CiudadesDestino)*/ && grupo.ciudadesDestinoIds.length > 0 ? (
-                            grupo.ciudadesDestinoIds.map((ciudad, cidx) => (
-                                <Typography 
-                                    key={cidx} 
-                                    variant="body2" 
-                                    component="div"
-                                    sx={{ 
-                                        fontSize: '0.9em',
-                                        color: 'text.secondary',
-                                        ml: 2
-                                    }}
-                                >
-                                    - {ciudad.id}
-                                    - {ciudad.nombre}
-                                </Typography>
-                            ))
-                        ) : (
-                            <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary' }}>
-                                No hay ciudades disponibles.
-                            </Typography>
-                        )}
+                        <List>
+                            {grupo.paisesDestino.map((pais, index) => (
+                                <ListItem key={index}>
+                                    <ListItemText primary={`País: ${pais}`} />
+                                </ListItem>
+                            ))}
+                            {grupo.ciudadesDestino.map((ciudad, index) => (
+                                <ListItem key={index}>
+                                    <ListItemText primary={`Ciudad: ${ciudad}`} />
+                                </ListItem>
+                            ))}
+                        </List>
             </Typography>
 
     {/* <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
@@ -275,7 +272,7 @@ const MisGrupos = () => {
     <Button
         variant="outlined"
         onClick={() => handleConfirmarGrupo(grupo.id)}
-        disabled={isGrupoEnViaje(grupo.fechaInicio)}
+        disabled={isGrupoEnViaje(grupo.fechaInicio)|| !tieneViajeros(grupo)}
         size="small"
         fullWidth
     >

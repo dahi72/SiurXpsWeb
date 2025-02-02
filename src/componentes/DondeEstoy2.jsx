@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Box, Button, Typography, CircularProgress, Paper, Snackbar, Alert, Backdrop } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
+import { useUsuario } from '../hooks/UsuarioContext';
 
 // Arreglo para el ícono del marcador
 delete L.Icon.Default.prototype._getIconUrl;
@@ -19,7 +20,7 @@ function LocationMarker() {
     const [position, setPosition] = useState(null);
     const [error, setError] = useState(null);
     const map = useMap();
-
+  
     useEffect(() => {
         map.locate().on("locationfound", function (e) {
             setPosition(e.latlng);
@@ -39,6 +40,8 @@ function LocationMarker() {
 }
 
 const DondeEstoy2 = () => {
+    const { Usuario } = useUsuario();
+    const usuarioId = Usuario?.id;
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [center, setCenter] = useState([0, 0]);
@@ -47,13 +50,97 @@ const DondeEstoy2 = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [showEventMarkers, setShowEventMarkers] = useState(false);
     const [eventMarkers, setEventMarkers] = useState([]);
-
+    const baseUrl = process.env.REACT_APP_API_URL;
+    const [ setItinerarios] = useState([]);
+    const [eventos, setEventos] = useState([]);
     // Memoize the eventos array
-    const eventos = useMemo(() => [
-        { id: 1, title: 'Evento 1', ubicacion: 'Hotel Ejemplo, Montevideo, Uruguay' },
-        { id: 2, title: 'Evento 2', ubicacion: 'Aeropuerto Ejemplo, Punta del Este, Uruguay' },
-        { id: 3, title: 'Evento 3', ubicacion: 'Actividad Ejemplo, Salto, Uruguay' },
-    ], []); // Empty dependency array means it will only be created once
+    // const eventos = useMemo(() => [
+    //     { id: 1, title: 'Evento 1', ubicacion: 'Hotel Ejemplo, Montevideo, Uruguay' },
+    //     { id: 2, title: 'Evento 2', ubicacion: 'Aeropuerto Ejemplo, Punta del Este, Uruguay' },
+    //     { id: 3, title: 'Evento 3', ubicacion: 'Actividad Ejemplo, Salto, Uruguay' },
+    // ], []); // Empty dependency array means it will only be created once
+    
+    useEffect(() => {
+        const fetchItinerarios = async () => {
+            if (!usuarioId) return; // Evita hacer la petición si no hay usuario
+    
+            try {
+                const response = await axios.get(`${baseUrl}/ItinerariosDeCoordinador/${usuarioId}`);
+                setItinerarios(response.data);
+    
+                // Obtener eventos de cada itinerario
+                const eventosPromises = response.data.map(async (itinerario) => {
+                    try {
+                        const eventosResponse = await axios.get(`${baseUrl}/Itinerario/${itinerario.id}/eventos`);
+                        const eventosConDetalles = await Promise.all(
+                            eventosResponse.data.map(async (evento) => {
+                                // Obtener los detalles de cada ID relacionado con el evento
+                                const detallesPromises = [];
+    
+                                if (evento.actividadId) {
+                                    detallesPromises.push(
+                                        axios.get(`${baseUrl}/Actividad/${evento.actividadId}`).then(res => ({ actividad: res.data }))
+                                    );
+                                }
+    
+                                if (evento.trasladoId) {
+                                    detallesPromises.push(
+                                        axios.get(`${baseUrl}/Traslado/api/Traslado/${evento.trasladoId}`).then(res => ({ traslado: res.data }))
+                                    );
+                                }
+    
+                                if (evento.aeropuertoId) {
+                                    detallesPromises.push(
+                                        axios.get(`${baseUrl}/Aeropuerto/${evento.aeropuertoId}`).then(res => ({ aeropuerto: res.data }))
+                                    );
+                                }
+    
+                                if (evento.hotelId) {
+                                    detallesPromises.push(
+                                        axios.get(`${baseUrl}/Hotel/${evento.hotelId}`).then(res => ({ hotel: res.data }))
+                                    );
+                                }
+    
+                                // Esperamos a que todas las llamadas de detalles terminen
+                                const detalles = await Promise.all(detallesPromises);
+    
+                                // Combina el evento con los detalles obtenidos
+                                const eventoConDetalles = detalles.reduce((acc, detalle) => {
+                                    return { ...acc, ...detalle };
+                                }, evento);
+    
+                                return eventoConDetalles;
+                            })
+                        );
+    
+                        return eventosConDetalles; // Devuelve los eventos con sus detalles
+                    } catch (error) {
+                        console.error(`Error al obtener eventos del itinerario ${itinerario.id}:`, error);
+                        return []; // Devuelve un array vacío en caso de error
+                    }
+                });
+    
+                // Esperar a que todas las promesas de eventos y detalles terminen
+                const eventosConDetalles = await Promise.all(eventosPromises);
+                setEventos(eventosConDetalles.flat()); // Aplanar los arrays de eventos
+    
+            } catch (error) {
+                console.error("Error al obtener los itinerarios:", error);
+            }
+        };
+    
+        fetchItinerarios();
+    }, [baseUrl, usuarioId, setItinerarios]);
+    
+
+  
+    
+
+    
+    
+    
+    
+
 
     useEffect(() => {
         if (!navigator.geolocation) {
