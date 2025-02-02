@@ -3,24 +3,52 @@ import { Paper, Typography, Button, Box, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { useSnackbar } from '../hooks/useSnackbar';
+import { useUsuario } from '../hooks/UsuarioContext';
 
 const VerItinerario = () => {
+    const { Usuario } = useUsuario();
+    const usuarioToken = Usuario?.token;
+
     const [itinerarios, setItinerarios] = useState([]);
     const { setOpenSnackbar, setSnackbarMessage } = useSnackbar();
     const navigate = useNavigate();
     const baseUrl = process.env.REACT_APP_API_URL;
     const [gruposDeViaje, setGruposDeViaje] = useState({});
 
+
     useEffect(() => {
+
         const fetchItinerarios = async () => {
             try {
-                const response = await fetch(`${baseUrl}/Itinerario/listado`); 
+                const response = await fetch(`${baseUrl}/Itinerario/listado`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${usuarioToken}`, // Incluir el token aquí
+                        'Content-Type': 'application/json'
+                    }
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+        
                 const data = await response.json();
                 setItinerarios(data); 
                 
                 for (const itinerario of data) {
                     if (itinerario.grupoDeViajeId) {
-                        const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`);
+                        const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${usuarioToken}`, // También aquí
+                                'Content-Type': 'application/json'
+                            }
+                        });
+        
+                        if (!grupoResponse.ok) {
+                            throw new Error(`Error ${grupoResponse.status}: ${grupoResponse.statusText}`);
+                        }
+        
                         const grupoData = await grupoResponse.json();
                         setGruposDeViaje(prev => ({
                             ...prev,
@@ -34,9 +62,39 @@ const VerItinerario = () => {
                 setOpenSnackbar(true);
             }
         };
+        
 
         fetchItinerarios();
-    }, [baseUrl, setOpenSnackbar, setSnackbarMessage]);
+    }, [ usuarioToken,baseUrl, setOpenSnackbar, setSnackbarMessage]);
+
+    // Se ejecuta solo una vez al montar el componente
+    // useEffect(() => {
+    //     const fetchItinerarios = async () => {
+    //         try {
+    //             const response = await fetch(`${baseUrl}/Itinerario/listado`); 
+                
+    //             const data = await response.json();
+    //             setItinerarios(data); 
+                
+    //             for (const itinerario of data) {
+    //                 if (itinerario.grupoDeViajeId) {
+    //                     const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`);
+    //                     const grupoData = await grupoResponse.json();
+    //                     setGruposDeViaje(prev => ({
+    //                         ...prev,
+    //                         [itinerario.grupoDeViajeId]: grupoData.nombre
+    //                     }));
+    //                 }
+    //             }
+    //         } catch (error) {
+    //             console.error('Error al obtener itinerarios:', error);
+    //             setSnackbarMessage('Error al cargar itinerarios');
+    //             setOpenSnackbar(true);
+    //         }
+    //     };
+
+    //     fetchItinerarios();
+    // }, [baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
     const handleVerDetalles = (id) => {
         navigate(`/itinerario/${id}/eventos`);
