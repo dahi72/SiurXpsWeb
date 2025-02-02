@@ -121,7 +121,8 @@ const VerMisDatos = () => {
 
                      {usuario?.vacunasDocumentoRuta ? (
 
-                    <img src={https://siurxpss.azurewebsites.net/${usuario.vacunasDocumentoRuta}} alt="Documento de Vacunas" style={{ width: '200px', height: 'auto' }} />
+                   <img src={`https://siurxpss.azurewebsites.net/${usuario.vacunasDocumentoRuta}`} alt="Documento de Vacunas" style={{ width: '200px', height: 'auto' }} />
+
 
                   ) : (
 
@@ -137,8 +138,7 @@ const VerMisDatos = () => {
 
                      {usuario?.pasaporteDocumentoRuta ? (
 
-                    <img src={https://siurxpss.azurewebsites.net/${usuario.pasaporteDocumentoRuta}} alt="Documento de Pasaporte" style={{ width: '200px', height: 'auto' }} />
-
+                    <img src={`https://siurxpss.azurewebsites.net/${usuario.pasaporteDocumentoRuta}`} alt="Documento de Pasaporte" style={{ width: '200px', height: 'auto' }} />
                   ) : (
 
                     <Typography>No cargado</Typography>
@@ -153,7 +153,7 @@ const VerMisDatos = () => {
 
                    {usuario?.visaDocumentoRuta ? (
 
-                    <img src={https://siurxpss.azurewebsites.net/${usuario.visaDocumentoRuta}} alt="Documento de Visa" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`https://siurxpss.azurewebsites.net/${usuario.visaDocumentoRuta}`} alt="Documento de Visa" style={{ width: '200px', height: 'auto' }} />
 
                   ) : (
 
@@ -169,7 +169,7 @@ const VerMisDatos = () => {
 
                     {usuario?.seguroDeViajeDocumentoRuta ? (
 
-                    <img src={https://siurxpss.azurewebsites.net/${usuario.seguroDeViajeDocumentoRuta}} alt="Documento de Seguro de Viaje" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`https://siurxpss.azurewebsites.net/${usuario.seguroDeViajeDocumentoRuta}`} alt="Documento de Seguro de Viaje" style={{ width: '200px', height: 'auto' }} />
 
                   ) : (
 
