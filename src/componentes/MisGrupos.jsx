@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { 
     Box, 
     Typography, 
@@ -18,107 +18,115 @@ import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { format } from 'date-fns';
-import { PaisContext } from "../hooks/PaisContext"; 
-import { CiudadContext } from "../hooks/CiudadContext";
-
 
 const MisGrupos = () => {
-    const { paises } = useContext(PaisContext); 
-    const { ciudades } = useContext(CiudadContext);
     const [grupos, setGrupos] = useState([]);
+    const [paisesFiltrados, setPaisesFiltrados] = useState([]);
+    const [ciudadesFiltradas, setCiudadesFiltradas] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [ setMensaje] = useState('');
     const [success, setSuccess] = useState(false);
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     
-    const cargarGrupos = useCallback(() => {
-        setLoading(true);
-        fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    if (data.length === 0) {
-                        setMensaje('No hay grupos para mostrar.');
-                        return []; 
-                    }
-                    throw new Error('Error al obtener los grupos');
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            const gruposConNombres = data.map(grupo => ({
-                ...grupo,
-                paisesDestino: grupo.paisesDestinoIds?.map(id => 
-                    paises.find(p => p.id === id)?.nombre || `ID ${id}`
-                ) || [],
-                ciudadesDestino: grupo.ciudadesDestinoIds?.map(id => 
-                    ciudades.find(c => c.id === id)?.nombre || `ID ${id}`
-                ) || []
-            }));
+    const cargarPaisesYCiudades = useCallback(async (grupos) => {
+        try {
+            // Obtener la lista de países
+            const responsePaises = await fetch(`${baseUrl}/Pais/listado`);
+            if (!responsePaises.ok) throw new Error('Error al obtener los países');
+            const paises = await responsePaises.json();
     
-            setGrupos(gruposConNombres);
-            setMensaje('Grupos cargados correctamente.');
-        })
-        .catch(error => {
+            // Filtrar países que coincidan con los ids de los grupos
+            const paisesIds = new Set(grupos.flatMap(g => g.paisesDestinoIds || []));
+            const paisesFiltrados = paises.filter(p => paisesIds.has(p.id));
+            setPaisesFiltrados(paisesFiltrados);
+    
+            // Obtener y filtrar ciudades de cada país filtrado
+            const ciudadesPromises = paisesFiltrados.map(async (pais) => {
+                const responseCiudades = await fetch(`${baseUrl}/Ciudad/${pais.codigoIso}/ciudades`);
+                if (!responseCiudades.ok) throw new Error('Error al obtener ciudades');
+                const ciudades = await responseCiudades.json();
+    
+                return ciudades.filter(c => grupos.some(g => g.ciudadesDestinoIds?.includes(c.id)));
+            });
+    
+            const ciudadesFiltradas = (await Promise.all(ciudadesPromises)).flat();
+            setCiudadesFiltradas(ciudadesFiltradas);
+        } catch (error) {
+            setError(error.message || 'Error al obtener países y ciudades.');
+        }
+    }, [baseUrl]); 
+
+    const cargarGrupos = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error('Error al obtener los grupos');
+            }
+    
+            const data = await response.json();
+            setGrupos(data);
+            await cargarPaisesYCiudades(data);
+        } catch (error) {
             setError(error.message || 'Ocurrió un error al cargar los grupos.');
-        })
-        .finally(() => {
+        } finally {
             setLoading(false);
-        });
-    }, [baseUrl, paises, ciudades, setMensaje]);
+        }
+    }, [baseUrl, cargarPaisesYCiudades]);
+
+    
 
     useEffect(() => {
         cargarGrupos();
     }, [cargarGrupos]);
 
-    const handleDelete = useCallback((grupoId) => {
+    const handleDelete = async (grupoId) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este grupo?')) {
-            fetch(`${baseUrl}/GrupoDeViaje/${grupoId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Error al eliminar el grupo');
-                    setSuccess(true);
-                    cargarGrupos();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    setError('No se pudo eliminar el grupo');
+            try {
+                const response = await fetch(`${baseUrl}/GrupoDeViaje/${grupoId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
                 });
+
+                if (!response.ok) throw new Error('Error al eliminar el grupo');
+
+                setSuccess(true);
+                cargarGrupos();
+            } catch (error) {
+                setError('No se pudo eliminar el grupo');
+            }
         }
-    }, [baseUrl, cargarGrupos]);
+    };
 
     const handleClick = (grupoId) => {
         navigate(`/viajeros/${grupoId}`);
     };
-   
-    const handleConfirmarGrupo = (grupoId) => {
-        fetch(`${baseUrl}/api/GrupoDeViaje/${grupoId}/confirmar`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('Error al confirmar el grupo');
-                setSuccess(true);
-                cargarGrupos();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                setError('No se pudo confirmar el grupo');
+
+    const handleConfirmarGrupo = async (grupoId) => {
+        try {
+            const response = await fetch(`${baseUrl}/api/GrupoDeViaje/${grupoId}/confirmar`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
             });
+
+            if (!response.ok) throw new Error('Error al confirmar el grupo');
+
+            setSuccess(true);
+            cargarGrupos();
+        } catch (error) {
+            setError('No se pudo confirmar el grupo');
+        }
     };
 
     const tieneViajeros = (grupo) => grupo.viajerosIds && grupo.viajerosIds.length > 0;
@@ -126,73 +134,76 @@ const MisGrupos = () => {
     const isGrupoEnViaje = (fechaInicio) => new Date(fechaInicio) <= new Date();
 
     return (
-    <Container maxWidth="lg">
-        <Box sx={{ py: 4 }}>
-            <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                mb: 4,
-                borderBottom: 1,
-                borderColor: 'divider',
-                pb: 2,
-                justifyContent: 'center',
-                width: '100%'
-            }}>
-                <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-                    Mis grupos de viaje
-                </Typography>
-            </Box>
+<Container maxWidth="lg">
+<Box sx={{ 
+display: 'flex', 
+alignItems: 'center', 
+mb: 4,
+borderBottom: 1,
+borderColor: 'divider',
+pb: 2,
+justifyContent: 'center',
+width: '100%'
+}}>
+<Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+Mis grupos de viaje
+</Typography>
+</Box>
 
-            {loading && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-                    <CircularProgress />
-                </Box>
-            )}
+{loading && (
+<Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+<CircularProgress />
+</Box>
+)}
 
-            <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
-                <Alert severity="success">Operación realizada con éxito</Alert>
-            </Snackbar>
+<Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+<Alert severity="success">Operación realizada con éxito</Alert>
+</Snackbar>
 
-            <Snackbar open={Boolean(error)} autoHideDuration={3000} onClose={() => setError(null)}>
-                <Alert severity="error">{error}</Alert>
-            </Snackbar>
+<Snackbar open={Boolean(error)} autoHideDuration={3000} onClose={() => setError(null)}>
+<Alert severity="error">{error}</Alert>
+</Snackbar>
 
-            {!loading && grupos.length === 0 ? (
-                <Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'grey.50' }}>
-                    <Typography variant="h6" color="text.secondary">
-                        No tienes grupos de viaje creados.
-                    </Typography>
-                </Paper>
-            ) : (
-                <Box sx={{ 
-                    display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-                    gap: 3
-                }}>
-                    {grupos.map(grupo => (
-                        <Paper key={grupo.id} elevation={3} sx={{ p: 3 }}>
-                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                                {grupo.nombre}
-                            </Typography>
-                            <Divider sx={{ mb: 2 }} />
-                            <Typography variant="body2" sx={{ mb: 1 }}>
-                                <strong>Fechas:</strong> {formatFechaCorta(grupo.fechaInicio)} - {formatFechaCorta(grupo.fechaFin)}
-                            </Typography>
-                            <Typography variant="body2" sx={{ mb: 2 }}>
-                                <strong>Destinos:</strong>
-                                <List>
-                                    {grupo.paisesDestino.map((pais, index) => (
-                                        <ListItem key={index}>
-                                            <ListItemText primary={`País: ${pais}`} />
-                                        </ListItem>
-                                    ))}
-                                    {grupo.ciudadesDestino.map((ciudad, index) => (
-                                        <ListItem key={index}>
-                                            <ListItemText primary={`Ciudad: ${ciudad}`} />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Typography>
+{!loading && grupos.length === 0 ? (
+<Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'grey.50' }}>
+<Typography variant="h6" color="text.secondary">
+No tienes grupos de viaje creados.
+</Typography>
+</Paper>
+) : (
+<Box sx={{ 
+display: 'grid',
+gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+gap: 3
+}}>
+{grupos.map(grupo => {
+    const paisesGrupo = paisesFiltrados.filter(p => grupo.paisesDestinoIds?.includes(p.id));
+    const ciudadesGrupo = ciudadesFiltradas.filter(c => grupo.ciudadesDestinoIds?.includes(c.id));
+
+    return (
+        <Paper key={grupo.id} elevation={3} sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+                {grupo.nombre}
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>Fechas:</strong> {formatFechaCorta(grupo.fechaInicio)} - {formatFechaCorta(grupo.fechaFin)}
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+                <strong>Destinos:</strong>
+                <List>
+                    {paisesGrupo.map((pais, index) => (
+                        <ListItem key={index}>
+                            <ListItemText primary={`País: ${pais.nombre}`} />
+                        </ListItem>
+                    ))}
+                    {ciudadesGrupo.map((ciudad, index) => (
+                        <ListItem key={index}>
+                            <ListItemText primary={`Ciudad: ${ciudad.nombre}`} />
+                        </ListItem>
+                    ))}
+                </List>
+            </Typography>
             <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
                 <Button onClick={() => handleClick(grupo.id)} sx={{ mt: 2 }}>
                     Ver viajeros
@@ -236,11 +247,12 @@ const MisGrupos = () => {
             </Button>            
         </Box> 
     </Paper>
-    ))}
-</Box>
-)}
-</Box> </Container>
-);
+                            );
+                        })}
+                    </Box>
+                )}
+        </Container>
+    );
 };
 
 export default MisGrupos;
