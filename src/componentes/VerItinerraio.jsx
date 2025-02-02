@@ -3,11 +3,8 @@ import { Paper, Typography, Button, Box, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { useSnackbar } from '../hooks/useSnackbar';
-import { useUsuario } from '../hooks/UsuarioContext';
 
 const VerItinerario = () => {
-    const { Usuario } = useUsuario();
-    const usuarioToken = Usuario?.token;
 
     const [itinerarios, setItinerarios] = useState([]);
     const { setOpenSnackbar, setSnackbarMessage } = useSnackbar();
@@ -23,7 +20,7 @@ const VerItinerario = () => {
                 const response = await fetch(`${baseUrl}/Itinerario/listado`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${usuarioToken}`, // Incluir el token aquí
+                        'Authorization':  `Bearer  ${localStorage.getItem('token')}`, // Incluir el token aquí
                         'Content-Type': 'application/json'
                     }
                 });
@@ -65,7 +62,7 @@ const VerItinerario = () => {
         
 
         fetchItinerarios();
-    }, [ usuarioToken,baseUrl, setOpenSnackbar, setSnackbarMessage]);
+    }, [ baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
     // Se ejecuta solo una vez al montar el componente
     // useEffect(() => {

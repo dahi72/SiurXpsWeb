@@ -105,6 +105,7 @@ const Hoteles = () => {
       ciudadId
     };
     console.log("Nuevo hotel:", nuevoHotel);
+    console.log("token localStorge:", token);
     try {
       const response = await fetch(`${baseUrl}/Hotel/altaHotel`, {
         method: 'POST',
