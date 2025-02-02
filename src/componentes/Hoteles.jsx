@@ -98,16 +98,16 @@ const Hoteles = () => {
       checkOut,
       paginaWeb,
       direccion,
-      paisId,
+      paisId : paisId.id,
       ciudadId
     };
-
+    console.log("Nuevo hotel:", nuevoHotel);
     try {
       const response = await fetch(`${baseUrl}/Hotel/altaHotel`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          //'Content-Type': 'application/json'
       },
         body: JSON.stringify(nuevoHotel),
       });
@@ -208,8 +208,8 @@ const Hoteles = () => {
                           </a>
                         </TableCell>
                         <TableCell>{hotel.direccion}</TableCell>
-                        <TableCell>{hotel.pais}</TableCell>
-                        <TableCell>{hotel.ciudad}</TableCell>
+                        <TableCell>{hotel.paisId}</TableCell>
+                        <TableCell>{hotel.ciudadId}</TableCell>
                       </TableRow>
                     ))
                   ) : (
@@ -293,7 +293,7 @@ const Hoteles = () => {
                   >
                     <option value="">Seleccione un país</option>
                     {paises.map(p => (
-                      <option key={p.id} value={JSON.stringify(p)}>{p.nombre}</option>
+                      <option key={p.id} value={p}>{p.nombre}</option>
                     ))}
                   </TextField>
                 </Grid>
