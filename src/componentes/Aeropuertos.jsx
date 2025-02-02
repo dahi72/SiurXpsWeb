@@ -32,52 +32,86 @@ const Aeropuertos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [aeropuertoEditando, setAeropuertoEditando] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
-
   useEffect(() => {
     const cargarAeropuertos = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`);
-        const data = await response.json();
-        setAeropuertos(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error al cargar los aeropuertos:', error);
-      }
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Error al obtener los aeropuertos');
+
+            const data = await response.json();
+            setAeropuertos(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error('Error al cargar los aeropuertos:', error);
+        }
     };
 
     cargarAeropuertos();
-  }, [baseUrl]);
+}, [baseUrl]);
 
-  useEffect(() => {
+useEffect(() => {
     const cargarPaises = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Pais/listado`);
-        const data = await response.json();
-        setPaises(data);
-      } catch (error) {
-        console.error('Error al cargar los países:', error);
-      }
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${baseUrl}/Pais/listado`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Error al obtener los países');
+
+            const data = await response.json();
+            setPaises(data);
+        } catch (error) {
+            console.error('Error al cargar los países:', error);
+        }
     };
 
     cargarPaises();
-  }, [baseUrl]);
+}, [baseUrl]);
+
 
   useEffect(() => {
     const cargarCiudades = async () => {
-      if (paisSeleccionado) {
-        try {
-          const response = await fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`); 
-          const data = await response.json();
-          setCiudades(data);
-        } catch (error) {
-          console.error('Error al cargar las ciudades:', error);
+        if (paisSeleccionado) {
+            try {
+                const token = localStorage.getItem('token'); // Obtener el token
+
+                const response = await fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Error al obtener las ciudades');
+
+                const data = await response.json();
+                setCiudades(data);
+            } catch (error) {
+                console.error('Error al cargar las ciudades:', error);
+            }
+        } else {
+            setCiudades([]); 
         }
-      } else {
-        setCiudades([]); 
-      }
     };
 
     cargarCiudades();
-  }, [baseUrl, paisSeleccionado]);
+}, [baseUrl, paisSeleccionado]); // Dependencias
+
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -92,8 +126,9 @@ const Aeropuertos = () => {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Content-Type': 'application/json'
+      },
         body: JSON.stringify({ 
           nombre, 
           paginaWeb, 
@@ -145,6 +180,10 @@ const Aeropuertos = () => {
     try {
       const response = await fetch(`${baseUrl}/Aeropuerto/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Content-Type': 'application/json'
+      },
       });
 
       if (response.ok) {

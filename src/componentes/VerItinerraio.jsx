@@ -40,7 +40,7 @@ const VerItinerario = () => {
                         const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
                             method: 'GET',
                             headers: {
-                                'Authorization': `Bearer ${usuarioToken}`, // También aquí
+                                'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
                                 'Content-Type': 'application/json'
                             }
                         });
@@ -108,6 +108,11 @@ const VerItinerario = () => {
             try {
                 const response = await fetch(`${baseUrl}/Itinerario/${id}`, {
                     method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+                        'Content-Type': 'application/json'
+                    }
+
                 });
 
                 if (response.ok) {

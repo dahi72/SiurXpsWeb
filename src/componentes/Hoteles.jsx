@@ -35,26 +35,39 @@ const Hoteles = () => {
 
   useEffect(() => {
     const cargarPaises = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Pais/listado`);
-        const data = await response.json();
-        setPaises(data);
-      } catch (error) {
-        console.error('Error al cargar los países:', error);
-      }
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${baseUrl}/Pais/listado`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Error al obtener los países');
+
+            const data = await response.json();
+            setPaises(data);
+        } catch (error) {
+            console.error('Error al cargar los países:', error);
+        }
     };
 
     cargarPaises();
   }, [baseUrl]);
-
+  
   useEffect(() => {
     const cargarHoteles = async (nuevoHotel) => {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${baseUrl}/Hotel/altaHotel`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-          },
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
           body: JSON.stringify(nuevoHotel),
         });
     
@@ -81,13 +94,25 @@ const Hoteles = () => {
     
   const handleCiudadChange = async (codigoIso) => {
     try {
-      const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`);
-      const data = await response.json();
-      setCiudades(data);
+        const token = localStorage.getItem('token');
+
+        const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) throw new Error('Error al obtener las ciudades');
+
+        const data = await response.json();
+        setCiudades(data);
     } catch (error) {
-      console.error('Error al cargar las ciudades:', error);
+        console.error('Error al cargar las ciudades:', error);
     }
-  };
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,11 +127,13 @@ const Hoteles = () => {
     };
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${baseUrl}/Hotel/altaHotel`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+      },
         body: JSON.stringify(nuevoHotel),
       });
 
@@ -120,8 +147,12 @@ const Hoteles = () => {
         setDireccion('');
         setPaisId('');
         setCiudadId('');
-        // Recargar la lista de hoteles
-        const hotelesResponse = await fetch(`${baseUrl}/Hotel/listado`);
+        const hotelesResponse = await fetch(`${baseUrl}/Hotel/listado`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
         const hotelesData = await hotelesResponse.json();
         setHoteles(hotelesData);
       } else {

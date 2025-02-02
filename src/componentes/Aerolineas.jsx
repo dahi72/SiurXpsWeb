@@ -36,23 +36,37 @@ const Aerolineas = () => {
   useEffect(() => {
     // Cargar aerolíneas al montar el componente
     const cargarAerolineas = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Aerolinea/aerolineas`);
-        const data = await response.json();
-        // Asegúrate de que data sea un array
-        setAerolineas(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error al cargar las aerolíneas:', error);
-      }
+        try {
+            const token = localStorage.getItem('token'); // Obtener el token
+
+            const response = await fetch(`${baseUrl}/Aerolinea/aerolineas`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`, 
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Error al obtener las aerolíneas');
+
+            const data = await response.json();
+            setAerolineas(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error('Error al cargar las aerolíneas:', error);
+        }
     };
 
     cargarAerolineas();
-  }, [baseUrl]);
+}, [baseUrl])
 
   const handleEliminar = async (id) => {
     try {
       const response = await fetch(`${baseUrl}/Aerolinea/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Content-Type': 'application/json'
+      }
       });
 
       if (response.ok) {
@@ -82,8 +96,9 @@ const Aerolineas = () => {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Content-Type': 'application/json'
+      },
         body: JSON.stringify({ nombre, paginaWeb }),
       });
 

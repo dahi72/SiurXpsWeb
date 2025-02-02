@@ -28,10 +28,16 @@ const MisGrupos = () => {
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     
+
     const cargarPaisesYCiudades = useCallback(async (grupos) => {
         try {
             // Obtener la lista de países
-            const responsePaises = await fetch(`${baseUrl}/Pais/listado`);
+            const responsePaises = await fetch(`${baseUrl}/Pais/listado`, {
+                headers: {
+                    Authorization: `Bearer  ${localStorage.getItem('token')}`
+                }
+            });
+    
             if (!responsePaises.ok) throw new Error('Error al obtener los países');
             const paises = await responsePaises.json();
     
@@ -42,7 +48,12 @@ const MisGrupos = () => {
     
             // Obtener y filtrar ciudades de cada país filtrado
             const ciudadesPromises = paisesFiltrados.map(async (pais) => {
-                const responseCiudades = await fetch(`${baseUrl}/Ciudad/${pais.codigoIso}/ciudades`);
+                const responseCiudades = await fetch(`${baseUrl}/Ciudad/${pais.codigoIso}/ciudades`, {
+                    headers: {
+                        Authorization: `Bearer  ${localStorage.getItem('token')}`
+                    }
+                });
+    
                 if (!responseCiudades.ok) throw new Error('Error al obtener ciudades');
                 const ciudades = await responseCiudades.json();
     
@@ -51,9 +62,37 @@ const MisGrupos = () => {
     
             const ciudadesFiltradas = (await Promise.all(ciudadesPromises)).flat();
             setCiudadesFiltradas(ciudadesFiltradas);
+            
         } catch (error) {
-            setError(error.message || 'Error al obtener países y ciudades.');
+            console.error('Error al cargar países y ciudades:', error);
         }
+    // }, [token, baseUrl]); // Dependencias incluyen `token` y `baseUrl`
+    // const cargarPaisesYCiudades = useCallback(async (grupos) => {
+    //     try {
+    //         // Obtener la lista de países
+    //         const responsePaises = await fetch(`${baseUrl}/Pais/listado`);
+    //         if (!responsePaises.ok) throw new Error('Error al obtener los países');
+    //         const paises = await responsePaises.json();
+    
+    //         // Filtrar países que coincidan con los ids de los grupos
+    //         const paisesIds = new Set(grupos.flatMap(g => g.paisesDestinoIds || []));
+    //         const paisesFiltrados = paises.filter(p => paisesIds.has(p.id));
+    //         setPaisesFiltrados(paisesFiltrados);
+    
+    //         // Obtener y filtrar ciudades de cada país filtrado
+    //         const ciudadesPromises = paisesFiltrados.map(async (pais) => {
+    //             const responseCiudades = await fetch(`${baseUrl}/Ciudad/${pais.codigoIso}/ciudades`);
+    //             if (!responseCiudades.ok) throw new Error('Error al obtener ciudades');
+    //             const ciudades = await responseCiudades.json();
+    
+    //             return ciudades.filter(c => grupos.some(g => g.ciudadesDestinoIds?.includes(c.id)));
+    //         });
+    
+        //     const ciudadesFiltradas = (await Promise.all(ciudadesPromises)).flat();
+        //     setCiudadesFiltradas(ciudadesFiltradas);
+        // } catch (error) {
+        //     setError(error.message || 'Error al obtener países y ciudades.');
+        // }
     }, [baseUrl]); 
 
     const cargarGrupos = useCallback(async () => {
