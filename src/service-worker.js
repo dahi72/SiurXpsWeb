@@ -2,7 +2,7 @@ const CACHE_NAME = "static-cache-v1"; // Versión del caché
 const URLS_TO_CACHE = ["/", "/index.html"];
 
 // Instalación del Service Worker
-self.addEventListener("install", (event) => {
+this.addEventListener("install", (event) => {
   console.log("[Service Worker] Instalando...");
 
   event.waitUntil(
@@ -12,11 +12,11 @@ self.addEventListener("install", (event) => {
     }).catch((error) => console.error("[Service Worker] Error al cachear:", error))
   );
 
-  self.skipWaiting(); // Activa la nueva versión inmediatamente
+  this.skipWaiting(); // Activa la nueva versión inmediatamente
 });
 
 // Activación y limpieza de caché viejo
-self.addEventListener("activate", (event) => {
+this.addEventListener("activate", (event) => {
   console.log("[Service Worker] Activando...");
 
   event.waitUntil(
@@ -32,11 +32,11 @@ self.addEventListener("activate", (event) => {
     })
   );
 
-  self.clients.claim(); // Reclama control sobre las pestañas abiertas
+  this.clients.claim(); // Reclama control sobre las pestañas abiertas
 });
 
 // Intercepción de peticiones para servir desde caché
-self.addEventListener("fetch", (event) => {
+this.addEventListener("fetch", (event) => {
   console.log("[Service Worker] Interceptando:", event.request.url);
 
   event.respondWith(
@@ -47,7 +47,7 @@ self.addEventListener("fetch", (event) => {
 });
 
 // Manejo de notificaciones Push
-self.addEventListener("push", (event) => {
+this.addEventListener("push", (event) => {
   console.log("[Service Worker] Notificación push recibida.");
 
   if (event.data) {
@@ -58,7 +58,7 @@ self.addEventListener("push", (event) => {
     };
 
     event.waitUntil(
-      self.registration.showNotification(data.title, options)
+      this.registration.showNotification(data.title, options)
     );
   }
 });
