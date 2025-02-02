@@ -40,11 +40,16 @@ export const UsuarioProvider = ({ children }) => {
              setUsuario({
               ...usuario,
               primerNombre: data.primerNombre,
+              segundoNombre: data.segundoNombre,               
               primerApellido: data.primerApellido,
+              segundoApellido: data.SegundoApellido,               
                estado: data.estado,
                pasaporte: data.pasaporte,
                email: data.email,
                pasaporteDocumentoRuta: data.pasaporteDocumentoRuta,
+               visaDocumentoRuta:data.visaDocumentoRuta,
+               seguroDeViajeDocumentoRuta:data.seguroDeViajeDocumentoRuta,
+               vacunasDocumentoRuta:data.vacunasDocumentoRuta,
                telefono: data.telefono,
                fechaNac: data.fechaNac,
                
