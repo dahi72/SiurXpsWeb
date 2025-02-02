@@ -3,14 +3,19 @@
   "name": "SiurXps",
   "icons": [
     {
-      "src": "IconoSiur.png",  
-      "sizes": "192x192",      
+      "src": "IconoSiur.png",
+      "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/png"
     },
     {
-      "src": "IconoSiur.png",  
-      "sizes": "512x512",      
-      "type": "image/png"
+      "src": "IconoSiur.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "IconoSiur.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "start_url": ".",
