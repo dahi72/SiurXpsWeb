@@ -3,15 +3,20 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 export const Layout = ({ children }) => {
   
-  const isAuthenticated = !!localStorage.getItem("token");
+ const isAuthenticated = !!localStorage.getItem("token");
   const { openSnackbar, handleCloseSnackbar, snackbarSeverity, snackbarMessage } = useSnackbar();
   const navigate = useNavigate();
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard';
+  
 
+  useEffect(() => {
+      localStorage.setItem("lastPath", location.pathname);
+  }, [location]);
 
   return (
     <Box sx={{
