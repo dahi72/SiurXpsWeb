@@ -3,7 +3,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import React, { useEffect } from 'react';
 
 export const Layout = ({ children }) => {
   
@@ -11,6 +11,20 @@ export const Layout = ({ children }) => {
   const { openSnackbar, handleCloseSnackbar, snackbarSeverity, snackbarMessage } = useSnackbar();
   const navigate = useNavigate();
   const location = useLocation();
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.setItem('lastPath', location.pathname); // Guardamos la ruta actual en localStorage
+    }
+  }, [location, isAuthenticated]);
+   useEffect(() => {
+    const lastPath = localStorage.getItem('lastPath');
+    if (isAuthenticated && lastPath && lastPath !== location.pathname) {
+      navigate(lastPath); // Redirigimos a la última ruta guardada
+    }
+  }, [isAuthenticated, location.pathname, navigate]);
+
+  // Comprobamos si estamos en la ruta de Dashboard
+  const isDashboard = location.pathname === '/dashboard';
   const isDashboard = location.pathname === '/dashboard';
   
 
