@@ -25,7 +25,7 @@ export const Layout = ({ children }) => {
 
   // Comprobamos si estamos en la ruta de Dashboard
   const isDashboard = location.pathname === '/dashboard';
-  const isDashboard = location.pathname === '/dashboard';
+
   
 
  
