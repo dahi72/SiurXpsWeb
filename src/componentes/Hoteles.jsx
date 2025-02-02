@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 
 const Hoteles = () => {
   const navigate = useNavigate(); 
+  const [tips, setTips] = useState('');
   const [tabValue, setTabValue] = useState(0);
   const [nombre, setNombre] = useState('');
   const [checkIn, setCheckIn] = useState('');
@@ -102,7 +103,8 @@ const Hoteles = () => {
       paginaWeb,
       direccion,
       paisId ,
-      ciudadId
+      ciudadId,
+      tips
     };
     console.log("Nuevo hotel:", nuevoHotel);
     console.log("token localStorge:", token);
@@ -125,6 +127,7 @@ const Hoteles = () => {
         setDireccion('');
         setPaisId('');
         setCiudadId('');
+        setTips('');
 
         const hotelesResponse = await fetch(`${baseUrl}/Hotel/listado`, {
         headers: {
@@ -197,6 +200,7 @@ const Hoteles = () => {
                     <TableCell>Dirección</TableCell>
                     <TableCell>País</TableCell>
                     <TableCell>Ciudad</TableCell>
+                    <TableCell>Tips</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -214,6 +218,7 @@ const Hoteles = () => {
                         <TableCell>{hotel.direccion}</TableCell>
                         <TableCell>{hotel.paisId}</TableCell>
                         <TableCell>{hotel.ciudadId}</TableCell>
+                        <TableCell>{hotel.tips}</TableCell>
                       </TableRow>
                     ))
                   ) : (
@@ -325,7 +330,15 @@ const Hoteles = () => {
                     fullWidth
                   />
                 </FormControl>
-
+                <FormControl fullWidth margin="normal">
+                  <TextField 
+                    label="Tips"
+                    variant="outlined"
+                    value={tips}
+                    onChange={(e) => setTips(e.target.value)}
+                    fullWidth
+                  />
+                </FormControl>
                 <FormControl fullWidth margin="normal">
                   <Button 
                     variant="contained" 
