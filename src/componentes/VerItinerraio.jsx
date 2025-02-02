@@ -89,7 +89,7 @@ const VerItinerario = () => {
                             <Paper key={itinerario.id} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
                                 <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2', marginBottom: 1 }}>
                                     {gruposDeViaje[itinerario.grupoDeViajeId]
-                                        ? `Itinerario del grupo de viaje: ${gruposDeViaje[itinerario.grupoDeViajeId]}`
+                                        ? `Itinerario de ${gruposDeViaje[itinerario.grupoDeViajeId]}`
                                         : 'Cargando nombre del grupo...'}
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666', marginBottom: 1 }}>

@@ -171,15 +171,48 @@ const DetallesItinerario = () => {
                                             <Typography variant="body2">
                                                 Descripción: {detalles[index].actividad.descripcion}
                                             </Typography>
+                                            <Typography variant="body2">
+                                                Ubicación: {detalles[index].actividad.ubicacion || 'Información no disponible'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Duración: {detalles[index].actividad.duracion || 'Desconocida'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Tips: {detalles[index].actividad.tips || 'No hay recomendaciones'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                               País: {detalles[index].actividad.pais.nombre || 'No hay pais'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Ciudad: {detalles[index].actividad.ciudad.nombre || 'No hay ciudad'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Opcional?: {detalles[index].actividad.opcional || ''}
+                                            </Typography>
+                                            {/* <Typography variant="body2">
+                                                <strong>Enlace de información:</strong> <a href={detalles[index].actividad.enlace} target="_blank" rel="noopener noreferrer">Más información</a>
+                                            </Typography> */}
                                         </>
                                     )}
                                     {detalles[index]?.traslado && (
                                         <>
                                             <Typography variant="body2">
-                                                <strong>Traslado:</strong> {detalles[index].traslado.lugarDeEncuentro}
+                                                <strong>Traslado:</strong> {detalles[index].traslado.lugarDeEncuentro || ''}
                                             </Typography>
                                             <Typography variant="body2">
-                                                Horario: {detalles[index].traslado.horario}
+                                                Horario: {detalles[index].traslado.horario || ''}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Tips: {detalles[index].traslado.tips || ''}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                País: {detalles[index].traslado.pais || ''}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Ciudad: {detalles[index].traslado.ciudad || ''}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Tipo de traslado: {detalles[index].traslado.tipoDeTraslado || ''}
                                             </Typography>
                                         </>
                                     )}
@@ -191,7 +224,15 @@ const DetallesItinerario = () => {
                                             <Typography variant="body2">
                                                 Dirección: {detalles[index].hotel.direccion}
                                             </Typography>
-                                        </>
+                                            <Typography variant="body2">
+                                                Fecha de Check-In: {new Date(detalles[index].hotel.checkIn).toLocaleDateString() || 'Fecha no disponible'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Fecha de Check-Out: {new Date(detalles[index].hotel.checkOut).toLocaleDateString() || 'Fecha no disponible'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Enlace al sitio web: <a href={detalles[index].hotel.sitioWeb} target="_blank" rel="noopener noreferrer">Visitar sitio</a>
+                                            </Typography></>
                                     )}
                                     {detalles[index]?.vuelo && (
                                         <>
@@ -203,6 +244,29 @@ const DetallesItinerario = () => {
                                             </Typography>
                                         </>
                                     )}
+                                    {detalles[index]?.aeropuerto && (
+                                        <>
+                                        <Typography variant="body2">
+                                            <strong>Aeropuerto:</strong> {detalles[index].aeropuerto.nombre}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Dirección: {detalles[index].aeropuerto.direccion}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Página web: <a href={detalles[index].aeropuerto.paginaWeb} target="_blank" rel="noopener noreferrer">{detalles[index].aeropuerto.paginaWeb}</a>
+                                        </Typography>
+                                    </>
+                                )}
+                                {detalles[index]?.aerolinea && (
+                                    <>
+                                        <Typography variant="body2">
+                                            <strong>Aerolínea:</strong> {detalles[index].aerolinea.nombre}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Página web: <a href={detalles[index].aerolinea.paginaWeb} target="_blank" rel="noopener noreferrer">{detalles[index].aerolinea.paginaWeb}</a>
+                                        </Typography>
+                                    </>
+                                )}
                                 </AccordionDetails>
                             </Accordion>
                         </TimelineContent>
