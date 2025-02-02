@@ -67,7 +67,7 @@ const VerMisDatos = () => {
                 <Box sx={{ flexBasis: '50%', p: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary">Vacunaciones:</Typography>
                      {usuario?.vacunasDocumentoRuta ? (
-                    <img src={`${baseUrl}/${usuario.vacunasDocumentoRuta}`} alt="Documento de Vacunas" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`https://siurxpss.azurewebsites.net/${usuario.vacunasDocumentoRuta}`} alt="Documento de Vacunas" style={{ width: '200px', height: 'auto' }} />
                   ) : (
                     <Typography>No cargado</Typography>
                   )}
@@ -75,7 +75,7 @@ const VerMisDatos = () => {
                 <Box sx={{ flexBasis: '50%', p: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary">Pasaporte:</Typography>
                      {usuario?.pasaporteDocumentoRuta ? (
-                    <img src={`${baseUrl}/${usuario.pasaporteDocumentoRuta}`} alt="Documento de Pasaporte" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`https://siurxpss.azurewebsites.net/${usuario.pasaporteDocumentoRuta}`} alt="Documento de Pasaporte" style={{ width: '200px', height: 'auto' }} />
                   ) : (
                     <Typography>No cargado</Typography>
                   )}
@@ -83,7 +83,7 @@ const VerMisDatos = () => {
                 <Box sx={{ flexBasis: '50%', p: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary">Visa:</Typography>
                    {usuario?.visaDocumentoRuta ? (
-                    <img src={`${baseUrl}/${usuario.visaDocumentoRuta}`} alt="Documento de Visa" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`https://siurxpss.azurewebsites.net/${usuario.visaDocumentoRuta}`} alt="Documento de Visa" style={{ width: '200px', height: 'auto' }} />
                   ) : (
                     <Typography>No cargado</Typography>
                   )}
@@ -91,7 +91,7 @@ const VerMisDatos = () => {
                 <Box sx={{ flexBasis: '50%', p: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary">Seguro de Viaje:</Typography>
                     {usuario?.seguroDeViajeDocumentoRuta ? (
-                    <img src={`${baseUrl}/${usuario.seguroDeViajeDocumentoRuta}`} alt="Documento de Seguro de Viaje" style={{ width: '200px', height: 'auto' }} />
+                    <img src={`https://siurxpss.azurewebsites.net/${usuario.seguroDeViajeDocumentoRuta}`} alt="Documento de Seguro de Viaje" style={{ width: '200px', height: 'auto' }} />
                   ) : (
                     <Typography>No cargado</Typography>
                   )}
