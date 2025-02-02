@@ -1,0 +1,10 @@
+{
+  "navigation": {
+    "routes": [
+      {
+        "route": "/*",
+        "rewrite": "/index.html"
+      }
+    ]
+  }
+}
