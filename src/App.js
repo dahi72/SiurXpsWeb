@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import './estilos.css';
 import NoEncontrado from './componentes/NoEncontrado';
@@ -7,7 +7,7 @@ import Registro from './componentes/Registro';
 import CambiarContrasena from './componentes/CambioContrasena';
 import Logout from './componentes/Logout';
 import Dashboard from './componentes/Dashboard/Dashboard';
-import { BrowserRouter, Routes, Route,useNavigate } from 'react-router-dom'; 
+import { BrowserRouter, Routes, Route} from 'react-router-dom'; 
 import VerMisDatos from './componentes/VerMisDatos';
 import MisDatos from './componentes/MisDatos';
 import { UsuarioProvider } from './hooks/UsuarioContext';
@@ -44,24 +44,7 @@ import FormularioAerolinea from './componentes/FormularioAerolinea';
 import FormularioVuelo from './componentes/FormularioVuelo';
 
 const App = () => {
-const navigate = useNavigate();
 
-  useEffect(() => {
-    
-    const idUsuario = localStorage.getItem("id");
-    const tokenJWT = localStorage.getItem("token");
-
-
-    if (idUsuario && tokenJWT) {
-      const lastPath = localStorage.getItem("lastPath");
-      if (lastPath) {
-        navigate(lastPath);
-      }
-    } else {
-    
-      navigate("/login");
-    }
-  }, [navigate]);
   return (
     <UsuarioProvider>
       <SnackbarProvider>
