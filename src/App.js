@@ -85,7 +85,6 @@ const App = () => {
               <Route path="/crearGrupo" element={
                   <PaisProvider>
                   <CiudadProvider>
-                      <DondeEstoy2 />
                       <CrearGrupoDeViaje />
                     </CiudadProvider>
                   </PaisProvider>

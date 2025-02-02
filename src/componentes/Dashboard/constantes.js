@@ -37,7 +37,7 @@ export const opcionesCoordinador = [
 export const opcionesViajero = [
     { 
         label: '¿Dónde estoy?',
-        action: '/donde-estoy',
+        action: '/donde-estoy2',
         icon: <TravelExplore sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     },
     { 
