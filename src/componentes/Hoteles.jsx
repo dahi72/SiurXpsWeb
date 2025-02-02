@@ -102,7 +102,7 @@ const Hoteles = () => {
       checkOut,
       paginaWeb,
       direccion,
-      paisId ,
+      paisId,
       ciudadId,
       tips
     };
@@ -292,7 +292,7 @@ const Hoteles = () => {
                     onChange={(e) => {
                       const selectedPais = paises.find(p => p.id === e.target.value);  // Buscamos el país completo por id
                       if (selectedPais) {
-                        setPaisId(selectedPais);  // Guardamos el país completo en el estado
+                        setPaisId(selectedPais.id);  // Guardamos el país completo en el estado
                         setCiudades([]);  // Limpiamos las ciudades al cambiar de país
                         handleCiudadChange(selectedPais.codigoIso);  // Usamos codigoIso para cargar las ciudades
                       }

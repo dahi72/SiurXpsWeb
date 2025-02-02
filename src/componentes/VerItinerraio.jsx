@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Button, Box, Container } from '@mui/material';
+import { Paper, Typography, Button, Box, Container, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-import { useSnackbar } from '../hooks/useSnackbar';
 
 const VerItinerario = () => {
 
     const [itinerarios, setItinerarios] = useState([]);
-    const { setOpenSnackbar, setSnackbarMessage } = useSnackbar();
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
     const navigate = useNavigate();
     const baseUrl = process.env.REACT_APP_API_URL;
     const [gruposDeViaje, setGruposDeViaje] = useState({});
-
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
 
@@ -20,7 +20,7 @@ const VerItinerario = () => {
                 const response = await fetch(`${baseUrl}/Itinerario/listado`, {
                     method: 'GET',
                     headers: {
-                        'Authorization':  `Bearer  ${localStorage.getItem('token')}`, // Incluir el token aquí
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -37,7 +37,7 @@ const VerItinerario = () => {
                         const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
                             method: 'GET',
                             headers: {
-                                'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+                                'Authorization': `Bearer ${token}`,
                                 'Content-Type': 'application/json'
                             }
                         });
@@ -57,12 +57,13 @@ const VerItinerario = () => {
                 console.error('Error al obtener itinerarios:', error);
                 setSnackbarMessage('Error al cargar itinerarios');
                 setOpenSnackbar(true);
+                
             }
         };
         
 
         fetchItinerarios();
-    }, [ baseUrl, setOpenSnackbar, setSnackbarMessage]);
+    }, [token, baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
     // Se ejecuta solo una vez al montar el componente
     // useEffect(() => {
@@ -100,6 +101,13 @@ const VerItinerario = () => {
         navigate(`/itinerario/${id}/editarItinerario`); 
     };
 
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenSnackbar(false);
+      };
+
     const handleEliminar = async (id) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este itinerario?')) {
             try {
@@ -133,6 +141,8 @@ const VerItinerario = () => {
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
+
+
 
     return (
         <Container maxWidth="lg">
@@ -186,6 +196,13 @@ const VerItinerario = () => {
                     )}
                 </Box>
             </Box>
+            {/* Agregar Snackbar para mostrar mensajes */}
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={3000} // 3 segundos
+                message={snackbarMessage}
+                onClose={handleCloseSnackbar}
+            />
         </Container>
     );
 };
