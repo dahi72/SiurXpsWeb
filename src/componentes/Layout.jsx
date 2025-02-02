@@ -3,7 +3,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import React, { useEffect } from 'react';
+
 
 export const Layout = ({ children }) => {
   
@@ -14,10 +14,7 @@ export const Layout = ({ children }) => {
   const isDashboard = location.pathname === '/dashboard';
   
 
-  useEffect(() => {
-      localStorage.setItem("lastPath", location.pathname);
-  }, [location]);
-
+ 
   return (
     <Box sx={{
       display: 'flex',
