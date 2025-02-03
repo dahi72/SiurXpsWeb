@@ -42,16 +42,17 @@ const Vuelos = () => {
             'Content-Type': 'application/json'
           }
         });
-    
+  
         const data = await response.json();
         setVuelos(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error al cargar los vuelos:', error);
       }
     };
-    
-    cargarVuelos()
-  });
+  
+    cargarVuelos();
+  }, [baseUrl, token]);
+  
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
