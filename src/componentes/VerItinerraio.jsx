@@ -16,7 +16,7 @@ const VerItinerario = () => {
     useEffect(() => {
         const fetchItinerarios = async () => {
             try {
-                const response = await fetch(`${baseUrl}/Itinerario/listado`, {
+                const response = await fetch(`${baseUrl}/ItinerariosDeCoordinador/${localStorage.getItem('id')}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
