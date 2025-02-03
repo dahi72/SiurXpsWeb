@@ -14,9 +14,10 @@ const VerItinerario = () => {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
+
         const fetchItinerarios = async () => {
             try {
-                const response = await fetch(`${baseUrl}/ItinerariosDeCoordinador/${localStorage.getItem('id')}`, {
+                const response = await fetch(`${baseUrl}/Itinerario/listado`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -29,8 +30,8 @@ const VerItinerario = () => {
                 }
         
                 const data = await response.json();
-                setItinerarios(data);
-        
+                setItinerarios(data); 
+                
                 for (const itinerario of data) {
                     if (itinerario.grupoDeViajeId) {
                         const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
@@ -46,29 +47,23 @@ const VerItinerario = () => {
                         }
         
                         const grupoData = await grupoResponse.json();
-        
-                        // Solo actualizamos si el grupo no ha sido añadido previamente
-                        setGruposDeViaje(prev => {
-                            if (!prev[itinerario.grupoDeViajeId]) {
-                                return {
-                                    ...prev,
-                                    [itinerario.grupoDeViajeId]: grupoData.nombre
-                                };
-                            }
-                            return prev;
-                        });
+                        setGruposDeViaje(prev => ({
+                            ...prev,
+                            [itinerario.grupoDeViajeId]: grupoData.nombre
+                        }));
                     }
                 }
             } catch (error) {
                 console.error('Error al obtener itinerarios:', error);
                 setSnackbarMessage('Error al cargar itinerarios');
                 setOpenSnackbar(true);
+                
             }
         };
         
+
         fetchItinerarios();
-        
-    });
+    }, [token, baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
     
     const handleVerDetalles = (id) => {

@@ -35,21 +35,24 @@ const Vuelos = () => {
   useEffect(() => {
     const cargarVuelos = async () => {
       try {
+
         const response = await fetch(`${baseUrl}/Vuelo/vuelos`, {
-          method: 'GET', 
+          method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`, 
             'Content-Type': 'application/json'
           }
         });
-  
+    
+        if (!response.ok) throw new Error('Error al obtener los vuelos');
+    
         const data = await response.json();
         setVuelos(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error al cargar los vuelos:', error);
       }
     };
-  
+
     cargarVuelos();
   }, [baseUrl, token]);
   
