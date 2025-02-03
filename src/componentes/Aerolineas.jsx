@@ -121,9 +121,9 @@ const Aerolineas = () => {
     }
   };
 
-  const filteredAerolineas = aerolineas.filter(aerolinea =>
+  const filteredAerolineas = (aerolineas || []).filter(aerolinea =>
     aerolinea.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  );  
 
   return (
     <Box
