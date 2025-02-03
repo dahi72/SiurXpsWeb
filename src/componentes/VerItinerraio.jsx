@@ -65,35 +65,7 @@ const VerItinerario = () => {
         fetchItinerarios();
     }, [token, baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
-    // Se ejecuta solo una vez al montar el componente
-    // useEffect(() => {
-    //     const fetchItinerarios = async () => {
-    //         try {
-    //             const response = await fetch(`${baseUrl}/Itinerario/listado`); 
-                
-    //             const data = await response.json();
-    //             setItinerarios(data); 
-                
-    //             for (const itinerario of data) {
-    //                 if (itinerario.grupoDeViajeId) {
-    //                     const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`);
-    //                     const grupoData = await grupoResponse.json();
-    //                     setGruposDeViaje(prev => ({
-    //                         ...prev,
-    //                         [itinerario.grupoDeViajeId]: grupoData.nombre
-    //                     }));
-    //                 }
-    //             }
-    //         } catch (error) {
-    //             console.error('Error al obtener itinerarios:', error);
-    //             setSnackbarMessage('Error al cargar itinerarios');
-    //             setOpenSnackbar(true);
-    //         }
-    //     };
-
-    //     fetchItinerarios();
-    // }, [baseUrl, setOpenSnackbar, setSnackbarMessage]);
-
+    
     const handleVerDetalles = (id) => {
         navigate(`/itinerario/${id}/eventos`);
     };

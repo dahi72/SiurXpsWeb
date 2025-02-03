@@ -113,7 +113,7 @@ const Hoteles = () => {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          //'Content-Type': 'application/json'
       },
         body: JSON.stringify(nuevoHotel),
       });
@@ -288,11 +288,11 @@ const Hoteles = () => {
                 <FormControl fullWidth margin="normal">
                   <InputLabel>País</InputLabel>
                   <Select
-                    value={paisId?.id || ""}  // El value es solo el id del país
+                    value={paisId || ""}  // El value es solo el id del país
                     onChange={(e) => {
                       const selectedPais = paises.find(p => p.id === e.target.value);  // Buscamos el país completo por id
                       if (selectedPais) {
-                        setPaisId(selectedPais.id);  // Guardamos el país completo en el estado
+                        setPaisId(selectedPais.id);  // Guardamos el país id
                         setCiudades([]);  // Limpiamos las ciudades al cambiar de país
                         handleCiudadChange(selectedPais.codigoIso);  // Usamos codigoIso para cargar las ciudades
                       }
