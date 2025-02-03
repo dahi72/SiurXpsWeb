@@ -42,6 +42,7 @@ import FormularioHotel from './componentes/FormularioHotel';
 import FormularioAeropuerto from './componentes/FormularioAeropuerto';
 import FormularioAerolinea from './componentes/FormularioAerolinea';
 import FormularioVuelo from './componentes/FormularioVuelo';
+import  {ChatWidget}  from './componentes/ChatWidget';
 
 const App = () => {
 
@@ -96,7 +97,9 @@ const App = () => {
               <Route path="/cambiar-contrasena" element={<CambiarContrasena />} />
               <Route path="/registro" element={<Registro />} />
               <Route path="/agregarViajeroAGrupo/:grupoId" element={<AgregarViajeroAGrupo />} />
+              
           </Routes>
+          <ChatWidget />
           </Layout>
         </BrowserRouter>
         </SnackbarProvider>
