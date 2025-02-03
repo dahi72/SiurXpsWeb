@@ -117,6 +117,14 @@ const Vuelos = () => {
       console.error('Error de red:', error);
     }
   };
+  const handleHorarioChange = (e) => {
+    let time = e.target.value;
+    // Asegúrate de que el valor sea un formato correcto
+    if (/^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/.test(time)) {
+      time = `${time}:00`; // Añadir segundos automáticamente
+    }
+    setHorario(time); // Actualiza el estado
+  };
 
   const handleEditar = (vuelo) => {
     setVueloEditando(vuelo);
@@ -197,6 +205,21 @@ const Vuelos = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Horario Check-in"
+                      value={horario} // Mostrar el valor completo HH:mm:ss
+                      onChange={handleHorarioChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                      inputProps={{
+                        pattern: "([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])", // Asegura el formato HH:mm:ss
+                      }}
+                    />
+                  </Grid>
+              {/* <Grid item xs={12} sm={6}>
                 <TextField 
                   fullWidth 
                   label="Horario" 
@@ -206,7 +229,7 @@ const Vuelos = () => {
                   onChange={(e) => setHorario(e.target.value)} 
                   sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
               <Button variant="contained" color="primary" type="submit">
