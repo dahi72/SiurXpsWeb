@@ -129,7 +129,7 @@ const Vuelos = () => {
   const handleEditar = (vuelo) => {
     setVueloEditando(vuelo);
     setNombre(vuelo.nombre);
-    setHorario(vuelo.horario);
+    //setHorario(vuelo.horario);
     setTabValue(1); 
   };
 
