@@ -30,21 +30,28 @@ const Vuelos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [vueloEditando, setVueloEditando] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
-
+  const token = localStorage.getItem('token');
   
   useEffect(() => {
     const cargarVuelos = async () => {
       try {
-        const response = await fetch(`${baseUrl}/Vuelo/vuelos`);
+        const response = await fetch(`${baseUrl}/Vuelo/vuelos`, {
+          method: 'GET', 
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+    
         const data = await response.json();
         setVuelos(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error al cargar los vuelos:', error);
       }
     };
-
-    cargarVuelos();
-  }, [baseUrl]);
+    
+    cargarVuelos()
+  });
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -65,7 +72,8 @@ const Vuelos = () => {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ nombre, horario }),
       });

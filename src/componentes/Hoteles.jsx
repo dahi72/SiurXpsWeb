@@ -129,7 +129,7 @@ const Hoteles = () => {
         setCiudadId('');
         setTips('');
 
-        const hotelesResponse = await fetch(`${baseUrl}/Hotel/listado`, {
+        const hotelesResponse = await fetch(`${baseUrl}/Hotel/hoteles`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

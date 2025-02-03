@@ -13,7 +13,11 @@ import {
   TableHead,
   TableRow,
   Tabs,
-  Tab
+  Tab,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from "react-router-dom"; 
@@ -32,6 +36,7 @@ const Aeropuertos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [aeropuertoEditando, setAeropuertoEditando] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
+  const token = localStorage.getItem('token'); 
   useEffect(() => {
     const cargarAeropuertos = async () => {
         try {
@@ -87,7 +92,7 @@ useEffect(() => {
     const cargarCiudades = async () => {
         if (paisSeleccionado) {
             try {
-                const token = localStorage.getItem('token'); // Obtener el token
+               
 
                 const response = await fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, {
                     method: 'GET',
@@ -110,7 +115,7 @@ useEffect(() => {
     };
 
     cargarCiudades();
-}, [baseUrl, paisSeleccionado]); // Dependencias
+}, [baseUrl, paisSeleccionado, token]);
 
 
   const handleTabChange = (event, newValue) => {
@@ -165,7 +170,29 @@ useEffect(() => {
       console.error('Error de red:', error);
     }
   };
-
+  const handleCiudadChange = async (codigoIso) => {
+    if (codigoIso) {
+      try {
+        const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (!response.ok) throw new Error('Error al obtener las ciudades');
+  
+        const data = await response.json();
+        setCiudades(data);  // Actualizar las ciudades según el país seleccionado
+      } catch (error) {
+        console.error('Error al cargar las ciudades:', error);
+      }
+    } else {
+      setCiudades([]);  // Limpiar las ciudades si no hay país seleccionado
+    }
+  };
+  
   const handleEditar = (aeropuerto) => {
     setAeropuertoEditando(aeropuerto);
     setNombre(aeropuerto.nombre);
@@ -195,7 +222,6 @@ useEffect(() => {
       console.error('Error de red:', error);
     }
   };
-  console.log("aeropuertos", aeropuertos)
   const filteredAeropuertos = aeropuertos.filter(aeropuerto =>
     aeropuerto.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -328,43 +354,43 @@ useEffect(() => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    select 
-                    fullWidth 
-                    label="País" 
-                    variant="outlined" 
-                    value={paisSeleccionado ? paisSeleccionado.id : ''}
-                    onChange={(e) => {
-                      const selectedPais = paises.find(pais => pais.codigoIso === e.target.value);
-                      setPaisSeleccionado(selectedPais);
-                    }} 
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value="">Seleccione un país</option>
-                    {paises.map((pais) => (
-                      <option key={pais.id} value={pais.codigoIso}>{pais.nombre}</option>
-                    ))}
-                  </TextField>
-                </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    select 
-                    fullWidth 
-                    label="Ciudad" 
-                    variant="outlined" 
-                    value={ciudadSeleccionada} 
-                    onChange={(e) => setCiudadSeleccionada(e.target.value)} 
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value="">Seleccione una ciudad</option>
-                    {ciudades.map((ciudad) => (
-                      <option key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</option>
-                    ))}
-                  </TextField>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>País</InputLabel>
+                    <Select
+                      value={paisSeleccionado ? paisSeleccionado.id : ''}
+                      onChange={(e) => {
+                        const selectedPais = paises.find(pais => pais.id === e.target.value);
+                        if (selectedPais) {
+                          setPaisSeleccionado(selectedPais);  // Guardar el objeto completo de país
+                          setCiudades([]);  // Limpiar las ciudades cuando se cambia el país
+                          handleCiudadChange(selectedPais.codigoIso);  // Llamar la función para cargar las ciudades según el país
+                        }
+                      }}
+                    >
+                      <MenuItem value="">Seleccione un país</MenuItem>  {/* Opción por defecto */}
+                      {paises.map((pais) => (
+                        <MenuItem key={pais.id} value={pais.id}>{pais.nombre}</MenuItem>  // El value es el id del país
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth margin="normal" disabled={ciudades.length === 0}>
+                    <InputLabel>Ciudad</InputLabel>
+                    <Select
+                      value={ciudadSeleccionada || ''}
+                      onChange={(e) => setCiudadSeleccionada(e.target.value)}  // Actualizar el estado con el id de la ciudad
+                    >
+                      <MenuItem value="">Seleccione una ciudad</MenuItem>  {/* Opción por defecto */}
+                      {ciudades.map((ciudad) => (
+                        <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>  // El value es el id de la ciudad
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
                 </Grid>
                 <Grid item xs={12}>
                   <TextField 
