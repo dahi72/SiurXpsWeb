@@ -14,7 +14,6 @@ const VerItinerario = () => {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-
         const fetchItinerarios = async () => {
             try {
                 const response = await fetch(`${baseUrl}/Itinerario/listado`, {
@@ -30,14 +29,14 @@ const VerItinerario = () => {
                 }
         
                 const data = await response.json();
-                setItinerarios(data); 
-                
+                setItinerarios(data);
+        
                 for (const itinerario of data) {
                     if (itinerario.grupoDeViajeId) {
                         const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
                             method: 'GET',
                             headers: {
-                                'Authorization': `Bearer ${token}`,
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`,
                                 'Content-Type': 'application/json'
                             }
                         });
@@ -47,23 +46,29 @@ const VerItinerario = () => {
                         }
         
                         const grupoData = await grupoResponse.json();
-                        setGruposDeViaje(prev => ({
-                            ...prev,
-                            [itinerario.grupoDeViajeId]: grupoData.nombre
-                        }));
+        
+                        // Solo actualizamos si el grupo no ha sido añadido previamente
+                        setGruposDeViaje(prev => {
+                            if (!prev[itinerario.grupoDeViajeId]) {
+                                return {
+                                    ...prev,
+                                    [itinerario.grupoDeViajeId]: grupoData.nombre
+                                };
+                            }
+                            return prev;
+                        });
                     }
                 }
             } catch (error) {
                 console.error('Error al obtener itinerarios:', error);
                 setSnackbarMessage('Error al cargar itinerarios');
                 setOpenSnackbar(true);
-                
             }
         };
         
-
         fetchItinerarios();
-    }, [token, baseUrl, setOpenSnackbar, setSnackbarMessage]);
+        
+    });
 
     
     const handleVerDetalles = (id) => {

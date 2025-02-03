@@ -26,8 +26,8 @@ const Hoteles = () => {
   const [tips, setTips] = useState('');
   const [tabValue, setTabValue] = useState(0);
   const [nombre, setNombre] = useState('');
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
+  const [checkIn, setCheckIn] = useState('00:00:00'); 
+  const [checkOut, setCheckOut] = useState('00:00:00'); 
   const [paginaWeb, setPaginaWeb] = useState('');
   const [direccion, setDireccion] = useState('');
   const [paises, setPaises] = useState([]);
@@ -113,7 +113,7 @@ const Hoteles = () => {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          //'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
       },
         body: JSON.stringify(nuevoHotel),
       });
@@ -144,7 +144,23 @@ const Hoteles = () => {
       console.error('Error de red:', error);
     }
   };
+  const handleCheckInChange = (e) => {
+    let time = e.target.value;
+    // Asegúrate de que el valor sea un formato correcto
+    if (/^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/.test(time)) {
+      time = `${time}:00`; // Añadir segundos automáticamente
+    }
+    setCheckIn(time); // Actualiza el estado
+  };
 
+  const handleCheckOutChange = (e) => {
+    let time = e.target.value;
+    // Asegúrate de que el valor sea un formato correcto
+    if (/^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/.test(time)) {
+      time = `${time}:00`; // Añadir segundos automáticamente
+    }
+    setCheckOut(time); // Actualiza el estado
+  };
   return (
     <Box
       sx={{
@@ -248,31 +264,37 @@ const Hoteles = () => {
                     onChange={(e) => setNombre(e.target.value)}
                   />
                 </Grid>
+                <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    fullWidth 
-                    label="Horario Check-in" 
-                    type="time" 
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField 
-                    fullWidth 
-                    label="Horario Check-out" 
-                    type="time" 
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
-                  />
+                    <TextField
+                      fullWidth
+                      label="Horario Check-in"
+                      value={checkIn} // Mostrar el valor completo HH:mm:ss
+                      onChange={handleCheckInChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                      inputProps={{
+                        pattern: "([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])", // Asegura el formato HH:mm:ss
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Horario Check-out"
+                      value={checkOut} // Mostrar el valor completo HH:mm:ss
+                      onChange={handleCheckOutChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                      inputProps={{
+                        pattern: "([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])", // Asegura el formato HH:mm:ss
+                      }}
+                    />
+                  </Grid>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField 
