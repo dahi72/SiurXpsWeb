@@ -265,7 +265,7 @@ const handleSnackbarClose = () => {
 
 if (loading || error) {
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor:'#fff' }}>
             <CircularProgress />
             <Typography sx={{ mt: 2 }}>
                 Obteniendo tu ubicación...
