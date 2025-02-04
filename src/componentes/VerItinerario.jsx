@@ -12,21 +12,32 @@ const VerItinerario = () => {
     const baseUrl = process.env.REACT_APP_API_URL;
     const [gruposDeViaje] = useState({});
    
-
-  
-
     useEffect(() => {
 
         const fetchGruposDeViaje = async (coordinadorId) => {
-            const response = await fetch(`${baseUrl}/GrupoDeViaje/coordinador/${coordinadorId}/grupos`);
+            const token = localStorage.getItem('token');  
+            const response = await fetch(`${baseUrl}/GrupoDeViaje/coordinador/${coordinadorId}/grupos`, {
+              method: 'GET',  
+              headers: {
+                'Authorization': `Bearer ${token}`,  
+                'Content-Type': 'application/json', 
+              },
+            });
             const data = await response.json();
-            return data;  // Devuelve los grupos de viaje del coordinador
+            return data;  
           };
-    
-        const fetchItinerarios = async () => {
-            const response = await fetch(`${baseUrl}/Itinerario/listado`);
+          
+          const fetchItinerarios = async () => {
+            const token = localStorage.getItem('token');  
+            const response = await fetch(`${baseUrl}/Itinerario/listado`, {
+              method: 'GET',  
+              headers: {
+                'Authorization': `Bearer ${token}`,  
+                'Content-Type': 'application/json',  
+              },
+            });
             const data = await response.json();
-            return data;  // Devuelve todos los itinerarios
+            return data; 
           };
           
         const filterItinerariosPorGrupo = (itinerarios, gruposDeViaje) => {
