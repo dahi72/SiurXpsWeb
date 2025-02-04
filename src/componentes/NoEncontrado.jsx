@@ -19,7 +19,7 @@ const NoEncontrado = () => {
       <ErrorOutlineIcon sx={{ fontSize: 80, color: "error.main", mb: 2 }} />
       <Box
         component="img"
-        src=".Imagenes/imagen404.jpg"
+        src="./Imagenes/imagen404.jpg"
         alt="Página no encontrada"
         sx={{ width: "80%", maxWidth: 400, mb: 3 }}
         onError={(e) => (e.target.style.display = "none")}
@@ -32,12 +32,12 @@ const NoEncontrado = () => {
       </Typography>
       <Button 
         component={Link} 
-        to="/" 
+        to="/dashboard" 
         variant="contained" 
         color="primary"
         aria-label="Volver a la página de inicio"
       >
-        Volver al inicio
+        Volver al dashboard
       </Button>
     </Container>
   );
