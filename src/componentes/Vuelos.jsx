@@ -18,9 +18,6 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from "react-router-dom"; 
 
-
-
-
 const Vuelos = () => {
   const navigate = useNavigate(); 
   const [tabValue, setTabValue] = useState(0);
@@ -94,7 +91,7 @@ const Vuelos = () => {
         setVueloEditando(null);
         setTabValue(0);
       } else {
-        const errorData = await response.json(); // Captura el mensaje de error del servidor
+        const errorData = await response.json(); 
         console.error('Error al guardar el vuelo:', errorData);
       }
     } catch (error) {
@@ -119,17 +116,16 @@ const Vuelos = () => {
   };
   const handleHorarioChange = (e) => {
     let time = e.target.value;
-    // Asegúrate de que el valor sea un formato correcto
+   
     if (/^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/.test(time)) {
-      time = `${time}:00`; // Añadir segundos automáticamente
+      time = `${time}:00`; 
     }
-    setHorario(time); // Actualiza el estado
+    setHorario(time); 
   };
 
   const handleEditar = (vuelo) => {
     setVueloEditando(vuelo);
     setNombre(vuelo.nombre);
-    //setHorario(vuelo.horario);
     setTabValue(1); 
   };
 
@@ -209,28 +205,17 @@ const Vuelos = () => {
                     <TextField
                       fullWidth
                       label="Horario Check-in"
-                      value={horario} // Mostrar el valor completo HH:mm:ss
+                      value={horario} 
                       onChange={handleHorarioChange}
                       InputLabelProps={{
                         shrink: true,
                       }}
                       variant="outlined"
                       inputProps={{
-                        pattern: "([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])", // Asegura el formato HH:mm:ss
+                        pattern: "([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])", 
                       }}
                     />
                   </Grid>
-              {/* <Grid item xs={12} sm={6}>
-                <TextField 
-                  fullWidth 
-                  label="Horario" 
-                  type="time" 
-                  variant="outlined" 
-                  value={horario} 
-                  onChange={(e) => setHorario(e.target.value)} 
-                  sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
-                />
-              </Grid> */}
             </Grid>
             <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
               <Button variant="contained" color="primary" type="submit">

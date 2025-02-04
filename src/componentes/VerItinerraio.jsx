@@ -17,10 +17,11 @@ const VerItinerario = () => {
 
         const fetchItinerarios = async () => {
             try {
+                console.log('Token:', localStorage.getItem('token'));
                 const response = await fetch(`${baseUrl}/Itinerario/listado`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -30,10 +31,12 @@ const VerItinerario = () => {
                 }
         
                 const data = await response.json();
-                setItinerarios(data); 
-                
+                console.log('Itinerarios:', data);
+                setItinerarios(data);
+        
                 for (const itinerario of data) {
                     if (itinerario.grupoDeViajeId) {
+                        console.log('Fetching grupo de viaje con ID:', itinerario.grupoDeViajeId);
                         const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
                             method: 'GET',
                             headers: {
@@ -47,6 +50,7 @@ const VerItinerario = () => {
                         }
         
                         const grupoData = await grupoResponse.json();
+                        console.log('Grupo de viaje:', grupoData);
                         setGruposDeViaje(prev => ({
                             ...prev,
                             [itinerario.grupoDeViajeId]: grupoData.nombre
@@ -57,11 +61,9 @@ const VerItinerario = () => {
                 console.error('Error al obtener itinerarios:', error);
                 setSnackbarMessage('Error al cargar itinerarios');
                 setOpenSnackbar(true);
-                
             }
         };
-        
-
+ 
         fetchItinerarios();
     }, [token, baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
@@ -168,7 +170,6 @@ const VerItinerario = () => {
                     )}
                 </Box>
             </Box>
-            {/* Agregar Snackbar para mostrar mensajes */}
             <Snackbar
                 open={openSnackbar}
                 autoHideDuration={3000} // 3 segundos
