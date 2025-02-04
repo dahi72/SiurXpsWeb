@@ -37,7 +37,7 @@ export const ActionButtons = () => {
     const menuItems = [
         { label: 'Mis datos', action: '/verMisDatos' },
         { label: 'Cambiar contraseña', action: '/cambiar-contrasena' },
-        { label: 'Registrar coordinador', action: '/registro' }
+        { label: 'Registrar coordinador', action: '/registro', rolesPermitidos: ['Coordinador'] }
     ];
 
     const getEstadoColor = () => {
@@ -83,6 +83,12 @@ export const ActionButtons = () => {
             }, 3000);
         }
     };
+
+    // Filtrar los elementos del menú según el rol del usuario
+    const filteredMenuItems = menuItems.filter(item => {
+        if (!item.rolesPermitidos) return true; // Si no hay roles definidos, incluir el ítem
+        return item.rolesPermitidos.includes(usuario.rol); // Verificar si el rol del usuario está permitido
+    });
 
     return (
         <>
@@ -142,11 +148,11 @@ export const ActionButtons = () => {
                     <MenuItem onClick={toggleEstado}>
                         Cambiar a {estadoCoordinador ? 'Inactivo' : 'Activo'}
                     </MenuItem>
-                    {menuItems.map((item, index) => (
-                        <MenuItem key={index} onClick={() => { handleMenuClose(); navigate(item.action); }}>
-                            {item.label}
-                        </MenuItem>
-                    ))}
+                    {filteredMenuItems.map((item, index) => (
+                    <MenuItem key={index} onClick={() => { handleMenuClose(); navigate(item.action); }}>
+                        {item.label}
+                    </MenuItem>
+                ))}
                 </Menu>
     </>);
 }
