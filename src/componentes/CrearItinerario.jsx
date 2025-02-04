@@ -128,6 +128,11 @@ const CrearItinerario = () => {
                         Cargando grupos...
                     </Typography>
                 )}
+                {error && (
+    <Typography color="error" variant="h6">
+        {error}
+    </Typography>
+)}
 
                 {grupos.length === 0 && !loading && (
                     <Box textAlign="center" mt={2}>
