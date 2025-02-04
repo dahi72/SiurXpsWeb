@@ -1,28 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { 
-  Box, 
-  Button, 
-  TextField, 
-  Typography,  
-  Grid, 
-  Paper,
-  Tabs,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from "@mui/material";
-import { useNavigate } from "react-router-dom"; 
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Tabs, Tab, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, TextField, Grid, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Hoteles = () => {
   const navigate = useNavigate(); 
+  const [tips, setTips] = useState('');
   const [tabValue, setTabValue] = useState(0);
   const [nombre, setNombre] = useState('');
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
+  const [checkIn, setCheckIn] = useState('00:00:00'); 
+  const [checkOut, setCheckOut] = useState('00:00:00'); 
   const [paginaWeb, setPaginaWeb] = useState('');
   const [direccion, setDireccion] = useState('');
   const [paises, setPaises] = useState([]);
@@ -30,62 +16,78 @@ const Hoteles = () => {
   const [paisId, setPaisId] = useState('');
   const [ciudadId, setCiudadId] = useState('');
   const [hoteles, setHoteles] = useState([]); 
-
+  const [filtroPais, setFiltroPais] = useState('');
+  const [filtroCiudad, setFiltroCiudad] = useState('');
+  const [filtroNombre, setFiltroNombre] = useState('');
+  const token = localStorage.getItem('token');
   const baseUrl = process.env.REACT_APP_API_URL;
+
+  const isFormComplete = () => {
+    return (
+      nombre &&
+      checkIn !== '00:00:00' &&
+      checkOut !== '00:00:00' &&
+      paginaWeb &&
+      direccion &&
+      paisId &&
+      ciudadId
+    );
+  };
+
 
   useEffect(() => {
     const cargarPaises = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Pais/listado`);
-        const data = await response.json();
-        setPaises(data);
-      } catch (error) {
-        console.error('Error al cargar los países:', error);
-      }
+        try {
+          const response = await fetch(`${baseUrl}/Pais/listado`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+            if (!response.ok) throw new Error('Error al obtener los países');
+
+            const data = await response.json();
+            
+            const paisesOrdenados = data.sort((a, b) => {
+                if (a.nombre < b.nombre) return -1;
+                if (a.nombre > b.nombre) return 1;
+                return 0;
+            });
+
+            setPaises(paisesOrdenados);
+        } catch (error) {
+            console.error('Error al cargar los países:', error);
+        }
     };
 
     cargarPaises();
-  }, [baseUrl]);
+  }, [baseUrl, token]);
 
-  useEffect(() => {
-    const cargarHoteles = async (nuevoHotel) => {
-      try {
-        const response = await fetch(`${baseUrl}/Hotel/altaHotel`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(nuevoHotel),
-        });
-    
-        if (response.ok) {
-          console.log('Hotel agregado exitosamente');
-          // Reiniciar el formulario
-          setNombre('');
-          setCheckIn('');
-          setCheckOut('');
-          setPaginaWeb('');
-          setDireccion('');
-          setPaisId('');
-          setCiudadId('');
-        } else {
-          console.error('Error al agregar el hotel');
-        }
-      } catch (error) {
-        console.error('Error de red:', error);
-      };
-    }
-    cargarHoteles();
-  }, [baseUrl]);
-  
-    
   const handleCiudadChange = async (codigoIso) => {
     try {
-      const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`);
-      const data = await response.json();
-      setCiudades(data);
+        const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) throw new Error('Error al obtener las ciudades');
+
+        const data = await response.json();
+        
+        const ciudadesOrdenadas = data.sort((a, b) => {
+            if (a.nombre < b.nombre) return -1;
+            if (a.nombre > b.nombre) return 1;
+            return 0;
+        });
+
+        setCiudades(ciudadesOrdenadas);
     } catch (error) {
-      console.error('Error al cargar las ciudades:', error);
+        console.error('Error al cargar las ciudades:', error);
     }
   };
 
@@ -98,39 +100,99 @@ const Hoteles = () => {
       paginaWeb,
       direccion,
       paisId,
-      ciudadId
+      ciudadId,
+      tips
     };
-
     try {
       const response = await fetch(`${baseUrl}/Hotel/altaHotel`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(nuevoHotel),
       });
-
-      if (response.ok) {
-        console.log('Hotel agregado exitosamente');
-        // Reiniciar el formulario
-        setNombre('');
-        setCheckIn('');
-        setCheckOut('');
-        setPaginaWeb('');
-        setDireccion('');
-        setPaisId('');
-        setCiudadId('');
-        // Recargar la lista de hoteles
-        const hotelesResponse = await fetch(`${baseUrl}/Hotel/listado`);
-        const hotelesData = await hotelesResponse.json();
-        setHoteles(hotelesData);
-      } else {
-        console.error('Error al agregar el hotel');
+  
+      const data = await response.json(); 
+  
+      if (!response.ok) {
+        throw new Error(data?.mensaje || 'Error al agregar el hotel');
       }
+  
+      setNombre('');
+      setCheckIn('');
+      setCheckOut('');
+      setPaginaWeb('');
+      setDireccion('');
+      setPaisId('');
+      setCiudadId('');
+      setTips('');
+      
     } catch (error) {
-      console.error('Error de red:', error);
+      console.error('Error en la solicitud:', error.message);
+    }
+
+    try {
+      const hotelesResponse = await fetch(`${baseUrl}/Hotel/hoteles`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+    
+      if (!hotelesResponse.ok) {
+        throw new Error(`Error ${hotelesResponse.status}: ${hotelesResponse.statusText}`);
+      }
+    
+      const hotelesData = await hotelesResponse.json();
+      
+      setHoteles(Array.isArray(hotelesData) ? hotelesData : []);
+      
+    } catch (error) {
+      console.error('Error en la solicitud de hoteles:', error.message);
     }
   };
+
+  const handleCheckInChange = (e) => {
+    let time = e.target.value;
+    if (/^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/.test(time)) {
+      time = `${time}:00`; 
+    }
+    setCheckIn(time); 
+  };
+
+  const handleCheckOutChange = (e) => {
+    let time = e.target.value;
+    if (/^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/.test(time)) {
+      time = `${time}:00`;
+    }
+    setCheckOut(time); 
+  };
+
+  const handleFiltroPaisChange = async (e) => {
+    setFiltroPais(e.target.value);
+    setFiltroCiudad('');
+    if (e.target.value) {
+      handleCiudadChange(e.target.value);
+    }
+  };
+
+  const handleFiltroCiudadChange = (e) => {
+    setFiltroCiudad(e.target.value);
+  };
+
+  const handleFiltroNombreChange = (e) => {
+    setFiltroNombre(e.target.value);
+  };
+
+  const filteredHoteles = hoteles.filter(hotel => {
+    return (
+      (filtroPais ? hotel.paisId === filtroPais : true) &&
+      (filtroCiudad ? hotel.ciudadId === filtroCiudad : true) &&
+      (filtroNombre ? hotel.nombre.toLowerCase().includes(filtroNombre.toLowerCase()) : true)
+    );
+  });
 
   return (
     <Box
@@ -175,7 +237,52 @@ const Hoteles = () => {
 
         {tabValue === 0 && (
           <Box>
-            {/* Tabla de Hoteles */}
+            {/* Filtros */}
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+              <Grid item xs={12} sm={4}>
+                <TextField 
+                  fullWidth 
+                  label="Nombre del Hotel" 
+                  variant="outlined" 
+                  value={filtroNombre}
+                  onChange={handleFiltroNombreChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>País</InputLabel>
+                  <Select
+                    value={filtroPais}
+                    onChange={handleFiltroPaisChange}
+                    label="País"
+                  >
+                    {paises.map((pais) => (
+                      <MenuItem key={pais.codigoIso} value={pais.codigoIso}>
+                        {pais.nombre}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>Ciudad</InputLabel>
+                  <Select
+                    value={filtroCiudad}
+                    onChange={handleFiltroCiudadChange}
+                    label="Ciudad"
+                  >
+                    {ciudades.map((ciudad) => (
+                      <MenuItem key={ciudad.id} value={ciudad.id}>
+                        {ciudad.nombre}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            {/* Tabla de Hoteles Filtrados */}
             <TableContainer component={Paper} sx={{ mb: 3 }}>
               <Table>
                 <TableHead>
@@ -187,29 +294,27 @@ const Hoteles = () => {
                     <TableCell>Dirección</TableCell>
                     <TableCell>País</TableCell>
                     <TableCell>Ciudad</TableCell>
+                    <TableCell>Tips</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {hoteles.length > 0 ? (
-                    hoteles.map((hotel) => (
+                  {filteredHoteles.length > 0 ? (
+                    filteredHoteles.map((hotel) => (
                       <TableRow key={hotel.id}>
                         <TableCell>{hotel.nombre}</TableCell>
                         <TableCell>{hotel.checkIn}</TableCell>
                         <TableCell>{hotel.checkOut}</TableCell>
-                        <TableCell>
-                          <a href={hotel.paginaWeb} target="_blank" rel="noopener noreferrer">
-                            {hotel.paginaWeb}
-                          </a>
-                        </TableCell>
+                        <TableCell>{hotel.paginaWeb}</TableCell>
                         <TableCell>{hotel.direccion}</TableCell>
-                        <TableCell>{hotel.pais}</TableCell>
-                        <TableCell>{hotel.ciudad}</TableCell>
+                        <TableCell>{hotel.paisNombre}</TableCell>
+                        <TableCell>{hotel.ciudadNombre}</TableCell>
+                        <TableCell>{hotel.tips}</TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={7} style={{ textAlign: 'center' }}>
-                        No hay hoteles disponibles.
+                      <TableCell colSpan={8} align="center">
+                        No se encontraron hoteles.
                       </TableCell>
                     </TableRow>
                   )}
@@ -221,119 +326,122 @@ const Hoteles = () => {
 
         {tabValue === 1 && (
           <Box>
-            {/* Formulario de Carga */}
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField 
                     fullWidth 
-                    label="Nombre" 
+                    label="Nombre del Hotel" 
                     variant="outlined" 
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    value={nombre} 
+                    onChange={(e) => setNombre(e.target.value)} 
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField 
                     fullWidth 
-                    label="Horario Check-in" 
-                    type="time" 
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
+                    label="Check-in" 
+                    variant="outlined" 
+                    value={checkIn} 
+                    onChange={handleCheckInChange} 
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField 
                     fullWidth 
-                    label="Horario Check-out" 
-                    type="time" 
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
+                    label="Check-out" 
+                    variant="outlined" 
+                    value={checkOut} 
+                    onChange={handleCheckOutChange} 
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField 
                     fullWidth 
                     label="Página Web" 
-                    type="url" 
-                    value={paginaWeb}
-                    onChange={(e) => setPaginaWeb(e.target.value)}
+                    variant="outlined" 
+                    value={paginaWeb} 
+                    onChange={(e) => setPaginaWeb(e.target.value)} 
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    fullWidth 
-                    label="País" 
-                    variant="outlined" 
-                    select
-                    value={paisId}
-                    onChange={(e) => {
-                      const selectedPais = JSON.parse(e.target.value);
-                      setPaisId(selectedPais.id);
-                      setCiudades([]); // Reiniciar ciudades al cambiar de país
-                      handleCiudadChange(selectedPais.codigoIso); // Call the function to load cities
-                    }}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value="">Seleccione un país</option>
-                    {paises.map(p => (
-                      <option key={p.id} value={JSON.stringify(p)}>{p.nombre}</option>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField 
-                    fullWidth 
-                    label="Ciudad" 
-                    variant="outlined" 
-                    select
-                    value={ciudadId}
-                    onChange={(e) => setCiudadId(e.target.value)}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value="">Seleccione una ciudad</option>
-                    {ciudades.map(c => (
-                      <option key={c.id} value={c.id}>{c.nombre}</option>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12}>
                   <TextField 
                     fullWidth 
                     label="Dirección" 
                     variant="outlined" 
-                    value={direccion}
-                    onChange={(e) => setDireccion(e.target.value)}
+                    value={direccion} 
+                    onChange={(e) => setDireccion(e.target.value)} 
                   />
                 </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel>País</InputLabel>
+                    <Select
+                      value={paisId}
+                      onChange={(e) => {
+                        setPaisId(e.target.value);
+                        handleCiudadChange(e.target.value);
+                      }}
+                      label="País"
+                    >
+                      {paises.map((pais) => (
+                        <MenuItem key={pais.codigoIso} value={pais.codigoIso}>
+                          {pais.nombre}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel>Ciudad</InputLabel>
+                    <Select
+                      value={ciudadId}
+                      onChange={(e) => setCiudadId(e.target.value)}
+                      label="Ciudad"
+                    >
+                      {ciudades.map((ciudad) => (
+                        <MenuItem key={ciudad.id} value={ciudad.id}>
+                          {ciudad.nombre}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Tips"
+                    variant="outlined"
+                    multiline
+                    rows={4}
+                    value={tips}
+                    onChange={(e) => setTips(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button 
+                    type="submit" 
+                    variant="contained" 
+                    color="primary" 
+                    fullWidth 
+                    sx={{ mt: 3 }}
+                    disabled={!isFormComplete()}
+                  >
+                    Agregar Hotel
+                  </Button>
+                </Grid>
               </Grid>
-              <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-                <Button variant="contained" color="primary" type="submit">
-                  Agregar Hotel
-                </Button>
-              </Box>
             </form>
           </Box>
         )}
       </Box>
       <Box>
-        <Button variant="outlined" 
+      <Button variant="outlined" 
           onClick={() => navigate('/catalogos')} 
           sx={{ 
           mb: 2, 
-          backgroundColor: 'rgb(227, 242, 253)', // Cambia 'blue' por el color que desees
+          backgroundColor: 'rgb(227, 242, 253)', 
           color: '#1976d2'
     }}
   >
@@ -345,3 +453,4 @@ const Hoteles = () => {
 };
 
 export default Hoteles;
+

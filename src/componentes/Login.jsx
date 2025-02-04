@@ -31,8 +31,9 @@ const Login = () => {
     fetch(`${baseUrl}/Usuario/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+        'Content-Type': 'application/json'
+    },
       body: JSON.stringify({
         password,
         pasaporte,
@@ -52,7 +53,7 @@ const Login = () => {
             rol: data.rol,
           });
           
-          if (data.debeCambiarContrasenia) {
+          if (data.debeCambiarContrasena) {
             navigate("/cambiar-contrasena");
           } else {
             navigate("/dashboard");

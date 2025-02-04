@@ -1,5 +1,4 @@
-import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Toolbar, IconButton, Box, useMediaQuery, useTheme } from '@mui/material';
+import { AppBar, Toolbar, Box, useMediaQuery, useTheme } from '@mui/material';
 import xperiencias from '../Imagenes/xperiencias.png';
 import siurBlanco from '../Imagenes/SiurBlanco.png';
 import Logout from './Logout';
@@ -17,7 +16,7 @@ export const Header = ({ handleDrawerToggle }) => {
       <AppBar>
         <Toolbar sx={{ width: '100%', padding: { xs: '0 16px', sm: '0 32px' } }}>
           
-          {!usuario && isSmallScreen && (
+          {/* {!usuario && isSmallScreen && (
             <IconButton
               color="inherit"
               aria-label="open drawer"
@@ -27,7 +26,7 @@ export const Header = ({ handleDrawerToggle }) => {
             >
               <MenuIcon />
             </IconButton>
-          )}
+          )} */}
 
           <Box
             sx={{

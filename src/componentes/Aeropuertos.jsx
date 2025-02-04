@@ -13,7 +13,11 @@ import {
   TableHead,
   TableRow,
   Tabs,
-  Tab
+  Tab,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from "react-router-dom"; 
@@ -32,52 +36,98 @@ const Aeropuertos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [aeropuertoEditando, setAeropuertoEditando] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
+  const token = localStorage.getItem('token'); 
+
+  const isFormComplete = () => {
+    return (
+      nombre &&
+      paginaWeb &&
+      direccion &&
+      paisSeleccionado &&
+      ciudadSeleccionada 
+    );
+  };
 
   useEffect(() => {
     const cargarAeropuertos = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`);
-        const data = await response.json();
-        setAeropuertos(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error al cargar los aeropuertos:', error);
-      }
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Error al obtener los aeropuertos');
+
+            const data = await response.json();
+            setAeropuertos(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error('Error al cargar los aeropuertos:', error);
+        }
     };
 
     cargarAeropuertos();
-  }, [baseUrl]);
+}, [baseUrl]);
 
-  useEffect(() => {
+useEffect(() => {
     const cargarPaises = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Pais/listado`);
-        const data = await response.json();
-        setPaises(data);
-      } catch (error) {
-        console.error('Error al cargar los países:', error);
-      }
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${baseUrl}/Pais/listado`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Error al obtener los países');
+
+            const data = await response.json();
+            setPaises(data);
+        } catch (error) {
+            console.error('Error al cargar los países:', error);
+        }
     };
 
     cargarPaises();
-  }, [baseUrl]);
+}, [baseUrl]);
+
 
   useEffect(() => {
     const cargarCiudades = async () => {
-      if (paisSeleccionado) {
-        try {
-          const response = await fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`); 
-          const data = await response.json();
-          setCiudades(data);
-        } catch (error) {
-          console.error('Error al cargar las ciudades:', error);
+        if (paisSeleccionado) {
+            try {
+               
+
+                const response = await fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Error al obtener las ciudades');
+
+                const data = await response.json();
+                setCiudades(data);
+            } catch (error) {
+                console.error('Error al cargar las ciudades:', error);
+            }
+        } else {
+            setCiudades([]); 
         }
-      } else {
-        setCiudades([]); 
-      }
     };
 
     cargarCiudades();
-  }, [baseUrl, paisSeleccionado]);
+}, [baseUrl, paisSeleccionado, token]);
+
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -87,17 +137,19 @@ const Aeropuertos = () => {
     e.preventDefault();
     const url = aeropuertoEditando ? `${baseUrl}/Aeropuerto/${aeropuertoEditando.id}` : `${baseUrl}/Aeropuerto/altaAeropuerto`;
     const method = aeropuertoEditando ? 'PUT' : 'POST';
-    
+    console.log('aeropuerto', nombre, paginaWeb, paisSeleccionado, ciudadSeleccionada, direccion)
+
     try {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Content-Type': 'application/json'
+      },
         body: JSON.stringify({ 
           nombre, 
           paginaWeb, 
-          paisId: paisSeleccionado.id,
+          paisId: paisSeleccionado,
           ciudadId: ciudadSeleccionada,
           direccion 
         }),
@@ -130,6 +182,28 @@ const Aeropuertos = () => {
       console.error('Error de red:', error);
     }
   };
+  const handleCiudadChange = async (codigoIso) => {
+    if (codigoIso) {
+      try {
+        const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (!response.ok) throw new Error('Error al obtener las ciudades');
+  
+        const data = await response.json();
+        setCiudades(data); 
+      } catch (error) {
+        console.error('Error al cargar las ciudades:', error);
+      }
+    } else {
+      setCiudades([]);  
+    }
+  };
 
   const handleEditar = (aeropuerto) => {
     setAeropuertoEditando(aeropuerto);
@@ -145,6 +219,10 @@ const Aeropuertos = () => {
     try {
       const response = await fetch(`${baseUrl}/Aeropuerto/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Content-Type': 'application/json'
+      },
       });
 
       if (response.ok) {
@@ -156,7 +234,6 @@ const Aeropuertos = () => {
       console.error('Error de red:', error);
     }
   };
-  console.log("aeropuertos", aeropuertos)
   const filteredAeropuertos = aeropuertos.filter(aeropuerto =>
     aeropuerto.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -218,8 +295,6 @@ const Aeropuertos = () => {
                 />
               </Grid>
             </Grid>
-
-            {/* Tabla de Aeropuertos */}
             <TableContainer component={Paper} sx={{ mb: 3 }}>
               <Table>
                 <TableHead>
@@ -266,7 +341,6 @@ const Aeropuertos = () => {
 
         {tabValue === 1 && (
           <Box>
-            {/* Formulario de Carga */}
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
@@ -289,43 +363,43 @@ const Aeropuertos = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    select 
-                    fullWidth 
-                    label="País" 
-                    variant="outlined" 
-                    value={paisSeleccionado ? paisSeleccionado.id : ''}
-                    onChange={(e) => {
-                      const selectedPais = paises.find(pais => pais.codigoIso === e.target.value);
-                      setPaisSeleccionado(selectedPais);
-                    }} 
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value="">Seleccione un país</option>
-                    {paises.map((pais) => (
-                      <option key={pais.id} value={pais.codigoIso}>{pais.nombre}</option>
-                    ))}
-                  </TextField>
-                </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    select 
-                    fullWidth 
-                    label="Ciudad" 
-                    variant="outlined" 
-                    value={ciudadSeleccionada} 
-                    onChange={(e) => setCiudadSeleccionada(e.target.value)} 
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value="">Seleccione una ciudad</option>
-                    {ciudades.map((ciudad) => (
-                      <option key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</option>
-                    ))}
-                  </TextField>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>País</InputLabel>
+                    <Select
+                      value={paisSeleccionado ? paisSeleccionado.id : ''}
+                      onChange={(e) => {
+                        const selectedPais = paises.find(pais => pais.id === e.target.value);
+                        if (selectedPais) {
+                          setPaisSeleccionado(selectedPais); 
+                          setCiudades([]);  
+                          handleCiudadChange(selectedPais.codigoIso); 
+                        }
+                      }}
+                    >
+                      <MenuItem value="">Seleccione un país</MenuItem>  
+                      {paises.map((pais) => (
+                        <MenuItem key={pais.id} value={pais.id}>{pais.nombre}</MenuItem>  
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth margin="normal" disabled={ciudades.length === 0}>
+                    <InputLabel>Ciudad</InputLabel>
+                    <Select
+                      value={ciudadSeleccionada || ''}
+                      onChange={(e) => setCiudadSeleccionada(e.target.value)}  
+                    >
+                      <MenuItem value="">Seleccione una ciudad</MenuItem>
+                      {ciudades.map((ciudad) => (
+                        <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>  
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
                 </Grid>
                 <Grid item xs={12}>
                   <TextField 
@@ -338,7 +412,7 @@ const Aeropuertos = () => {
                 </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-                <Button variant="contained" color="primary" type="submit">
+                <Button variant="contained" color="primary" type="submit"  disabled={!isFormComplete()} >
                   {aeropuertoEditando ? 'Actualizar' : 'Cargar'}
                 </Button>
               </Box>

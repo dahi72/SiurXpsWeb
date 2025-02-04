@@ -26,7 +26,7 @@ import Traslados from './componentes/Traslados';
 import AgregarViajeroAGrupo from './componentes/AgregarViajeroAGrupo';
 import DondeEstoy from './componentes/DondeEstoy';
 import CrearItinerario from './componentes/CrearItinerario';
-import VerItinerario from './componentes/VerItinerraio';
+import VerItinerario from './componentes/VerItinerario';
 import RecuperarContrasena from './componentes/RecuperarContrasena'; // Asegúrate de que la ruta sea correcta
 import { Layout } from './componentes/Layout';
 import { SnackbarProvider } from './hooks/useSnackbar';
@@ -42,6 +42,8 @@ import FormularioHotel from './componentes/FormularioHotel';
 import FormularioAeropuerto from './componentes/FormularioAeropuerto';
 import FormularioAerolinea from './componentes/FormularioAerolinea';
 import FormularioVuelo from './componentes/FormularioVuelo';
+import ActividadOpcional from './componentes/ActividadOpcional';
+
 
 
 const App = () => {
@@ -83,9 +85,22 @@ const App = () => {
               <Route path="/editar-aerolinea/:id" element={<FormularioAerolinea />} />
               <Route path="/editar-vuelo/:id" element={<FormularioVuelo />} />
               <Route path="/editar-aeropuerto/:id" element={<FormularioAeropuerto />} />
+<<<<<<< HEAD
               <Route path="/crearGrupo" element={<CrearGrupoDeViaje /> } />                           
                                
           
+=======
+
+              {/* Aquí solo el componente CrearGrupoDeViaje tiene acceso a los contextos de Pais y Ciudad */}
+              <Route path="/crearGrupo" element={
+                  <PaisProvider>
+                  <CiudadProvider>
+                      <CrearGrupoDeViaje />
+                    </CiudadProvider>
+                  </PaisProvider>
+              } />
+              <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
+>>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
               <Route path="/viajeros/:grupoId" element={<Viajeros />} />
               <Route path="/itinerario/:id/editarItinerario" element={<EditarItinerario />} /> 
               <Route path="/donde-estoy2" element={<DondeEstoy2 />} /> 

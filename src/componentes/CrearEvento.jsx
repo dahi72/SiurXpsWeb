@@ -35,8 +35,19 @@ function CrearEvento() {
                 console.error('Error al cargar las actividades:', error);
             }
         };
-    
+        
+        const cargarTraslados = async () => {
+            try {
+                const response = await fetch(`${baseUrl}/Traslado/listado`);
+                const data = await response.json();
+                setTraslados(data);
+            } catch (error) {
+                console.error('Error al cargar los traslados:', error);
+            }
+        };
+
         cargarActividades();
+        cargarTraslados();
     
         const cargarDatos = async () => {
             try {
@@ -83,6 +94,7 @@ function CrearEvento() {
             const response = await fetch(`${baseUrl}/Itinerario/${itinerarioId}/evento`, {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(nuevoEvento)
@@ -93,7 +105,7 @@ function CrearEvento() {
                 setMensajeExito(true);
                 setTimeout(() => {
                     Navigate('/dashboard');
-                }, 3000); // Redirigir después de 3 segundos
+                }, 2000); 
             } else {
                 console.error('Error al crear el evento');
             }
@@ -105,6 +117,9 @@ function CrearEvento() {
     const handleAgregarActividad = () => {
         Navigate(`/agregar-actividad/${itinerarioId}`);
     }; 
+    const handleAgregarTraslado = () => {
+        Navigate(`/agregar-traslado/${itinerarioId}`);
+    };
     const isSubmitDisabled = () => {
         return !(
             evento.fechaYHora &&
@@ -156,6 +171,11 @@ function CrearEvento() {
                     ))}
                     </Select>
                 </FormControl>
+               
+                <Button variant="outlined" onClick={handleAgregarTraslado} sx={{ marginBottom: 3, color: 'primary' }}>
+                    Agregar Traslado
+                </Button>
+
                 <FormControl fullWidth sx={{ marginBottom: 3, gap: 3 }}>
                     <InputLabel>Traslado</InputLabel>
                     <Select
@@ -170,6 +190,7 @@ function CrearEvento() {
                         ))}
                     </Select>
                 </FormControl>
+                
                 <FormControl fullWidth sx={{ marginBottom: 3 }}>
                     <InputLabel>Aeropuerto</InputLabel>
                     <Select

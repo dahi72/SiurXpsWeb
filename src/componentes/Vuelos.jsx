@@ -18,9 +18,6 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from "react-router-dom"; 
 
-
-
-
 const Vuelos = () => {
   const navigate = useNavigate(); 
   const [tabValue, setTabValue] = useState(0);
@@ -30,12 +27,30 @@ const Vuelos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [vueloEditando, setVueloEditando] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
-
+  const token = localStorage.getItem('token');
   
+  const isFormComplete = () => {
+    return (
+      nombre &&
+      horario !== '00:00:00' 
+    );
+  };
+
+
   useEffect(() => {
     const cargarVuelos = async () => {
       try {
-        const response = await fetch(`${baseUrl}/Vuelo/vuelos`);
+
+        const response = await fetch(`${baseUrl}/Vuelo/vuelos`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`, 
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        if (!response.ok) throw new Error('Error al obtener los vuelos');
+    
         const data = await response.json();
         setVuelos(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -44,7 +59,8 @@ const Vuelos = () => {
     };
 
     cargarVuelos();
-  }, [baseUrl]);
+  }, [baseUrl, token]);
+  
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -65,7 +81,8 @@ const Vuelos = () => {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ nombre, horario }),
       });
@@ -82,7 +99,7 @@ const Vuelos = () => {
         setVueloEditando(null);
         setTabValue(0);
       } else {
-        const errorData = await response.json(); // Captura el mensaje de error del servidor
+        const errorData = await response.json(); 
         console.error('Error al guardar el vuelo:', errorData);
       }
     } catch (error) {
@@ -105,15 +122,23 @@ const Vuelos = () => {
       console.error('Error de red:', error);
     }
   };
+  const handleHorarioChange = (e) => {
+    let time = e.target.value;
+   
+    if (/^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/.test(time)) {
+      time = `${time}:00`; 
+    }
+    setHorario(time); 
+  };
 
   const handleEditar = (vuelo) => {
     setVueloEditando(vuelo);
     setNombre(vuelo.nombre);
-    setHorario(vuelo.horario);
     setTabValue(1); 
   };
 
-  const filteredVuelos = vuelos.filter(vuelo =>
+
+  const filteredVuelos =(vuelos || []).filter(vuelo =>
     vuelo.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -185,19 +210,23 @@ const Vuelos = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField 
-                  fullWidth 
-                  label="Horario" 
-                  type="time" 
-                  variant="outlined" 
-                  value={horario} 
-                  onChange={(e) => setHorario(e.target.value)} 
-                  sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
-                />
-              </Grid>
+                    <TextField
+                      fullWidth
+                      label="Horario Check-in"
+                      value={horario} 
+                      onChange={handleHorarioChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                      inputProps={{
+                        pattern: "([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])", 
+                      }}
+                    />
+                  </Grid>
             </Grid>
             <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-              <Button variant="contained" color="primary" type="submit">
+              <Button variant="contained" color="primary" type="submit" disabled={!isFormComplete()} >
                 {vueloEditando ? 'Actualizar' : 'Cargar'}
               </Button>
             </Box>
