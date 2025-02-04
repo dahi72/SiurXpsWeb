@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useUsuario } from "../../hooks/UsuarioContext";
 import { useSnackbar } from "../../hooks/useSnackbar";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const baseUrl = process.env.REACT_APP_API_URL;
 
 export const ActionButtons = () => {
     const id = localStorage.getItem("id");
@@ -14,6 +14,7 @@ export const ActionButtons = () => {
     const { setSnackbarMessage, setSnackbarSeverity, setOpenSnackbar } = useSnackbar();
     const [anchorEl, setAnchorEl] = useState(null);
     const { usuario, setUsuario } = useUsuario();
+
 
     const nombreUsuario = usuario
     ? `${usuario.primerNombre} ${usuario.primerApellido}`
@@ -48,7 +49,7 @@ export const ActionButtons = () => {
         try {
             const nuevoEstado = !estadoCoordinador;
             
-            const response = await fetch(`${API_URL}/Usuario/${id}/estado`, {
+            const response = await fetch(`${baseUrl}/Usuario/${id}/estado`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -147,6 +148,9 @@ export const ActionButtons = () => {
                             {item.label}
                         </MenuItem>
                     ))}
+                    <MenuItem onClick={() => { handleMenuClose(); navigate("/dashboard"); }}>
+                        Dashboard
+                    </MenuItem>
                 </Menu>
     </>);
 }

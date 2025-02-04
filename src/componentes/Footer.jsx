@@ -30,7 +30,7 @@ export const Footer = () => {
           padding: '0 32px',
         }}
       >
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: isDownMd ? 'center' : 'flex-start', marginLeft: isDownMd ? 0 : 20 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: isDownMd ? 'center' : 'flex-start', marginLeft: isDownMd ? 0 : 5 }}>
           <Box sx={{ marginBottom: 2 }}>
             <img
               src={siurBlanco}

@@ -48,6 +48,8 @@ const App = () => {
 
   return (
     <UsuarioProvider>
+         <PaisProvider>
+         <CiudadProvider>
       <SnackbarProvider>
       <BrowserRouter future={{ v7_relativeSplatPath: true }}>
       <Layout>
@@ -81,16 +83,9 @@ const App = () => {
               <Route path="/editar-aerolinea/:id" element={<FormularioAerolinea />} />
               <Route path="/editar-vuelo/:id" element={<FormularioVuelo />} />
               <Route path="/editar-aeropuerto/:id" element={<FormularioAeropuerto />} />
-
-              {/* Aquí solo el componente CrearGrupoDeViaje tiene acceso a los contextos de Pais y Ciudad */}
-              <Route path="/crearGrupo" element={
-                  <PaisProvider>
-                  <CiudadProvider>
-                      <DondeEstoy2 />
-                      <CrearGrupoDeViaje />
-                    </CiudadProvider>
-                  </PaisProvider>
-              } />
+              <Route path="/crearGrupo" element={<CrearGrupoDeViaje /> } />                           
+                               
+          
               <Route path="/viajeros/:grupoId" element={<Viajeros />} />
               <Route path="/itinerario/:id/editarItinerario" element={<EditarItinerario />} /> 
               <Route path="/donde-estoy2" element={<DondeEstoy2 />} /> 
@@ -103,6 +98,8 @@ const App = () => {
           </Layout>
         </BrowserRouter>
         </SnackbarProvider>
+        </CiudadProvider>
+        </PaisProvider>
     </UsuarioProvider>
   );
 }
