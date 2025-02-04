@@ -29,6 +29,14 @@ const Vuelos = () => {
   const baseUrl = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem('token');
   
+  const isFormComplete = () => {
+    return (
+      nombre &&
+      horario !== '00:00:00' 
+    );
+  };
+
+
   useEffect(() => {
     const cargarVuelos = async () => {
       try {
@@ -218,7 +226,7 @@ const Vuelos = () => {
                   </Grid>
             </Grid>
             <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-              <Button variant="contained" color="primary" type="submit">
+              <Button variant="contained" color="primary" type="submit" disabled={!isFormComplete()} >
                 {vueloEditando ? 'Actualizar' : 'Cargar'}
               </Button>
             </Box>

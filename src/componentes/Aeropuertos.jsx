@@ -37,6 +37,17 @@ const Aeropuertos = () => {
   const [aeropuertoEditando, setAeropuertoEditando] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem('token'); 
+
+  const isFormComplete = () => {
+    return (
+      nombre &&
+      paginaWeb &&
+      direccion &&
+      paisSeleccionado &&
+      ciudadSeleccionada 
+    );
+  };
+
   useEffect(() => {
     const cargarAeropuertos = async () => {
         try {
@@ -185,12 +196,12 @@ useEffect(() => {
         if (!response.ok) throw new Error('Error al obtener las ciudades');
   
         const data = await response.json();
-        setCiudades(data);  // Actualizar las ciudades según el país seleccionado
+        setCiudades(data); 
       } catch (error) {
         console.error('Error al cargar las ciudades:', error);
       }
     } else {
-      setCiudades([]);  // Limpiar las ciudades si no hay país seleccionado
+      setCiudades([]);  
     }
   };
 
@@ -284,8 +295,6 @@ useEffect(() => {
                 />
               </Grid>
             </Grid>
-
-            {/* Tabla de Aeropuertos */}
             <TableContainer component={Paper} sx={{ mb: 3 }}>
               <Table>
                 <TableHead>
@@ -332,7 +341,6 @@ useEffect(() => {
 
         {tabValue === 1 && (
           <Box>
-            {/* Formulario de Carga */}
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
@@ -363,15 +371,15 @@ useEffect(() => {
                       onChange={(e) => {
                         const selectedPais = paises.find(pais => pais.id === e.target.value);
                         if (selectedPais) {
-                          setPaisSeleccionado(selectedPais);  // Guardar el objeto completo de país
-                          setCiudades([]);  // Limpiar las ciudades cuando se cambia el país
-                          handleCiudadChange(selectedPais.codigoIso);  // Llamar la función para cargar las ciudades según el país
+                          setPaisSeleccionado(selectedPais); 
+                          setCiudades([]);  
+                          handleCiudadChange(selectedPais.codigoIso); 
                         }
                       }}
                     >
-                      <MenuItem value="">Seleccione un país</MenuItem>  {/* Opción por defecto */}
+                      <MenuItem value="">Seleccione un país</MenuItem>  
                       {paises.map((pais) => (
-                        <MenuItem key={pais.id} value={pais.id}>{pais.nombre}</MenuItem>  // El value es el id del país
+                        <MenuItem key={pais.id} value={pais.id}>{pais.nombre}</MenuItem>  
                       ))}
                     </Select>
                   </FormControl>
@@ -382,11 +390,11 @@ useEffect(() => {
                     <InputLabel>Ciudad</InputLabel>
                     <Select
                       value={ciudadSeleccionada || ''}
-                      onChange={(e) => setCiudadSeleccionada(e.target.value)}  // Actualizar el estado con el id de la ciudad
+                      onChange={(e) => setCiudadSeleccionada(e.target.value)}  
                     >
-                      <MenuItem value="">Seleccione una ciudad</MenuItem>  {/* Opción por defecto */}
+                      <MenuItem value="">Seleccione una ciudad</MenuItem>
                       {ciudades.map((ciudad) => (
-                        <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>  // El value es el id de la ciudad
+                        <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>  
                       ))}
                     </Select>
                   </FormControl>
@@ -404,7 +412,7 @@ useEffect(() => {
                 </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-                <Button variant="contained" color="primary" type="submit">
+                <Button variant="contained" color="primary" type="submit"  disabled={!isFormComplete()} >
                   {aeropuertoEditando ? 'Actualizar' : 'Cargar'}
                 </Button>
               </Box>

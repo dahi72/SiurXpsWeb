@@ -29,6 +29,14 @@ const Aerolineas = () => {
   const [aerolineaEditando, setAerolineaEditando] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
 
+  const isFormComplete = () => {
+    return (
+      nombre &&
+      paginaWeb
+    );
+  };
+
+
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -250,7 +258,7 @@ const Aerolineas = () => {
                 </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-                <Button variant="contained" color="primary" type="submit">
+                <Button variant="contained" color="primary" type="submit" disabled={!isFormComplete()} >
                   {aerolineaEditando ? 'Actualizar' : 'Cargar'}
                 </Button>
               </Box>

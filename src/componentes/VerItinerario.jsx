@@ -10,62 +10,103 @@ const VerItinerario = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const navigate = useNavigate();
     const baseUrl = process.env.REACT_APP_API_URL;
-    const [gruposDeViaje, setGruposDeViaje] = useState({});
-    const token = localStorage.getItem('token');
+    const [gruposDeViaje] = useState({});
+   
+
+  
 
     useEffect(() => {
 
+        const fetchGruposDeViaje = async (coordinadorId) => {
+            const response = await fetch(`${baseUrl}/GrupoDeViaje/coordinador/${coordinadorId}/grupos`);
+            const data = await response.json();
+            return data;  // Devuelve los grupos de viaje del coordinador
+          };
+    
         const fetchItinerarios = async () => {
-            try {
-                console.log('Token:', localStorage.getItem('token'));
-                const response = await fetch(`${baseUrl}/Itinerario/listado`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-        
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
-                }
-        
-                const data = await response.json();
-                console.log('Itinerarios:', data);
-                setItinerarios(data);
-        
-                for (const itinerario of data) {
-                    if (itinerario.grupoDeViajeId) {
-                        console.log('Fetching grupo de viaje con ID:', itinerario.grupoDeViajeId);
-                        const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
-                            method: 'GET',
-                            headers: {
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                                'Content-Type': 'application/json'
-                            }
-                        });
-        
-                        if (!grupoResponse.ok) {
-                            throw new Error(`Error ${grupoResponse.status}: ${grupoResponse.statusText}`);
-                        }
-        
-                        const grupoData = await grupoResponse.json();
-                        console.log('Grupo de viaje:', grupoData);
-                        setGruposDeViaje(prev => ({
-                            ...prev,
-                            [itinerario.grupoDeViajeId]: grupoData.nombre
-                        }));
-                    }
-                }
-            } catch (error) {
-                console.error('Error al obtener itinerarios:', error);
-                setSnackbarMessage('Error al cargar itinerarios');
-                setOpenSnackbar(true);
-            }
+            const response = await fetch(`${baseUrl}/Itinerario/listado`);
+            const data = await response.json();
+            return data;  // Devuelve todos los itinerarios
+          };
+          
+        const filterItinerariosPorGrupo = (itinerarios, gruposDeViaje) => {
+        // Filtramos los itinerarios que pertenecen a los grupos de viaje del coordinador
+        return itinerarios.filter(itinerario =>
+            gruposDeViaje.some(grupo => grupo.id === itinerario.grupoDeViajeId)
+        );
         };
+
+        const obtenerItinerarios = async () => {
+          // Primero obtener los grupos de viaje del coordinador
+          const grupos = await fetchGruposDeViaje(localStorage.getItem('id'));
+    
+          // Luego obtener todos los itinerarios
+          const itinerarios = await fetchItinerarios();
+    
+          // Filtrar los itinerarios por los grupos de viaje
+          const itinerariosFiltrados = filterItinerariosPorGrupo(itinerarios, grupos);
+    
+          // Seteamos los itinerarios filtrados en el estado
+          setItinerarios(itinerariosFiltrados);
+        };
+    
+        obtenerItinerarios();
+      }, [baseUrl]);
+      
+
+    // useEffect(() => {
+
+    //     const fetchItinerarios = async () => {
+    //         try {
+    //             console.log('Token:', localStorage.getItem('token'));
+    //             const response = await fetch(`${baseUrl}/Itinerario/listado`, {
+    //                 method: 'GET',
+    //                 headers: {
+    //                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //             });
+        
+    //             if (!response.ok) {
+    //                 throw new Error(`Error ${response.status}: ${response.statusText}`);
+    //             }
+        
+    //             const data = await response.json();
+    //             console.log('Itinerarios:', data);
+    //             setItinerarios(data);
+        
+    //             for (const itinerario of data) {
+    //                 if (itinerario.grupoDeViajeId) {
+    //                     console.log('Fetching grupo de viaje con ID:', itinerario.grupoDeViajeId);
+    //                     const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
+    //                         method: 'GET',
+    //                         headers: {
+    //                             'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    //                             'Content-Type': 'application/json'
+    //                         }
+    //                     });
+        
+    //                     if (!grupoResponse.ok) {
+    //                         throw new Error(`Error ${grupoResponse.status}: ${grupoResponse.statusText}`);
+    //                     }
+        
+    //                     const grupoData = await grupoResponse.json();
+    //                     console.log('Grupo de viaje:', grupoData);
+    //                     setGruposDeViaje(prev => ({
+    //                         ...prev,
+    //                         [itinerario.grupoDeViajeId]: grupoData.nombre
+    //                     }));
+    //                 }
+    //             }
+    //         } catch (error) {
+    //             console.error('Error al obtener itinerarios:', error);
+    //             setSnackbarMessage('Error al cargar itinerarios');
+    //             setOpenSnackbar(true);
+    //         }
+    //     };
  
-        fetchItinerarios();
-    }, [token, baseUrl, setOpenSnackbar, setSnackbarMessage]);
+    //     fetchItinerarios();
+    // }, [token, baseUrl, setOpenSnackbar, setSnackbarMessage]);
 
     
     const handleVerDetalles = (id) => {

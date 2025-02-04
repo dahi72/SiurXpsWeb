@@ -26,7 +26,7 @@ import Traslados from './componentes/Traslados';
 import AgregarViajeroAGrupo from './componentes/AgregarViajeroAGrupo';
 import DondeEstoy from './componentes/DondeEstoy';
 import CrearItinerario from './componentes/CrearItinerario';
-import VerItinerario from './componentes/VerItinerraio';
+import VerItinerario from './componentes/VerItinerario';
 import RecuperarContrasena from './componentes/RecuperarContrasena'; // Asegúrate de que la ruta sea correcta
 import { Layout } from './componentes/Layout';
 import { SnackbarProvider } from './hooks/useSnackbar';
