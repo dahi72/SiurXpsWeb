@@ -53,7 +53,7 @@ const Login = () => {
             rol: data.rol,
           });
           
-          if (data.debeCambiarContrasenia) {
+          if (data.debeCambiarContrasena) {
             navigate("/cambiar-contrasena");
           } else {
             navigate("/dashboard");
