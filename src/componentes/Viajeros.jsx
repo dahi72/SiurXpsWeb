@@ -84,6 +84,11 @@ const Viajeros = () => {
     navigate('/misGrupos'); 
   };
   
+  const handleActividadOpcional = (viajeroId) => {
+    navigate(`/actividad-opcional/${viajeroId}`);
+  }
+
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
@@ -125,6 +130,14 @@ const Viajeros = () => {
                     <TableCell>
                       <Button variant="contained" color="secondary" onClick={() => handleDeleteClick(viajero)}>
                         Eliminar
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{ ml: 2 }}
+                        onClick={() => handleActividadOpcional(viajero.id)}
+                      >
+                        Inscribir/Describir a actividad opcional
                       </Button>
                     </TableCell>
                   </TableRow>

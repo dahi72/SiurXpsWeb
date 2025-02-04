@@ -42,6 +42,8 @@ import FormularioHotel from './componentes/FormularioHotel';
 import FormularioAeropuerto from './componentes/FormularioAeropuerto';
 import FormularioAerolinea from './componentes/FormularioAerolinea';
 import FormularioVuelo from './componentes/FormularioVuelo';
+import ActividadOpcional from './componentes/ActividadOpcional';
+
 
 const App = () => {
 
@@ -89,6 +91,7 @@ const App = () => {
                     </CiudadProvider>
                   </PaisProvider>
               } />
+              <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
               <Route path="/viajeros/:grupoId" element={<Viajeros />} />
               <Route path="/itinerario/:id/editarItinerario" element={<EditarItinerario />} /> 
               <Route path="/donde-estoy2" element={<DondeEstoy2 />} /> 

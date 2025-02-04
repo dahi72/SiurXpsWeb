@@ -110,12 +110,10 @@ const VerItinerario = () => {
         }
     };
 
-    // Función para formatear la fecha
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
-
 
 
     return (
@@ -172,7 +170,7 @@ const VerItinerario = () => {
             </Box>
             <Snackbar
                 open={openSnackbar}
-                autoHideDuration={3000} // 3 segundos
+                autoHideDuration={3000} 
                 message={snackbarMessage}
                 onClose={handleCloseSnackbar}
             />
