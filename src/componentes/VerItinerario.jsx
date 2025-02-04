@@ -10,115 +10,64 @@ const VerItinerario = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const navigate = useNavigate();
     const baseUrl = process.env.REACT_APP_API_URL;
-    const [gruposDeViaje] = useState({});
+    const [gruposDeViaje, setGruposDeViaje] = useState([]);
    
     useEffect(() => {
-
         const fetchGruposDeViaje = async (coordinadorId) => {
-            const token = localStorage.getItem('token');  
-            const response = await fetch(`${baseUrl}/GrupoDeViaje/coordinador/${coordinadorId}/grupos`, {
-              method: 'GET',  
-              headers: {
-                'Authorization': `Bearer ${token}`,  
-                'Content-Type': 'application/json', 
-              },
-            });
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${baseUrl}/GrupoDeViaje/coordinador/${coordinadorId}/grupos`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
             const data = await response.json();
-            return data;  
-          };
-          
-          const fetchItinerarios = async () => {
-            const token = localStorage.getItem('token');  
-            const response = await fetch(`${baseUrl}/Itinerario/listado`, {
-              method: 'GET',  
-              headers: {
-                'Authorization': `Bearer ${token}`,  
-                'Content-Type': 'application/json',  
-              },
-            });
-            const data = await response.json();
-            return data; 
-          };
-          
+            setGruposDeViaje(data);
+          return data;
+        };
+      
+        const fetchItinerarios = async () => {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${baseUrl}/Itinerario/listado`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          const data = await response.json();
+          return data;
+        };
+      
         const filterItinerariosPorGrupo = (itinerarios, gruposDeViaje) => {
-        // Filtramos los itinerarios que pertenecen a los grupos de viaje del coordinador
-        return itinerarios.filter(itinerario =>
+          return itinerarios.filter(itinerario =>
             gruposDeViaje.some(grupo => grupo.id === itinerario.grupoDeViajeId)
-        );
+          );
         };
-
+      
         const obtenerItinerarios = async () => {
-          // Primero obtener los grupos de viaje del coordinador
           const grupos = await fetchGruposDeViaje(localStorage.getItem('id'));
-    
-          // Luego obtener todos los itinerarios
           const itinerarios = await fetchItinerarios();
-    
-          // Filtrar los itinerarios por los grupos de viaje
+      
+          // Asegúrate de depurar el contenido de los datos
+          console.log('Grupos de Viaje:', grupos);
+          console.log('Itinerarios:', itinerarios);
+      
+          // Filtrar itinerarios solo para los grupos de viaje correspondientes
           const itinerariosFiltrados = filterItinerariosPorGrupo(itinerarios, grupos);
-    
-          // Seteamos los itinerarios filtrados en el estado
-          setItinerarios(itinerariosFiltrados);
+      
+          // Eliminar duplicados si es necesario
+          const itinerariosUnicos = itinerariosFiltrados.filter((itinerario, index, self) =>
+            index === self.findIndex((t) => t.id === itinerario.id)
+          );
+      
+          // Establecer el estado con los itinerarios únicos
+          setItinerarios(itinerariosUnicos);
         };
-    
+      
         obtenerItinerarios();
       }, [baseUrl]);
-      
-
-    // useEffect(() => {
-
-    //     const fetchItinerarios = async () => {
-    //         try {
-    //             console.log('Token:', localStorage.getItem('token'));
-    //             const response = await fetch(`${baseUrl}/Itinerario/listado`, {
-    //                 method: 'GET',
-    //                 headers: {
-    //                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    //                     'Content-Type': 'application/json'
-    //                 }
-    //             });
-        
-    //             if (!response.ok) {
-    //                 throw new Error(`Error ${response.status}: ${response.statusText}`);
-    //             }
-        
-    //             const data = await response.json();
-    //             console.log('Itinerarios:', data);
-    //             setItinerarios(data);
-        
-    //             for (const itinerario of data) {
-    //                 if (itinerario.grupoDeViajeId) {
-    //                     console.log('Fetching grupo de viaje con ID:', itinerario.grupoDeViajeId);
-    //                     const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${itinerario.grupoDeViajeId}`, {
-    //                         method: 'GET',
-    //                         headers: {
-    //                             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    //                             'Content-Type': 'application/json'
-    //                         }
-    //                     });
-        
-    //                     if (!grupoResponse.ok) {
-    //                         throw new Error(`Error ${grupoResponse.status}: ${grupoResponse.statusText}`);
-    //                     }
-        
-    //                     const grupoData = await grupoResponse.json();
-    //                     console.log('Grupo de viaje:', grupoData);
-    //                     setGruposDeViaje(prev => ({
-    //                         ...prev,
-    //                         [itinerario.grupoDeViajeId]: grupoData.nombre
-    //                     }));
-    //                 }
-    //             }
-    //         } catch (error) {
-    //             console.error('Error al obtener itinerarios:', error);
-    //             setSnackbarMessage('Error al cargar itinerarios');
-    //             setOpenSnackbar(true);
-    //         }
-    //     };
- 
-    //     fetchItinerarios();
-    // }, [token, baseUrl, setOpenSnackbar, setSnackbarMessage]);
-
     
     const handleVerDetalles = (id) => {
         navigate(`/itinerario/${id}/eventos`);
@@ -179,54 +128,59 @@ const VerItinerario = () => {
                     {itinerarios.length === 0 ? (
                         <Typography variant="body1">No hay itinerarios para mostrar.</Typography>
                     ) : (
-                        itinerarios.map((itinerario) => (
-                            <Paper key={itinerario.id} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2', marginBottom: 1 }}>
-                                    {gruposDeViaje[itinerario.grupoDeViajeId]
-                                        ? `Itinerario de ${gruposDeViaje[itinerario.grupoDeViajeId]}`
-                                        : 'Cargando nombre del grupo...'}
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666', marginBottom: 1 }}>
-                                    <strong>Fecha de Inicio:</strong> {formatDate(itinerario.fechaInicio)}
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666', marginBottom: 2 }}>
-                                    <strong>Fecha de Fin:</strong> {formatDate(itinerario.fechaFin)}
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    onClick={() => handleVerDetalles(itinerario.id)}
-                                    sx={{ marginTop: 2, marginRight: 1 }}
-                                >
-                                    Ver Detalles
-                                </Button>
-                                <Button
-                                    variant="outlined"
-                                    color="secondary"
-                                    onClick={() => handleEditar(itinerario.id)}
-                                    sx={{ marginTop: 2, marginRight: 1 }}
-                                >
-                                    Editar
-                                </Button>
-                                <Button
-                                    variant="outlined"
-                                    color="error"
-                                    onClick={() => handleEliminar(itinerario.id)}
-                                    sx={{ marginTop: 2 }}
-                                >
-                                    Eliminar
-                                </Button>
-                            </Paper>
-                        ))
-                    )}
-                </Box>
-            </Box>
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={3000} 
-                message={snackbarMessage}
-                onClose={handleCloseSnackbar}
-            />
-        </Container>
+                        itinerarios.map((itinerario) => {
+                            // Encontrar el grupo de viaje asociado al itinerario
+                            const grupoDeViaje = gruposDeViaje.find(grupo => grupo.id === itinerario.grupoDeViajeId);
+                            return (
+                                <Paper key={itinerario.id} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2', marginBottom: 1 }}>
+                                        Itinerario del grupo {grupoDeViaje ? grupoDeViaje.nombre : 'Desconocido'}
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ color: '#666', marginBottom: 1 }}>
+                                        <strong>Fecha de Inicio:</strong> {formatDate(itinerario.fechaInicio)}
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ color: '#666', marginBottom: 2 }}>
+                                        <strong>Fecha de Fin:</strong> {formatDate(itinerario.fechaFin)}
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => handleVerDetalles(itinerario.id)}
+                                        sx={{ marginTop: 2, marginRight: 1 }}
+                                    >
+                                        Ver Detalles
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="secondary"
+                                        onClick={() => handleEditar(itinerario.id)}
+                                        sx={{ marginTop: 2, marginRight: 1 }}
+                                    >
+                                        Editar
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        onClick={() => handleEliminar(itinerario.id)}
+                                        sx={{ marginTop: 2 }}
+                                    >
+                                        Eliminar
+                                    </Button>
+                                </Paper>
+                                 );
+                                }
+                            ))
+                        }
+                            </Box>
+                            </Box>
+                        
+                            <Snackbar
+                                open={openSnackbar}
+                                autoHideDuration={3000} 
+                                message={snackbarMessage}
+                                onClose={handleCloseSnackbar}
+                            />
+                        </Container>
+        
     );
 };
 

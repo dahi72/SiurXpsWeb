@@ -15,12 +15,14 @@ const CrearItinerario = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const token = localStorage.getItem('token');
+    const usuarioId = localStorage.getItem("id");
 
     const cargarGrupos = useCallback(() => {
         setLoading(true);
-        fetch(`${baseUrl}/GrupoDeViaje/coordinador/${localStorage.getItem("id")}/grupos`, {
+        fetch(`${baseUrl}/GrupoDeViaje/coordinador/${usuarioId}/grupos`, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
@@ -46,7 +48,7 @@ const CrearItinerario = () => {
                 setOpenSnackbar(true);
             })
             .finally(() => setLoading(false));
-    }, [baseUrl]);
+    }, [token, baseUrl, usuarioId]);
 
     useEffect(() => {
         cargarGrupos();
@@ -66,7 +68,7 @@ const CrearItinerario = () => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(nuevoItinerario),
     });
@@ -79,7 +81,7 @@ const CrearItinerario = () => {
     
     const itinerariosResponse = await fetch(`${baseUrl}/Itinerario/Listado`, {
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
         }
     });
 
