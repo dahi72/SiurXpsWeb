@@ -123,37 +123,42 @@ export const ActionButtons = () => {
                 </IconButton>
 
                 <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                >
-                    <MenuItem sx={{ pointerEvents: 'none' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Badge
-                                overlap="circular"
-                                variant="dot"
-                                sx={{
-                                    '& .MuiBadge-badge': {
-                                        backgroundColor: getEstadoColor(),
-                                        width: 8,
-                                        height: 8,
-                                        borderRadius: '50%',
-                                    }
-                                }}
-                            />
-                            <Typography>
-                                Estado: {estadoCoordinador ? 'Activo' : 'Inactivo'}
-                            </Typography>
-                        </Box>
-                    </MenuItem>
-                    <MenuItem onClick={toggleEstado}>
-                        Cambiar a {estadoCoordinador ? 'Inactivo' : 'Activo'}
-                    </MenuItem>
-                    {filteredMenuItems.map((item, index) => (
-                    <MenuItem key={index} onClick={() => { handleMenuClose(); navigate(item.action); }}>
-                        {item.label}
-                    </MenuItem>
-                ))}
-                </Menu>
+    anchorEl={anchorEl}
+    open={Boolean(anchorEl)}
+    onClose={handleMenuClose}
+>
+    <MenuItem sx={{ pointerEvents: 'none' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Badge
+                overlap="circular"
+                variant="dot"
+                sx={{
+                    '& .MuiBadge-badge': {
+                        backgroundColor: getEstadoColor(),
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                    }
+                }}
+            />
+            <Typography>
+                Estado: {estadoCoordinador ? 'Activo' : 'Inactivo'}
+            </Typography>
+        </Box>
+    </MenuItem>
+    <MenuItem onClick={toggleEstado}>
+        Cambiar a {estadoCoordinador ? 'Inactivo' : 'Activo'}
+    </MenuItem>
+    {/* Cambié esto para usar filteredMenuItems en lugar de menuItems */}
+    {filteredMenuItems.map((item, index) => (
+        <MenuItem key={index} onClick={() => { handleMenuClose(); navigate(item.action); }}>
+            {item.label}
+        </MenuItem>
+    ))}
+    <MenuItem onClick={() => { handleMenuClose(); navigate("/dashboard"); }}>
+        Dashboard
+    </MenuItem>
+</Menu>
+
     </>);
 }

@@ -27,7 +27,7 @@ import AgregarViajeroAGrupo from './componentes/AgregarViajeroAGrupo';
 import DondeEstoy from './componentes/DondeEstoy';
 import CrearItinerario from './componentes/CrearItinerario';
 import VerItinerario from './componentes/VerItinerario';
-import RecuperarContrasena from './componentes/RecuperarContrasena'; // Asegúrate de que la ruta sea correcta
+import RecuperarContrasena from './componentes/RecuperarContrasena'; 
 import { Layout } from './componentes/Layout';
 import { SnackbarProvider } from './hooks/useSnackbar';
 import CrearEvento from './componentes/CrearEvento';
@@ -85,22 +85,14 @@ const App = () => {
               <Route path="/editar-aerolinea/:id" element={<FormularioAerolinea />} />
               <Route path="/editar-vuelo/:id" element={<FormularioVuelo />} />
               <Route path="/editar-aeropuerto/:id" element={<FormularioAeropuerto />} />
-
-              {/* Aquí solo el componente CrearGrupoDeViaje tiene acceso a los contextos de Pais y Ciudad */}
-              <Route path="/crearGrupo" element={
-                  <PaisProvider>
-                  <CiudadProvider>
-                      <CrearGrupoDeViaje />
-                    </CiudadProvider>
-                  </PaisProvider>
-              } />
-              <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
+              <Route path="/crearGrupo" element={<CrearGrupoDeViaje /> } />                           
               <Route path="/viajeros/:grupoId" element={<Viajeros />} />
               <Route path="/itinerario/:id/editarItinerario" element={<EditarItinerario />} /> 
               <Route path="/donde-estoy2" element={<DondeEstoy2 />} /> 
               <Route path="/cambiar-contrasena" element={<CambiarContrasena />} />
               <Route path="/registro" element={<Registro />} />
               <Route path="/agregarViajeroAGrupo/:grupoId" element={<AgregarViajeroAGrupo />} />
+              <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
              
           </Routes>
          

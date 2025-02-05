@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, TextField, MenuItem, Snackbar, Alert, Box, Typography } from '@mui/material';
+import { Button, TextField, MenuItem, Snackbar, Alert, Box, Typography, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 
@@ -25,7 +25,18 @@ const CrearItinerario = () => {
                 'Authorization': `Bearer ${token}`
             }
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        setSnackbarMessage('No tienes grupos de viaje creados. No puede crear un itinerario.');
+                        setSnackbarSeverity('info');
+                        setOpenSnackbar(true);
+                        return []; // Retornamos un array vacío en caso de 404
+                    }
+                    throw new Error('Ocurrió un error al cargar los grupos');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.length === 0) {
                     setSnackbarMessage('Debe crear un grupo antes de crear un itinerario.');
@@ -35,7 +46,7 @@ const CrearItinerario = () => {
                 setGrupos(data);
             })
             .catch(error => {
-                setError('Ocurrió un error al cargar los grupos.');
+                setError(error.message || 'Ocurrió un error al cargar los grupos.');
                 setOpenSnackbar(true);
             })
             .finally(() => setLoading(false));
@@ -59,7 +70,6 @@ const CrearItinerario = () => {
                 fechaInicio,
                 fechaFin,
             };
-        
             const response = await fetch(`${baseUrl}/Itinerario/altaItinerario`, {
                 method: 'POST',
                 headers: {
@@ -70,6 +80,8 @@ const CrearItinerario = () => {
             });
 
             if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error del servidor:', errorData);
                 throw new Error('Error al crear el itinerario');
             }
 
@@ -91,10 +103,15 @@ const CrearItinerario = () => {
 
             navigate(`/crear-eventos/${nuevoItinerarioId}`);
         } catch (error) {
+            console.error('Error al crear el itinerario:', error);
             setSnackbarMessage('Error al crear el itinerario.');
             setSnackbarSeverity('error');
             setOpenSnackbar(true);
         }
+    };
+
+    const handleCrearGrupo = () => {
+        navigate("/crearGrupo"); // Redirige al componente CrearGrupo
     };
 
     const handleCloseSnackbar = () => {
@@ -102,21 +119,17 @@ const CrearItinerario = () => {
     };
 
     return (
-        <Box 
-            display="flex" 
-            flexDirection="column" 
-            minHeight="100vh"
-        >
+        <Box display="flex" flexDirection="column" minHeight="100vh">
             <Header />
-            <Box 
-                component="main" 
-                sx={{ 
-                    padding: 3, 
-                    marginTop: 8, 
-                    flex: 1, 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center' 
+            <Box
+                component="main"
+                sx={{
+                    padding: 3,
+                    marginTop: 8,
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
                 }}
             >
                 <Typography variant="h4" gutterBottom>
@@ -128,29 +141,34 @@ const CrearItinerario = () => {
                     </Typography>
                 )}
                 {error && (
-    <Typography color="error" variant="h6">
-        {error}
-    </Typography>
-)}
-
-                {grupos.length === 0 && !loading && (
-                    <Box textAlign="center" mt={2}>
-                        <Typography color="error" variant="h6">
-                            Debe crear un grupo antes de crear un itinerario.
-                        </Typography>
-                        <Button 
-                            variant="contained" 
-                            color="primary" 
-                            sx={{ marginTop: 2 }}
-                            onClick={() => navigate('/crear-grupo')}
-                        >
-                            Crear Grupo
-                        </Button>
-                    </Box>
+                    <Snackbar
+                        open={openSnackbar}
+                        autoHideDuration={4000}
+                        onClose={handleCloseSnackbar}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    >
+                        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                            {error}
+                        </Alert>
+                    </Snackbar>
                 )}
-
-                {grupos.length > 0 && (
-                    <Box 
+                {/* Mostrar mensaje si no hay grupos */}
+                {!loading && grupos.length === 0 ? (
+                    <Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'grey.50' }}>
+                        <Typography variant="h6" color="text.secondary">
+                            No tienes grupos de viaje creados. No puede crear un itinerario.
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleCrearGrupo}
+                            sx={{ marginTop: 2 }}
+                        >
+                            Crear un Grupo
+                        </Button>
+                    </Paper>
+                ) : (
+                    <Box
                         sx={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -198,12 +216,11 @@ const CrearItinerario = () => {
                             InputLabelProps={{ shrink: true }}
                             sx={{ marginBottom: 2 }}
                         />
-                        <Button 
-                            variant="contained" 
-                            color="primary" 
+                        <Button
+                            variant="contained"
+                            color="primary"
                             onClick={handleCrearItinerario}
                             sx={{ marginTop: 2 }}
-                            disabled={!grupoViaje}
                         >
                             Crear Itinerario
                         </Button>
@@ -211,17 +228,13 @@ const CrearItinerario = () => {
                 )}
             </Box>
 
-            <Snackbar 
-                open={openSnackbar} 
-                autoHideDuration={4000} 
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={4000}
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-                <Alert 
-                    onClose={handleCloseSnackbar} 
-                    severity={snackbarSeverity}
-                    sx={{ width: '100%' }}
-                >
+                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
