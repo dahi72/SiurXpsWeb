@@ -9,7 +9,7 @@ import {
     Container,
     Divider,
     CircularProgress,
-    List,
+   
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -210,7 +210,6 @@ const VerItinerario = () => {
                     })}
                 </Box>
             )}
-
             <Snackbar 
                 open={success} 
                 autoHideDuration={3000} 
