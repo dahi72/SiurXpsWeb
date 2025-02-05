@@ -1,13 +1,25 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Container, TextField, Button, Typography, FormControl, Alert, Box,Input } from '@mui/material';
+import React, { useState, useContext } from 'react';
+import { 
+    Container, 
+    TextField, 
+    Button, 
+    Typography, 
+    Alert, 
+    Box,
+    Paper,
+    Divider,
+    ListItemText,
+    ListItem,
+    List,
+    Snackbar
+} from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useNavigate } from 'react-router-dom';
 import { UsuarioContext } from '../hooks/UsuarioContext';
 import dayjs from 'dayjs';
-import { useLocation } from 'react-router-dom';
-
+import { Upload} from 'lucide-react';
 
 const MisDatos = () => {
   const { usuario, setUsuario } = useContext(UsuarioContext);
@@ -20,16 +32,7 @@ const MisDatos = () => {
   const [vacuna, setVacuna] = useState(null);
   const [seguro, setSeguro] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
-  const location = useLocation();
- 
-  // Si location.state tiene datos, actualiza el usuario del contexto
-  useEffect(() => {
-    if (location.state?.viajero) {
-      setUsuario(location.state.viajero);
-    }
-    console.log("usuario", usuario);
-  }, [location.state, setUsuario, usuario]);
-
+  
   const handleFileChange = (e, tipoDocumento) => {
     const file = e.target.files[0];
     if (file) {
@@ -52,7 +55,6 @@ const MisDatos = () => {
     }
   };
 
-
   const handleDateChange = (date) => {
     if (date) {
       setFechaNac(dayjs(date).startOf('day'));
@@ -68,7 +70,6 @@ const MisDatos = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-
   
     Object.keys(usuario).forEach((key) => {
       if (usuario[key] !== null && usuario[key] !== undefined) {
@@ -77,13 +78,11 @@ const MisDatos = () => {
     });
 
     formData.append("fechaNac", fechaNac.format("YYYY-MM-DD"));
-
     
     if (pasaporte) formData.append("pasaporteDocumento", pasaporte);
     if (visa) formData.append("visaDocumento", visa);
     if (vacuna) formData.append("vacunasDocumento", vacuna);
     if (seguro) formData.append("seguroDeViajeDocumento", seguro);
-    
 
     const token = localStorage.getItem("token");
     const id = localStorage.getItem("id");
@@ -121,7 +120,6 @@ const MisDatos = () => {
     .then((data) => {
       setSuccess(true);
       setError(null);
- 
       setTimeout(() => {
         setSuccess(false);
         navigate("/dashboard"); 
@@ -130,7 +128,6 @@ const MisDatos = () => {
     .catch((error) => {
       setSuccess(false);
       setError(error.message);
-   
       setTimeout(() => {
         setError(null);
         navigate("/dashboard"); 
@@ -138,17 +135,35 @@ const MisDatos = () => {
     });
   };
 
-
   return (
-    <>
-
-      <Container maxWidth="md" sx={{ mt: 5, p: 4, boxShadow: 3, borderRadius: 2, backgroundColor: '#fff' }}>
-        <Typography variant="h4" align="center" gutterBottom>
+    <Container maxWidth="lg">
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        mb: 4,
+        borderBottom: 1,
+        borderColor: 'divider',
+        pb: 2,
+        justifyContent: 'center',
+        width: '100%'
+      }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
           Mis Datos
         </Typography>
-        
-        <form onSubmit={handleSubmit}>
-          <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2} mb={2}>
+      </Box>
+
+      <Box sx={{ 
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+        gap: 3
+      }}>
+        {/* Datos Personales */}
+        <Paper elevation={3} sx={{ p: 3, transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.03)', boxShadow: 6 } }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+            Datos Personales
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
               label="Primer Nombre"
               name="primerNombre"
@@ -156,7 +171,8 @@ const MisDatos = () => {
               onChange={handleInputChange}
               fullWidth
               required
-              />
+              size="small"
+            />
             <TextField
               label="Primer Apellido"
               name="primerApellido"
@@ -164,17 +180,15 @@ const MisDatos = () => {
               onChange={handleInputChange}
               fullWidth
               required
-              />
-          </Box>
-
-          {/* Segundo Nombre y Segundo Apellido */}
-          <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2} mb={2}>
+              size="small"
+            />
             <TextField
               label="Segundo Nombre"
               name="segundoNombre"
               value={usuario.segundoNombre}
               onChange={handleInputChange}
               fullWidth
+              size="small"
             />
             <TextField
               label="Segundo Apellido"
@@ -182,17 +196,25 @@ const MisDatos = () => {
               value={usuario.segundoApellido}
               onChange={handleInputChange}
               fullWidth
+              size="small"
             />
           </Box>
+        </Paper>
 
-          {/* Nro. Pasaporte y Correo Electrónico */}
-          <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2} mb={2}>
+        {/* Información de Contacto */}
+        <Paper elevation={3} sx={{ p: 3, transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.03)', boxShadow: 6 } }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+            Información de Contacto
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
               label="Nro. Pasaporte"
               name="pasaporte"
               value={usuario.pasaporte}
               onChange={handleInputChange}
               fullWidth
+              size="small"
             />
             <TextField
               label="Correo Electrónico"
@@ -201,117 +223,194 @@ const MisDatos = () => {
               onChange={handleInputChange}
               fullWidth
               type="email"
+              size="small"
             />
-          </Box>
-
-          {/* Teléfono y Fecha de Nacimiento */}
-          <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={3} mb={3}>
             <TextField
               label="Teléfono"
               name="telefono"
               value={usuario.telefono}
               onChange={handleInputChange}
               fullWidth
-          
+              size="small"
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Fecha de Nacimiento"
                 value={fechaNac}
                 onChange={handleDateChange}
-                renderInput={(params) => <TextField {...params} fullWidth />}
+                renderInput={(params) => <TextField {...params} fullWidth size="small" />}
               />
             </LocalizationProvider>
           </Box>
+        </Paper>
 
-         {/* Documentos: Pasaporte, Visa, Vacunas, Seguro de Viaje */}
-<Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2} mb={2}>
-  <FormControl fullWidth>
-    <Typography>Pasaporte:</Typography>
-    {pasaporte ? (
-      <Typography>{pasaporte.name}</Typography>
-    ) : usuario?.pasaporteDocumentoRuta ? (
-      <a href={`https://siurxpss.azurewebsites.net/${usuario.pasaporteDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
-        Ver pasaporte actual
-      </a>
-    ) : (
-      <Typography>No cargado</Typography>
-    )}
-    <Input
-      type="file"
-      onChange={(e) => handleFileChange(e, "pasaporte")}
-      inputProps={{ accept: '.jpg,.png,.pdf' }}
-    />
-  </FormControl>
+        {/* Documentos */}
+        <Paper elevation={3} sx={{ p: 3, transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.03)', boxShadow: 6 } }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+            Documentos
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <List>
+            <ListItem>
+              <ListItemText 
+                primary="Pasaporte"
+                secondary={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                    {pasaporte ? (
+                      <Typography variant="body2">{pasaporte.name}</Typography>
+                    ) : usuario?.pasaporteDocumentoRuta ? (
+                      <a href={`https://siurxpss.azurewebsites.net/${usuario.pasaporteDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+                        Ver documento actual
+                      </a>
+                    ) : (
+                      <Typography variant="body2">No cargado</Typography>
+                    )}
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      size="small"
+                      startIcon={<Upload size={16} />}
+                    >
+                      Subir
+                      <input
+                        type="file"
+                        hidden
+                        onChange={(e) => handleFileChange(e, "pasaporte")}
+                        accept=".jpg,.png,.pdf"
+                      />
+                    </Button>
+                  </Box>
+                }
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText 
+                primary="Visa"
+                secondary={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                    {visa ? (
+                      <Typography variant="body2">{visa.name}</Typography>
+                    ) : usuario?.visaDocumentoRuta ? (
+                      <a href={`https://siurxpss.azurewebsites.net/${usuario.visaDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+                        Ver documento actual
+                      </a>
+                    ) : (
+                      <Typography variant="body2">No cargado</Typography>
+                    )}
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      size="small"
+                      startIcon={<Upload size={16} />}
+                    >
+                      Subir
+                      <input
+                        type="file"
+                        hidden
+                        onChange={(e) => handleFileChange(e, "visa")}
+                        accept=".jpg,.png,.pdf"
+                      />
+                    </Button>
+                  </Box>
+                }
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText 
+                primary="Certificado de Vacunación"
+                secondary={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                    {vacuna ? (
+                      <Typography variant="body2">{vacuna.name}</Typography>
+                    ) : usuario?.vacunasDocumentoRuta ? (
+                      <a href={`https://siurxpss.azurewebsites.net/${usuario.vacunasDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+                        Ver documento actual
+                      </a>
+                    ) : (
+                      <Typography variant="body2">No cargado</Typography>
+                    )}
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      size="small"
+                      startIcon={<Upload size={16} />}
+                    >
+                      Subir
+                      <input
+                        type="file"
+                        hidden
+                        onChange={(e) => handleFileChange(e, "vacuna")}
+                        accept=".jpg,.png,.pdf"
+                      />
+                    </Button>
+                  </Box>
+                }
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText 
+                primary="Seguro de Viaje"
+                secondary={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                    {seguro ? (
+                      <Typography variant="body2">{seguro.name}</Typography>
+                    ) : usuario?.seguroDeViajeDocumentoRuta ? (
+                      <a href={`https://siurxpss.azurewebsites.net/${usuario.seguroDeViajeDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
+                        Ver documento actual
+                      </a>
+                    ) : (
+                      <Typography variant="body2">No cargado</Typography>
+                    )}
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      size="small"
+                      startIcon={<Upload size={16} />}
+                    >
+                      Subir
+                      <input
+                        type="file"
+                        hidden
+                        onChange={(e) => handleFileChange(e, "seguro")}
+                        accept=".jpg,.png,.pdf"
+                      />
+                    </Button>
+                  </Box>
+                }
+              />
+            </ListItem>
+          </List>
+        </Paper>
+      </Box>
 
-  <FormControl fullWidth>
-    <Typography>Visa :</Typography>
-    {visa ? (
-      <Typography>{visa.name}</Typography>
-    ) : usuario?.visaDocumentoRuta ? (
-      <a href={`https://siurxpss.azurewebsites.net/${usuario.visaDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
-        Ver visa actual
-      </a>
-    ) : (
-      <Typography>No cargado</Typography>
-    )}
-    <Input
-      type="file"
-      onChange={(e) => handleFileChange(e, "visa")}
-      inputProps={{ accept: '.jpg,.png,.pdf' }}
-    />
-  </FormControl>
-</Box>
+      <Box sx={{ mt: 3 }}>
+        <Button 
+          type="submit" 
+          variant="contained" 
+          fullWidth
+          size="large"
+          onClick={handleSubmit}
+          sx={{
+            py: 1.5,
+            fontWeight: 'bold',
+            transition: 'transform 0.2s ease-in-out',
+            '&:hover': {
+              transform: 'scale(1.02)'
+            }
+          }}
+        >
+          Guardar Cambios
+        </Button>
+      </Box>
 
-<Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2} mb={2}>
-  <FormControl fullWidth>
-    <Typography>Certificado de vacunación:</Typography>
-    {vacuna ? (
-      <Typography>{vacuna.name}</Typography>
-    ) : usuario?.vacunasDocumentoRuta ? (
-      <a href={`https://siurxpss.azurewebsites.net/${usuario.vacunasDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
-        Ver certificado de vacunas actual
-      </a>
-    ) : (
-      <Typography>No cargado</Typography>
-    )}
-    <Input
-      type="file"
-      onChange={(e) => handleFileChange(e, "vacuna")}
-      inputProps={{ accept: '.jpg,.png,.pdf' }}
-    />
-  </FormControl>
+      <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+        <Alert severity="success">Operación realizada con éxito</Alert>
+      </Snackbar>
 
-  <FormControl fullWidth>
-    <Typography>Seguro de Viaje:</Typography>
-    {seguro ? (
-      <Typography>{seguro.name}</Typography>
-    ) : usuario?.seguroDeViajeDocumentoRuta ? (
-      <a href={`https://siurxpss.azurewebsites.net/${usuario.seguroDeViajeDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
-        Ver seguro actual
-      </a>
-    ) : (
-      <Typography>No cargado</Typography>
-    )}
-    <Input
-      type="file"
-      onChange={(e) => handleFileChange(e, "seguro")}
-      inputProps={{ accept: '.jpg,.png,.pdf' }}
-    />
-  </FormControl>
-</Box>
-          {/* Botón de Guardar Cambios */}
-          <Box mt={3}>
-            <Button type="submit" variant="contained" fullWidth>
-              Guardar Cambios
-            </Button>
-          </Box>
-        </form>
-
-        {success && <Alert severity="success" sx={{ mt: 2 }}>Datos actualizados con éxito.</Alert>}
-        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-      </Container>
-    </>
+      <Snackbar open={Boolean(error)} autoHideDuration={3000} onClose={() => setError(null)}>
+        <Alert severity="error">{error}</Alert>
+      </Snackbar>
+    </Container>
   );
 };
 
