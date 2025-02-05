@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/static/css/main.f8b40e9d.css",
-    "main.js": "/static/js/main.793325f3.js",
+    "main.js": "/static/js/main.57eb8dd3.js",
     "static/media/Playa.jpeg": "/static/media/Playa.8091063eef347c378956.jpeg",
     "static/media/xperiencias.png": "/static/media/xperiencias.d9d3b1537a639c21e429.png",
     "static/media/SiurBlanco.png": "/static/media/SiurBlanco.0fe902af93323265588c.png",
     "index.html": "/index.html",
     "main.f8b40e9d.css.map": "/static/css/main.f8b40e9d.css.map",
-    "main.793325f3.js.map": "/static/js/main.793325f3.js.map"
+    "main.57eb8dd3.js.map": "/static/js/main.57eb8dd3.js.map"
   },
   "entrypoints": [
     "static/css/main.f8b40e9d.css",
-    "static/js/main.793325f3.js"
+    "static/js/main.57eb8dd3.js"
   ]
 }
