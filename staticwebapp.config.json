@@ -2,5 +2,15 @@
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/images/*.{png,jpg,gif}", "/css/*"]
-  }
+  },
+  "routes": [
+    {
+      "route": "/static/js/*",
+      "mimeType": "application/javascript"
+    },
+    {
+      "route": "/static/css/*",
+      "mimeType": "text/css"
+    }
+  ]
 }
