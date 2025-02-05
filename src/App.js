@@ -85,11 +85,6 @@ const App = () => {
               <Route path="/editar-aerolinea/:id" element={<FormularioAerolinea />} />
               <Route path="/editar-vuelo/:id" element={<FormularioVuelo />} />
               <Route path="/editar-aeropuerto/:id" element={<FormularioAeropuerto />} />
-<<<<<<< HEAD
-              <Route path="/crearGrupo" element={<CrearGrupoDeViaje /> } />                           
-                               
-          
-=======
 
               {/* Aquí solo el componente CrearGrupoDeViaje tiene acceso a los contextos de Pais y Ciudad */}
               <Route path="/crearGrupo" element={
@@ -100,7 +95,6 @@ const App = () => {
                   </PaisProvider>
               } />
               <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
               <Route path="/viajeros/:grupoId" element={<Viajeros />} />
               <Route path="/itinerario/:id/editarItinerario" element={<EditarItinerario />} /> 
               <Route path="/donde-estoy2" element={<DondeEstoy2 />} /> 

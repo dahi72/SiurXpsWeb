@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, TextField, MenuItem, Snackbar, Alert, Box, Typography, Paper } from '@mui/material';
+import { Button, TextField, MenuItem, Snackbar, Alert, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 
@@ -25,22 +25,7 @@ const CrearItinerario = () => {
                 'Authorization': `Bearer ${token}`
             }
         })
-<<<<<<< HEAD
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        setSnackbarMessage('No tienes grupos de viaje creados. No puede crear un itinerario.');
-                        setSnackbarSeverity('info');
-                        setOpenSnackbar(true);
-                        return []; // Retornamos un array vacío en caso de 404
-                    }
-                    throw new Error('Ocurrió un error al cargar los grupos');
-                }
-                return response.json();
-            })
-=======
             .then(response => response.json())
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
             .then(data => {
                 if (data.length === 0) {
                     setSnackbarMessage('Debe crear un grupo antes de crear un itinerario.');
@@ -50,11 +35,7 @@ const CrearItinerario = () => {
                 setGrupos(data);
             })
             .catch(error => {
-<<<<<<< HEAD
-                setError(error.message || 'Ocurrió un error al cargar los grupos.');
-=======
                 setError('Ocurrió un error al cargar los grupos.');
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
                 setOpenSnackbar(true);
             })
             .finally(() => setLoading(false));
@@ -78,11 +59,7 @@ const CrearItinerario = () => {
                 fechaInicio,
                 fechaFin,
             };
-<<<<<<< HEAD
-
-=======
         
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
             const response = await fetch(`${baseUrl}/Itinerario/altaItinerario`, {
                 method: 'POST',
                 headers: {
@@ -93,11 +70,6 @@ const CrearItinerario = () => {
             });
 
             if (!response.ok) {
-<<<<<<< HEAD
-                const errorData = await response.json();
-                console.error('Error del servidor:', errorData);
-=======
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
                 throw new Error('Error al crear el itinerario');
             }
 
@@ -119,41 +91,17 @@ const CrearItinerario = () => {
 
             navigate(`/crear-eventos/${nuevoItinerarioId}`);
         } catch (error) {
-<<<<<<< HEAD
-            console.error('Error al crear el itinerario:', error);
-=======
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
             setSnackbarMessage('Error al crear el itinerario.');
             setSnackbarSeverity('error');
             setOpenSnackbar(true);
         }
     };
-<<<<<<< HEAD
-
-    const handleCrearGrupo = () => {
-        navigate("/crearGrupo"); // Redirige al componente CrearGrupo
-    };
-=======
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
     };
 
     return (
-<<<<<<< HEAD
-        <Box display="flex" flexDirection="column" minHeight="100vh">
-            <Header />
-            <Box
-                component="main"
-                sx={{
-                    padding: 3,
-                    marginTop: 8,
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
-=======
         <Box 
             display="flex" 
             flexDirection="column" 
@@ -169,64 +117,17 @@ const CrearItinerario = () => {
                     display: 'flex', 
                     flexDirection: 'column', 
                     alignItems: 'center' 
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
                 }}
             >
                 <Typography variant="h4" gutterBottom>
                     Crear Itinerario
                 </Typography>
-<<<<<<< HEAD
-=======
-
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
                 {loading && (
                     <Typography variant="h6" color="primary">
                         Cargando grupos...
                     </Typography>
                 )}
                 {error && (
-<<<<<<< HEAD
-                    <Snackbar
-                        open={openSnackbar}
-                        autoHideDuration={4000}
-                        onClose={handleCloseSnackbar}
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                    >
-                        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-                            {error}
-                        </Alert>
-                    </Snackbar>
-                )}
-                {/* Mostrar mensaje si no hay grupos */}
-                {!loading && grupos.length === 0 ? (
-                    <Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'grey.50' }}>
-                        <Typography variant="h6" color="text.secondary">
-                            No tienes grupos de viaje creados. No puede crear un itinerario.
-                        </Typography>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleCrearGrupo}
-                            sx={{ marginTop: 2 }}
-                        >
-                            Crear un Grupo
-                        </Button>
-                    </Paper>
-                ) : (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            backgroundColor: 'white',
-                            borderRadius: 2,
-                            boxShadow: 3,
-                            padding: 3,
-                            maxWidth: 600,
-                            width: '100%',
-                        }}
-                    >
-=======
     <Typography color="error" variant="h6">
         {error}
     </Typography>
@@ -262,7 +163,6 @@ const CrearItinerario = () => {
                             width: '100%',
                         }}
                     >
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
                         <TextField
                             select
                             label="Grupo de Viaje"
@@ -298,20 +198,12 @@ const CrearItinerario = () => {
                             InputLabelProps={{ shrink: true }}
                             sx={{ marginBottom: 2 }}
                         />
-<<<<<<< HEAD
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleCrearItinerario}
-                            sx={{ marginTop: 2 }}
-=======
                         <Button 
                             variant="contained" 
                             color="primary" 
                             onClick={handleCrearItinerario}
                             sx={{ marginTop: 2 }}
                             disabled={!grupoViaje}
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
                         >
                             Crear Itinerario
                         </Button>
@@ -319,15 +211,6 @@ const CrearItinerario = () => {
                 )}
             </Box>
 
-<<<<<<< HEAD
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={4000}
-                onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
-=======
             <Snackbar 
                 open={openSnackbar} 
                 autoHideDuration={4000} 
@@ -339,7 +222,6 @@ const CrearItinerario = () => {
                     severity={snackbarSeverity}
                     sx={{ width: '100%' }}
                 >
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
                     {snackbarMessage}
                 </Alert>
             </Snackbar>

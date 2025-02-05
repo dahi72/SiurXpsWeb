@@ -149,22 +149,11 @@ export const ActionButtons = () => {
                     <MenuItem onClick={toggleEstado}>
                         Cambiar a {estadoCoordinador ? 'Inactivo' : 'Activo'}
                     </MenuItem>
-<<<<<<< HEAD
-                    {menuItems.map((item, index) => (
-                        <MenuItem key={index} onClick={() => { handleMenuClose(); navigate(item.action); }}>
-                            {item.label}
-                        </MenuItem>
-                    ))}
-                    <MenuItem onClick={() => { handleMenuClose(); navigate("/dashboard"); }}>
-                        Dashboard
-                    </MenuItem>
-=======
                     {filteredMenuItems.map((item, index) => (
                     <MenuItem key={index} onClick={() => { handleMenuClose(); navigate(item.action); }}>
                         {item.label}
                     </MenuItem>
                 ))}
->>>>>>> 88b1e3d3321f48c8c03a08df85a5b87303b9433d
                 </Menu>
     </>);
 }
