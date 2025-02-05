@@ -26,7 +26,7 @@ const CambioContrasena = () => {
     }
 
     const token = localStorage.getItem('token');
-    fetch(`${baseUrl}/Usuario/cambiarContrasenia`, {
+    fetch(`${baseUrl}/Usuario/cambiarContrasena`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
