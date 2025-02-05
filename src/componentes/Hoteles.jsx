@@ -29,7 +29,7 @@ const Hoteles = () => {
       checkOut !== '00:00:00' &&
       paginaWeb &&
       direccion &&
-      paisId &&
+      paisId.id &&
       ciudadId
     );
   };
