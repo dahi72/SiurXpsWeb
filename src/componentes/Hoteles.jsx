@@ -379,15 +379,19 @@ const Hoteles = () => {
                   <FormControl fullWidth variant="outlined">
                     <InputLabel>País</InputLabel>
                     <Select
-                      value={paisId}
+                      value={paisId ? paisId.id : ''}
                       onChange={(e) => {
-                        setPaisId(e.target.value);
-                        handleCiudadChange(e.target.value);
+                        const selectedPais = paises.find(pais => pais.id === e.target.value);
+                        if (selectedPais) {
+                          setPaisId(selectedPais);
+                          setCiudades([]);  
+                          handleCiudadChange(selectedPais.codigoIso); 
+                        }
                       }}
                       label="País"
                     >
                       {paises.map((pais) => (
-                        <MenuItem key={pais.codigoIso} value={pais.codigoIso}>
+                        <MenuItem key={pais.id} value={pais.id}>
                           {pais.nombre}
                         </MenuItem>
                       ))}

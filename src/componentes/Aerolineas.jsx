@@ -28,7 +28,8 @@ const Aerolineas = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [aerolineaEditando, setAerolineaEditando] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
-
+  const token = localStorage.getItem('token');
+  
   const isFormComplete = () => {
     return (
       nombre &&
@@ -45,7 +46,7 @@ const Aerolineas = () => {
     // Cargar aerolíneas al montar el componente
     const cargarAerolineas = async () => {
         try {
-            const token = localStorage.getItem('token'); // Obtener el token
+            
 
             const response = await fetch(`${baseUrl}/Aerolinea/aerolineas`, {
                 method: 'GET',
@@ -65,14 +66,14 @@ const Aerolineas = () => {
     };
 
     cargarAerolineas();
-}, [baseUrl])
+}, [baseUrl, token])
 
   const handleEliminar = async (id) => {
     try {
       const response = await fetch(`${baseUrl}/Aerolinea/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Authorization': `Bearer ${token}`, 
           'Content-Type': 'application/json'
       }
       });
@@ -97,14 +98,14 @@ const Aerolineas = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = aerolineaEditando ? `${baseUrl}/Aerolinea/${aerolineaEditando.id}` : `${baseUrl}/Aerolinea/altaAerolinea`;
+    const url = aerolineaEditando ? `${baseUrl}/Aerolinea/${aerolineaEditando}` : `${baseUrl}/Aerolinea/altaAerolinea`;
     const method = aerolineaEditando ? 'PUT' : 'POST';
 
     try {
       const response = await fetch(url, {
         method,
         headers: {
-          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Authorization': `Bearer  ${token}`, 
           'Content-Type': 'application/json'
       },
         body: JSON.stringify({ nombre, paginaWeb }),
