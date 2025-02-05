@@ -92,6 +92,7 @@ const Hoteles = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("handleSubmit se ejecutó");
     const nuevoHotel = {
       nombre,
       checkIn,
@@ -115,7 +116,7 @@ const Hoteles = () => {
       });
   
       const data = await response.json(); 
-  
+      console.log('Respuesta del servidor:', data);
       if (!response.ok) {
         throw new Error(data?.mensaje || 'Error al agregar el hotel');
       }
@@ -129,11 +130,11 @@ const Hoteles = () => {
       setCiudadId('');
       setTips('');
       
-    } catch (error) {
-      console.error('Error en la solicitud:', error.message);
-    }
+    // } catch (error) {
+    //   console.error('Error en la solicitud:', error.message);
+    // }
 
-    try {
+    // try {
       const hotelesResponse = await fetch(`${baseUrl}/Hotel/hoteles`, {
         method: 'GET',
         headers: {
