@@ -27,7 +27,8 @@ const MisDatos = () => {
     if (location.state?.viajero) {
       setUsuario(location.state.viajero);
     }
-  }, [location.state, setUsuario]);
+    console.log("usuario", usuario);
+  }, [location.state, setUsuario, usuario]);
 
   const handleFileChange = (e, tipoDocumento) => {
     const file = e.target.files[0];

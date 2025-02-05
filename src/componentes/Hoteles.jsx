@@ -42,7 +42,6 @@ const Hoteles = () => {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
             }
         });
 
@@ -103,6 +102,8 @@ const Hoteles = () => {
       ciudadId,
       tips
     };
+    console.log("Datos nuevoHotel:", nuevoHotel);
+
     try {
       const response = await fetch(`${baseUrl}/Hotel/altaHotel`, {
         method: 'POST',
