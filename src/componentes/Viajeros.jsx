@@ -1,102 +1,105 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Snackbar, Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import {
+  Container, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  CircularProgress, Snackbar, Alert, Box, Button, Dialog, DialogActions, DialogContent,
+  DialogContentText, DialogTitle
+} from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 
+
 const Viajeros = () => {
-  const { grupoId } = useParams(); 
+  const { grupoId } = useParams();
   const [viajeros, setViajeros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedViajero, setSelectedViajero] = useState(null);
-  const baseUrl = process.env.REACT_APP_API_URL;
+   const baseUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
   useEffect(() => {
     const obtenerViajeros = async () => {
+      setError(null);
+      setLoading(true);
+
       try {
         const grupoResponse = await fetch(`${baseUrl}/GrupoDeViaje/${grupoId}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         });
+
+        if (!grupoResponse.ok) throw new Error('Error al obtener el grupo');
+
         const grupoData = await grupoResponse.json();
-
-        if (grupoData.viajerosIds.length > 0) {
-          const viajerosData = await Promise.all(grupoData.viajerosIds.map(async (id) => {
-            const viajeroResponse = await fetch(`${baseUrl}/Usuario/${id}`, {
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-              }
-            });
-            if (!viajeroResponse.ok) {
-              throw new Error('Error al cargar los datos del viajero');
-            }
-            return viajeroResponse.json();
-          }));
-
-          setViajeros(viajerosData);
-        } else {
-          setError('No hay viajeros para este grupo.');
+        if (!grupoData.viajerosIds || grupoData.viajerosIds.length === 0) {
+          setError('No hay viajeros en este grupo.');
+          setLoading(false);
+          return;
         }
+
+        const viajerosData = await Promise.all(grupoData.viajerosIds.map(async (id) => {
+          const viajeroResponse = await fetch(`${baseUrl}/Usuario/${id}`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          });
+
+          if (!viajeroResponse.ok) throw new Error(`Error cargando viajero ID: ${id}`);
+
+          return viajeroResponse.json();
+        }));
+
+        setViajeros(viajerosData);
       } catch (error) {
-        setError('Hubo un error al cargar los viajeros.');
+        console.error(error);
+        setError(error.message || 'Hubo un error al cargar los viajeros.');
       } finally {
         setLoading(false);
       }
     };
 
     obtenerViajeros();
-  }, [grupoId, baseUrl]);
+  }, [grupoId,baseUrl]);
 
   const handleDeleteClick = (viajero) => {
     setSelectedViajero(viajero);
     setOpenDialog(true);
   };
-
+  const handleActividadOpcional = (viajeroId) => {
+    navigate(`/actividad-opcional/${viajeroId}`);
+  }
   const handleDeleteConfirm = async () => {
     if (!selectedViajero) return;
+
+    setError(null);
 
     try {
       const response = await fetch(`${baseUrl}/GrupoDeViaje/${grupoId}/viajeros/${selectedViajero.id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
 
-      if (!response.ok) {
-        throw new Error('Error al eliminar el viajero');
-      }
+      if (!response.ok) throw new Error('Error al eliminar el viajero');
 
-      setViajeros(viajeros.filter(v => v.id !== selectedViajero.id));
+      setViajeros(prevViajeros => prevViajeros.filter(v => v.id !== selectedViajero.id));
       setSuccess(true);
     } catch (error) {
-      setError('Hubo un error al eliminar el viajero.');
+      console.error(error);
+      setError(error.message || 'Error al eliminar el viajero.');
     } finally {
       setOpenDialog(false);
       setSelectedViajero(null);
     }
   };
 
-  const handleRedirect = () => {
-    navigate('/misGrupos'); 
-  };
-  
-  const handleActividadOpcional = (viajeroId) => {
-    navigate(`/actividad-opcional/${viajeroId}`);
-  }
-  
   const handleDatosViajero = (viajero) => {
-    console.log("viajero", viajero); 
-    navigate('/misDatos', { state: { ...viajero } } );
+    navigate('/verDatosViajero', { state: { viajero } });
   };
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 4 }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 4 }}>
           Viajeros del Grupo
         </Typography>
 
@@ -105,22 +108,21 @@ const Viajeros = () => {
             <CircularProgress />
           </Box>
         ) : error ? (
-          <Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'grey.50' }}>
-            <Typography variant="h6" color="text.secondary">
+          <Paper sx={{ p: 4, textAlign: 'center' }}>
+            <Typography variant="h6" color="error">
               {error}
             </Typography>
           </Paper>
         ) : (
           <TableContainer component={Paper}>
-            <Table>
+            <Table aria-label="Lista de viajeros">
               <TableHead>
                 <TableRow>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Apellido</TableCell>
-                  <TableCell>Pasaporte</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Teléfono</TableCell>
-                  <TableCell>Acciones</TableCell>
+                  <TableCell scope="col">Nombre</TableCell>
+                  <TableCell scope="col">Apellido</TableCell>
+                  <TableCell scope="col">Pasaporte</TableCell>
+                  <TableCell scope="col">Email</TableCell>
+                  <TableCell scope="col">Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -130,26 +132,34 @@ const Viajeros = () => {
                     <TableCell>{viajero.primerApellido}</TableCell>
                     <TableCell>{viajero.pasaporte}</TableCell>
                     <TableCell>{viajero.email}</TableCell>
-                    <TableCell>{viajero.telefono}</TableCell>
                     <TableCell>
-                      <Button variant="contained" color="secondary" onClick={() => handleDeleteClick(viajero)}>
-                        Eliminar
-                      </Button>
-                      <Button
+                    <Button
                         variant="contained"
-                        color="primary"
-                        sx={{ ml: 2 }}
+                        color="info"
+                        size="small"
+                        sx={{ 
+                          mr: 4, 
+                          fontSize: "0.85rem" 
+                        }}
                         onClick={() => handleActividadOpcional(viajero.id)}
                       >
                         Inscribir/Describir a actividad opcional
                       </Button>
-                      <Button
-                        variant="contained"
-                        color="info"
-                        sx={{ ml: 2 }}
-                        onClick={() => handleDatosViajero(viajero)}
-                      >
-                        Datos de viajero
+                      <Button variant="contained" color="info"  onClick={() => handleDatosViajero(viajero)}  size="small"
+                        sx={{ 
+                          mr: 4,
+                          mt:4,
+                          fontSize: "0.85rem" 
+                        }}>
+                        Info personal
+                      </Button>
+                   
+                      <Button variant="contained" color="error" onClick={() => handleDeleteClick(viajero)}  size="small"
+                        sx={{ 
+                          mr: 4,
+                          fontSize: "0.85rem" 
+                        }}>
+                        Eliminar
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -158,36 +168,31 @@ const Viajeros = () => {
             </Table>
           </TableContainer>
         )}
-        <Box sx={{ my: 4 }}>
-          <Button
-            variant="contained"
-            onClick={handleRedirect}
-            sx={{ bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}
-          >
-            Volver a Mis Grupos
-          </Button>
-        </Box>
-        <Snackbar
-          open={success}
-          autoHideDuration={3000}
-          onClose={() => setSuccess(false)}
-        >
-          <Alert severity="success" sx={{ width: '100%' }}>
-            Operación realizada con éxito
-          </Alert>
-        </Snackbar>
+
+        {/* Dialogo de confirmación */}
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-          <DialogTitle>Confirmar eliminación</DialogTitle>
+          <DialogTitle>Eliminar viajero</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              ¿Está seguro de que desea eliminar a este viajero del grupo?
+              ¿Estás seguro de que deseas eliminar a {selectedViajero?.primerNombre} {selectedViajero?.primerApellido}?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
-            <Button onClick={handleDeleteConfirm} color="error">Eliminar</Button>
+            <Button onClick={() => setOpenDialog(false)} color="primary">
+              Cancelar
+            </Button>
+            <Button onClick={handleDeleteConfirm} color="error">
+              Eliminar
+            </Button>
           </DialogActions>
         </Dialog>
+
+        {/* Notificación de éxito */}
+        <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+          <Alert onClose={() => setSuccess(false)} severity="success">
+            Viajero eliminado con éxito.
+          </Alert>
+        </Snackbar>
       </Box>
     </Container>
   );
