@@ -87,7 +87,11 @@ const Viajeros = () => {
   const handleActividadOpcional = (viajeroId) => {
     navigate(`/actividad-opcional/${viajeroId}`);
   }
-
+  
+  const handleDatosViajero = (viajero) => {
+    console.log("viajero", viajero); 
+    navigate('/misDatos', { state: { ...viajero } } );
+  };
 
   return (
     <Container maxWidth="lg">
@@ -138,6 +142,14 @@ const Viajeros = () => {
                         onClick={() => handleActividadOpcional(viajero.id)}
                       >
                         Inscribir/Describir a actividad opcional
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="info"
+                        sx={{ ml: 2 }}
+                        onClick={() => handleDatosViajero(viajero)}
+                      >
+                        Datos de viajero
                       </Button>
                     </TableCell>
                   </TableRow>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, TextField, Button, Typography, FormControl, Alert, Box,Input } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -6,6 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useNavigate } from 'react-router-dom';
 import { UsuarioContext } from '../hooks/UsuarioContext';
 import dayjs from 'dayjs';
+import { useLocation } from 'react-router-dom';
 
 
 const MisDatos = () => {
@@ -19,7 +20,15 @@ const MisDatos = () => {
   const [vacuna, setVacuna] = useState(null);
   const [seguro, setSeguro] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
-  
+  const location = useLocation();
+ 
+  // Si location.state tiene datos, actualiza el usuario del contexto
+  useEffect(() => {
+    if (location.state?.viajero) {
+      setUsuario(location.state.viajero);
+    }
+  }, [location.state, setUsuario]);
+
   const handleFileChange = (e, tipoDocumento) => {
     const file = e.target.files[0];
     if (file) {
