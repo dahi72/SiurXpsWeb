@@ -136,6 +136,21 @@ const Vuelos = () => {
     vuelo.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Función para validar el formato de hora (HH:mm)
+  const validarHora = (hora) => {
+    const regex = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
+    return regex.test(hora);
+  };
+
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+
+    // Solo actualizar el valor si es un formato de hora válido o si el campo está vacío
+    if (validarHora(newValue) || newValue === '') {
+      setHorario(newValue);
+    }
+  }
+
   return (
     <Box>
 
@@ -204,22 +219,16 @@ const Vuelos = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Horario"
-                  type="text"
-                  value={horario}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    // Solo permitir caracteres válidos (números y dos puntos)
-                    if (/^([0-9]{0,2}[:]{0,1}[0-9]{0,2})$/.test(newValue)) {
-                      setHorario(newValue);
-                    }
-                  }}
-                  helperText="Formato: 00:00"
-                  margin="normal"
-                />
-              </Grid>
+              <TextField
+                fullWidth
+                label="Horario"
+                type="text"
+                value={horario}
+                onChange={handleChange}
+                helperText="Formato: 00:00"
+                margin="normal"
+              />
+            </Grid>
             </Grid>
             <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
               <Button variant="contained" color="primary" type="submit" disabled={!isFormComplete()} >
