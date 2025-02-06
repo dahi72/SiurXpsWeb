@@ -92,14 +92,13 @@ const Hoteles = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("handleSubmit se ejecutó");
     const nuevoHotel = {
       nombre,
       checkIn,
       checkOut,
       paginaWeb,
       direccion,
-      paisId,
+      paisId : paisId.id,
       ciudadId,
       tips
     };
