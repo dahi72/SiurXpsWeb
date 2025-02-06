@@ -211,7 +211,7 @@ const Vuelos = () => {
                   type="time"
                   value={horario}
                   onChange={(e) =>
-                    setHorario({checkIn: e.target.value })
+                    setHorario(e.target.value)
                   }
                   margin="normal"
                 />

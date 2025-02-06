@@ -379,8 +379,8 @@ const Hoteles = () => {
   const isFormComplete = () => {
     return (
       nombre &&
-      checkIn  &&
-      checkOut  &&
+      checkIn &&
+      checkOut &&
       paginaWeb &&
       direccion &&
       paisId.id &&
@@ -683,7 +683,7 @@ const Hoteles = () => {
                   type="time"
                   value={checkIn}
                   onChange={(e) =>
-                    setCheckIn({checkIn: e.target.value })
+                    setCheckIn(e.target.value)
                   }
                   margin="normal"
                 />
@@ -693,7 +693,7 @@ const Hoteles = () => {
                     type="time"
                     value={checkOut}
                     onChange={(e) =>
-                      setCheckOut({checkOut: e.target.value })
+                      setCheckOut(e.target.value)
                     }
                     margin="normal"
                   />
