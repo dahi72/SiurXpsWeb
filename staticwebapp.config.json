@@ -11,6 +11,11 @@
     {
       "route": "/static/css/*",
       "mimeType": "text/css"
+    },
+    {
+      "route": "/static/media/*",
+      "mimeType": "application/octet-stream"
     }
   ]
 }
+
