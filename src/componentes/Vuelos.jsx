@@ -207,13 +207,13 @@ const Vuelos = () => {
                 <TextField
                   fullWidth
                   label="Horario"
-                  type="text" 
+                  type="text"
                   value={horario}
                   onChange={(e) => {
-                    const regex = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
                     const newValue = e.target.value;
-                    if (regex.test(newValue) || newValue === '') {
-                      setHorario(newValue); 
+                    // Solo permitir caracteres válidos (números y dos puntos)
+                    if (/^([0-9]{0,2}[:]{0,1}[0-9]{0,2})$/.test(newValue)) {
+                      setHorario(newValue);
                     }
                   }}
                   helperText="Formato: 00:00"
