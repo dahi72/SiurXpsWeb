@@ -1,27 +1,25 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Tabs,
   Tab,
-  Table,
-  TableBody,
-  TableCell,
+  TextField,
   TableContainer,
+  Table,
   TableHead,
   TableRow,
+  TableCell,
+  TableBody,
   Paper,
   Button,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Select,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import axios from "axios";
 import { Navigate } from "react-router-dom";
-
 
 const Hoteles = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -38,71 +36,83 @@ const Hoteles = () => {
     checkIn: "",
     checkOut: "",
     paginaWeb: "",
-    tips: ""
+    tips: "",
   });
-  console.log("newHotel", nuevoHotel)
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const baseUrl = process.env.REACT_APP_API_URL;
 
-  if (token) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  }
+  const setAuthHeaders = useCallback(
+    (headers = {}) => {
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      return headers;
+    },
+    [token]
+  );
 
+  const obtenerHoteles = useCallback(async () => {
+    const response = await fetch(`${baseUrl}/Hotel/altaHotel`, {
+      headers: setAuthHeaders(),
+    });
+    const data = await response.json();
+    setHoteles(data);
+  }, [baseUrl, setAuthHeaders]);
 
-const obtenerHoteles = useCallback(async () => {
-  const response = await axios.get(`${baseUrl}/Hotel/altaHotel`);
-  setHoteles(response.data);
-}, [baseUrl]);
+  const obtenerPaises = useCallback(async () => {
+    const response = await fetch(`${baseUrl}/Pais/listado`, {
+      headers: setAuthHeaders(),
+    });
+    const data = await response.json();
+    data.sort((a, b) => (a.nombre < b.nombre ? -1 : 1));
+    setPaises(data);
+  }, [baseUrl, setAuthHeaders]);
 
-const obtenerPaises = useCallback(async () => {
-  const response = await axios.get(`${baseUrl}/Pais/listado`);
-  response.data.sort((a, b) => {
-    if (a.nombre < b.nombre) return -1;
-    if (a.nombre > b.nombre) return 1;
-    return 0
-  });
-  setPaises(response.data);
-}, [baseUrl]);
+  useEffect(() => {
+    obtenerHoteles();
+    obtenerPaises();
+  }, [obtenerHoteles, obtenerPaises]);
 
-useEffect(() => {
-  obtenerHoteles();
-  obtenerPaises();
-}, [obtenerHoteles, obtenerPaises]); 
-  
   const obtenerCiudades = async (paisIso) => {
-    const response = await axios.get(`${baseUrl}/Ciudad/${paisIso}/ciudades`, {
-      headers: { Authorization: `Bearer ${token}` },
+    const response = await fetch(`${baseUrl}/Ciudad/${paisIso}/ciudades`, {
+      headers: setAuthHeaders(),
     });
-    response.data.sort((a, b) => {
-      if (a.nombre < b.nombre) return -1;
-      if (a.nombre > b.nombre) return 1;
-      return 0
-    });
-    setCiudades(response.data);
+    const data = await response.json();
+    data.sort((a, b) => (a.nombre < b.nombre ? -1 : 1));
+    setCiudades(data);
   };
-  
+
   const handleEditar = (hotel) => {
     setHotelActual(hotel);
     setOpen(true);
   };
-  
+
   const handleEliminar = async (id) => {
-    await axios.delete(`${baseUrl}/Hotel/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
+    await fetch(`${baseUrl}/Hotel/${id}`, {
+      method: "DELETE",
+      headers: setAuthHeaders(),
     });
     obtenerHoteles();
   };
-  
 
   const handleGuardar = async () => {
+    const headers = setAuthHeaders({ "Content-Type": "application/json" });
     if (hotelActual) {
-      await axios.put(`${baseUrl}/Hotel/${hotelActual.id}`, hotelActual);
+      await fetch(`${baseUrl}/Hotel/${hotelActual.id}`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(hotelActual),
+      });
     } else {
-      await axios.post(`${baseUrl}/Hotel/altaHotel`, nuevoHotel);
+      await fetch(`${baseUrl}/Hotel`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(nuevoHotel),
+      });
     }
-    obtenerHoteles();
     setOpen(false);
+    obtenerHoteles();
   };
 
   return (
@@ -133,14 +143,20 @@ useEffect(() => {
               </TableHead>
               <TableBody>
                 {hoteles
-                  .filter((h) => h.nombre.toLowerCase().includes(filtro.toLowerCase()))
+                  .filter((h) =>
+                    h.nombre.toLowerCase().includes(filtro.toLowerCase())
+                  )
                   .map((hotel) => (
                     <TableRow key={hotel.id}>
                       <TableCell>{hotel.nombre}</TableCell>
                       <TableCell>{hotel.direccion}</TableCell>
                       <TableCell>
-                        <Button onClick={() => handleEditar(hotel)}>Editar</Button>
-                        <Button onClick={() => handleEliminar(hotel.id)}>Eliminar</Button>
+                        <Button onClick={() => handleEditar(hotel)}>
+                          Editar
+                        </Button>
+                        <Button onClick={() => handleEliminar(hotel.id)}>
+                          Eliminar
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -152,43 +168,137 @@ useEffect(() => {
 
       {tabIndex === 1 && (
         <Box sx={{ mt: 2 }}>
-          <TextField fullWidth label="Nombre" value={nuevoHotel.nombre} onChange={(e) => setNuevoHotel({ ...nuevoHotel, nombre: e.target.value })} />
-          <TextField fullWidth label="Dirección" value={nuevoHotel.direccion} onChange={(e) => setNuevoHotel({ ...nuevoHotel, direccion: e.target.value })} />
-          <Select fullWidth value={nuevoHotel.paisId} onChange={(e) => {
-            setNuevoHotel({ ...nuevoHotel, paisId: e.target.value, ciudadId: "" });
-            obtenerCiudades(e.target.value);
-          }}>
+          <TextField
+            fullWidth
+            label="Nombre"
+            value={nuevoHotel.nombre}
+            onChange={(e) =>
+              setNuevoHotel({ ...nuevoHotel, nombre: e.target.value })
+            }
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Dirección"
+            value={nuevoHotel.direccion}
+            onChange={(e) =>
+              setNuevoHotel({ ...nuevoHotel, direccion: e.target.value })
+            }
+            margin="normal"
+          />
+          <Select
+            fullWidth
+            value={nuevoHotel.paisId}
+            onChange={(e) => {
+              setNuevoHotel({
+                ...nuevoHotel,
+                paisId: e.target.value,
+                ciudadId: "",
+              });
+              obtenerCiudades(e.target.value);
+            }}
+            margin="normal"
+          >
             {paises.map((pais) => (
-              <MenuItem key={pais.codigoIso} value={pais.codigoIso}>{pais.nombre}</MenuItem>
+              <MenuItem key={pais.codigoIso} value={pais.codigoIso}>
+                {pais.nombre}
+              </MenuItem>
             ))}
           </Select>
-          <Select fullWidth value={nuevoHotel.ciudadId} onChange={(e) => setNuevoHotel({ ...nuevoHotel, ciudadId: e.target.value })}>
+          <Select
+            fullWidth
+            value={nuevoHotel.ciudadId}
+            onChange={(e) =>
+              setNuevoHotel({ ...nuevoHotel, ciudadId: e.target.value })
+            }
+            margin="normal"
+          >
             {ciudades.map((ciudad) => (
-              <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>
+              <MenuItem key={ciudad.id} value={ciudad.id}>
+                {ciudad.nombre}
+              </MenuItem>
             ))}
           </Select>
-          <TextField fullWidth label="Check-In" type="time" value={nuevoHotel.checkIn} onChange={(e) => setNuevoHotel({ ...nuevoHotel, checkIn: e.target.value })} />
-          <TextField fullWidth label="Check-Out" type="time" value={nuevoHotel.checkOut} onChange={(e) => setNuevoHotel({ ...nuevoHotel, checkOut: e.target.value })}/>
-          <TextField fullWidth label="Página Web" value={nuevoHotel.paginaWeb} onChange={(e) => setNuevoHotel({ ...nuevoHotel, paginaWeb: e.target.value })} />
-          <TextField fullWidth label="Tips" value={nuevoHotel.tips} onChange={(e) => setNuevoHotel({ ...nuevoHotel, tips: e.target.value })} />
-          <Button variant="contained" onClick={handleGuardar}>Guardar</Button>
-          <Button variant="outlined" 
-          onClick={() => Navigate('/catalogos')} 
-          sx={{ 
-          mb: 2, 
-          backgroundColor: 'rgb(227, 242, 253)', 
-          color: '#1976d2'
-          }}>
-          Volver a Catálogos
-        </Button>
+          <TextField
+            fullWidth
+            label="Check-In"
+            type="time"
+            value={nuevoHotel.checkIn}
+            onChange={(e) =>
+              setNuevoHotel({ ...nuevoHotel, checkIn: e.target.value })
+            }
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Check-Out"
+            type="time"
+            value={nuevoHotel.checkOut}
+            onChange={(e) =>
+              setNuevoHotel({ ...nuevoHotel, checkOut: e.target.value })
+            }
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Página Web"
+            value={nuevoHotel.paginaWeb}
+            onChange={(e) =>
+              setNuevoHotel({ ...nuevoHotel, paginaWeb: e.target.value })
+            }
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Tips"
+            value={nuevoHotel.tips}
+            onChange={(e) =>
+              setNuevoHotel({ ...nuevoHotel, tips: e.target.value })
+            }
+            margin="normal"
+          />
+          <Button
+            variant="contained"
+            onClick={handleGuardar}
+            sx={{ mt: 2 }}
+          >
+            Guardar
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => Navigate("/catalogos")}
+            sx={{
+              mt: 2,
+              backgroundColor: "rgb(227, 242, 253)",
+              color: "#1976d2",
+            }}
+          >
+            Volver a Catálogos
+          </Button>
         </Box>
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Editar Hotel</DialogTitle>
         <DialogContent>
-          <TextField fullWidth label="Nombre" value={hotelActual?.nombre || ""} onChange={(e) => setHotelActual({ ...hotelActual, nombre: e.target.value })} />
-          <TextField fullWidth label="Dirección" value={hotelActual?.direccion || ""} onChange={(e) => setHotelActual({ ...hotelActual, direccion: e.target.value })} />
+          <TextField
+            fullWidth
+            label="Nombre"
+            value={hotelActual?.nombre || ""}
+            onChange={(e) =>
+              setHotelActual({ ...hotelActual, nombre: e.target.value })
+            }
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Dirección"
+            value={hotelActual?.direccion || ""}
+            onChange={(e) =>
+              setHotelActual({ ...hotelActual, direccion: e.target.value })
+            }
+            margin="normal"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancelar</Button>
@@ -200,6 +310,7 @@ useEffect(() => {
 };
 
 export default Hoteles;
+
 
 
 // import React, { useState, useEffect } from 'react';
