@@ -70,6 +70,7 @@ const CrearItinerario = () => {
                 fechaInicio,
                 fechaFin,
             };
+            console.log("itinerarionuevo", nuevoItinerario)
             const response = await fetch(`${baseUrl}/Itinerario/altaItinerario`, {
                 method: 'POST',
                 headers: {
