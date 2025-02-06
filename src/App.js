@@ -43,6 +43,7 @@ import FormularioAeropuerto from './componentes/FormularioAeropuerto';
 import FormularioAerolinea from './componentes/FormularioAerolinea';
 import FormularioVuelo from './componentes/FormularioVuelo';
 import ActividadOpcional from './componentes/ActividadOpcional';
+import VerDatosViajero from './componentes/VerDatosViajeros';
 
 
 
