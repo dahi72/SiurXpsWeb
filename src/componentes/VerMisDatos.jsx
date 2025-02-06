@@ -1,142 +1,69 @@
-import React, { useState, useContext } from 'react';
-import { 
-    Container, 
-    TextField, 
-    Button, 
-    Typography, 
-    Alert, 
-    Box,
-    Paper,
-    Divider,
-    ListItemText,
-    ListItem,
-    List,
-    Snackbar
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import React, { useContext } from 'react';
+import { Container, Typography, Box, Button, Paper, Grid, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { UsuarioContext } from '../hooks/UsuarioContext';
 import dayjs from 'dayjs';
-import { Upload} from 'lucide-react';
+import { Edit as EditIcon } from '@mui/icons-material';
+import { UsuarioContext } from '../hooks/UsuarioContext';
 
-const MisDatos = () => {
-  const { usuario, setUsuario } = useContext(UsuarioContext);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
+const VerMisDatos = () => {
   const navigate = useNavigate();
-  const [fechaNac, setFechaNac] = useState(dayjs(usuario?.fechaNac || null));
-  const [pasaporte, setPasaporte] = useState(null);
-  const [visa, setVisa] = useState(null);
-  const [vacuna, setVacuna] = useState(null);
-  const [seguro, setSeguro] = useState(null);
-  const baseUrl = process.env.REACT_APP_API_URL;
-  
-  const handleFileChange = (e, tipoDocumento) => {
-    const file = e.target.files[0];
-    if (file) {
-      switch (tipoDocumento) {
-        case "pasaporte":
-          setPasaporte(file);
-          break;
-        case "visa":
-          setVisa(file);
-          break;
-        case "vacuna":
-          setVacuna(file);
-          break;
-        case "seguro":
-          setSeguro(file);
-          break;
-        default:
-          break;
-      }
-    }
+  const { usuario, error } = useContext(UsuarioContext);
+
+  const fechaNacFormateada = usuario && usuario.fechaNac ? dayjs(usuario.fechaNac).format('DD/MM/YYYY') : '';
+
+  const handleEditClick = () => {
+    navigate('/misDatos');
   };
 
-  const handleDateChange = (date) => {
-    if (date) {
-      setFechaNac(dayjs(date).startOf('day'));
-      setUsuario((prevUsuario) => ({ ...prevUsuario, fechaNac: date.format("YYYY-MM-DD") }));
-    }
-  };
+  const DataField = ({ label, value }) => (
+    <Box sx={{ mb: 2 }}>
+      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+        {label}
+      </Typography>
+      <Typography variant="body1">
+        {value || 'No especificado'}
+      </Typography>
+    </Box>
+  );
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUsuario((prevUsuario) => ({ ...prevUsuario, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-  
-    Object.keys(usuario).forEach((key) => {
-      if (usuario[key] !== null && usuario[key] !== undefined) {
-        formData.append(key, usuario[key]);
-      }
-    });
-
-    formData.append("fechaNac", fechaNac.format("YYYY-MM-DD"));
-    
-    if (pasaporte) formData.append("pasaporteDocumento", pasaporte);
-    if (visa) formData.append("visaDocumento", visa);
-    if (vacuna) formData.append("vacunasDocumento", vacuna);
-    if (seguro) formData.append("seguroDeViajeDocumento", seguro);
-
-    const token = localStorage.getItem("token");
-    const id = localStorage.getItem("id");
-
-    fetch(`${baseUrl}/Usuario/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      body: formData,
-    })
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((data) => {
-          if (response.status === 400) 
-            throw new Error(data.message || 'Los datos proporcionados son incorrectos.');
-          if (response.status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("pasaporte");
-            localStorage.removeItem("rol");
-            localStorage.removeItem("id");
-            navigate('/'); 
+  const DocumentPreview = ({ label, path }) => (
+    <Box sx={{ mb: 3 }}>
+      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+        {label}
+      </Typography>
+      {path ? (
+        <Box sx={{ 
+          mt: 1,
+          position: 'relative',
+          '&:hover': {
+            '& img': {
+              transform: 'scale(1.05)',
+            },
           }
-          if (response.status === 404) {
-            throw new Error('Usuario no encontrado.');
-          }
-          if (response.status === 500) {
-            throw new Error('Ocurrió un error en el servidor. Por favor intente más tarde.');
-          }
-          throw new Error(data.message || 'Error desconocido al intentar cargar información');
-        });
-      }
-      return response.json();
-    })
-    .then((data) => {
-      setSuccess(true);
-      setError(null);
-      setTimeout(() => {
-        setSuccess(false);
-        navigate("/dashboard"); 
-      }, 2000);
-    })
-    .catch((error) => {
-      setSuccess(false);
-      setError(error.message);
-      setTimeout(() => {
-        setError(null);
-        navigate("/dashboard"); 
-      }, 2000);
-    });
-  };
+        }}>
+          <img 
+            src={`https://siurxpss.azurewebsites.net/${path}`} 
+            alt={`Documento de ${label}`} 
+            style={{ 
+              width: '100%',
+              maxWidth: '200px',
+              height: 'auto',
+              borderRadius: '8px',
+              transition: 'transform 0.3s ease',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+            }} 
+          />
+        </Box>
+      ) : (
+        <Typography variant="body2" color="text.secondary">
+          No cargado
+        </Typography>
+      )}
+    </Box>
+  );
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ 
         display: 'flex', 
         alignItems: 'center', 
@@ -144,274 +71,85 @@ const MisDatos = () => {
         borderBottom: 1,
         borderColor: 'divider',
         pb: 2,
-        justifyContent: 'center',
-        width: '100%'
+        justifyContent: 'center'
       }}>
         <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-          Mis Datos
+          Mis Datos Personales
         </Typography>
       </Box>
 
-      <Box sx={{ 
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-        gap: 3
-      }}>
-        {/* Datos Personales */}
-        <Paper elevation={3} sx={{ p: 3, transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.03)', boxShadow: 6 } }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-            Datos Personales
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              label="Primer Nombre"
-              name="primerNombre"
-              value={usuario.primerNombre}
-              onChange={handleInputChange}
-              fullWidth
-              required
-              size="small"
-            />
-            <TextField
-              label="Primer Apellido"
-              name="primerApellido"
-              value={usuario.primerApellido}
-              onChange={handleInputChange}
-              fullWidth
-              required
-              size="small"
-            />
-            <TextField
-              label="Segundo Nombre"
-              name="segundoNombre"
-              value={usuario.segundoNombre}
-              onChange={handleInputChange}
-              fullWidth
-              size="small"
-            />
-            <TextField
-              label="Segundo Apellido"
-              name="segundoApellido"
-              value={usuario.segundoApellido}
-              onChange={handleInputChange}
-              fullWidth
-              size="small"
-            />
-          </Box>
+      {error && (
+        <Paper sx={{ p: 2, mb: 3, bgcolor: 'error.light', color: 'error.contrastText' }}>
+          <Typography>{error}</Typography>
         </Paper>
+      )}
 
-        {/* Información de Contacto */}
-        <Paper elevation={3} sx={{ p: 3, transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.03)', boxShadow: 6 } }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-            Información de Contacto
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              label="Nro. Pasaporte"
-              name="pasaporte"
-              value={usuario.pasaporte}
-              onChange={handleInputChange}
-              fullWidth
-              size="small"
-            />
-            <TextField
-              label="Correo Electrónico"
-              name="email"
-              value={usuario.email}
-              onChange={handleInputChange}
-              fullWidth
-              type="email"
-              size="small"
-            />
-            <TextField
-              label="Teléfono"
-              name="telefono"
-              value={usuario.telefono}
-              onChange={handleInputChange}
-              fullWidth
-              size="small"
-            />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Fecha de Nacimiento"
-                value={fechaNac}
-                onChange={handleDateChange}
-                renderInput={(params) => <TextField {...params} fullWidth size="small" />}
-              />
-            </LocalizationProvider>
-          </Box>
-        </Paper>
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 4,
+          transition: 'transform 0.3s ease',
+          '&:hover': { 
+            transform: 'scale(1.01)',
+            boxShadow: 6 
+          }
+        }}
+      >
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+              Información Personal
+            </Typography>
+            <Divider sx={{ mb: 3 }} />
+            
+            <DataField label="Primer Nombre" value={usuario?.primerNombre} />
+            <DataField label="Segundo Nombre" value={usuario?.segundoNombre} />
+            <DataField label="Primer Apellido" value={usuario?.primerApellido} />
+            <DataField label="Segundo Apellido" value={usuario?.segundoApellido} />
+            <DataField label="Pasaporte" value={usuario?.pasaporte} />
+            <DataField label="Fecha de Nacimiento" value={fechaNacFormateada} />
+            <DataField label="Correo Electrónico" value={usuario?.email} />
+            <DataField label="Teléfono" value={usuario?.telefono} />
+          </Grid>
 
-        {/* Documentos */}
-        <Paper elevation={3} sx={{ p: 3, transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.03)', boxShadow: 6 } }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-            Documentos
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <List>
-            <ListItem>
-              <ListItemText 
-                primary="Pasaporte"
-                secondary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                    {pasaporte ? (
-                      <Typography variant="body2">{pasaporte.name}</Typography>
-                    ) : usuario?.pasaporteDocumentoRuta ? (
-                      <a href={`https://siurxpss.azurewebsites.net/${usuario.pasaporteDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
-                        Ver documento actual
-                      </a>
-                    ) : (
-                      <Typography variant="body2">No cargado</Typography>
-                    )}
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      size="small"
-                      startIcon={<Upload size={16} />}
-                    >
-                      Subir
-                      <input
-                        type="file"
-                        hidden
-                        onChange={(e) => handleFileChange(e, "pasaporte")}
-                        accept=".jpg,.png,.pdf"
-                      />
-                    </Button>
-                  </Box>
-                }
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText 
-                primary="Visa"
-                secondary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                    {visa ? (
-                      <Typography variant="body2">{visa.name}</Typography>
-                    ) : usuario?.visaDocumentoRuta ? (
-                      <a href={`https://siurxpss.azurewebsites.net/${usuario.visaDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
-                        Ver documento actual
-                      </a>
-                    ) : (
-                      <Typography variant="body2">No cargado</Typography>
-                    )}
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      size="small"
-                      startIcon={<Upload size={16} />}
-                    >
-                      Subir
-                      <input
-                        type="file"
-                        hidden
-                        onChange={(e) => handleFileChange(e, "visa")}
-                        accept=".jpg,.png,.pdf"
-                      />
-                    </Button>
-                  </Box>
-                }
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText 
-                primary="Certificado de Vacunación"
-                secondary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                    {vacuna ? (
-                      <Typography variant="body2">{vacuna.name}</Typography>
-                    ) : usuario?.vacunasDocumentoRuta ? (
-                      <a href={`https://siurxpss.azurewebsites.net/${usuario.vacunasDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
-                        Ver documento actual
-                      </a>
-                    ) : (
-                      <Typography variant="body2">No cargado</Typography>
-                    )}
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      size="small"
-                      startIcon={<Upload size={16} />}
-                    >
-                      Subir
-                      <input
-                        type="file"
-                        hidden
-                        onChange={(e) => handleFileChange(e, "vacuna")}
-                        accept=".jpg,.png,.pdf"
-                      />
-                    </Button>
-                  </Box>
-                }
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText 
-                primary="Seguro de Viaje"
-                secondary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                    {seguro ? (
-                      <Typography variant="body2">{seguro.name}</Typography>
-                    ) : usuario?.seguroDeViajeDocumentoRuta ? (
-                      <a href={`https://siurxpss.azurewebsites.net/${usuario.seguroDeViajeDocumentoRuta}`} target="_blank" rel="noopener noreferrer">
-                        Ver documento actual
-                      </a>
-                    ) : (
-                      <Typography variant="body2">No cargado</Typography>
-                    )}
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      size="small"
-                      startIcon={<Upload size={16} />}
-                    >
-                      Subir
-                      <input
-                        type="file"
-                        hidden
-                        onChange={(e) => handleFileChange(e, "seguro")}
-                        accept=".jpg,.png,.pdf"
-                      />
-                    </Button>
-                  </Box>
-                }
-              />
-            </ListItem>
-          </List>
-        </Paper>
-      </Box>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+              Documentos
+            </Typography>
+            <Divider sx={{ mb: 3 }} />
 
-      <Box sx={{ mt: 3 }}>
-        <Button 
-          type="submit" 
-          variant="contained" 
-          fullWidth
-          size="large"
-          onClick={handleSubmit}
-          sx={{
-            py: 1.5,
-            fontWeight: 'bold',
-            transition: 'transform 0.2s ease-in-out',
-            '&:hover': {
-              transform: 'scale(1.02)'
-            }
-          }}
-        >
-          Guardar Cambios
-        </Button>
-      </Box>
+            <DocumentPreview label="Vacunaciones" path={usuario?.vacunasDocumentoRuta} />
+            <DocumentPreview label="Pasaporte" path={usuario?.pasaporteDocumentoRuta} />
+            <DocumentPreview label="Visa" path={usuario?.visaDocumentoRuta} />
+            <DocumentPreview label="Seguro de Viaje" path={usuario?.seguroDeViajeDocumentoRuta} />
+          </Grid>
+        </Grid>
 
-      <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
-        <Alert severity="success">Operación realizada con éxito</Alert>
-      </Snackbar>
-
-      <Snackbar open={Boolean(error)} autoHideDuration={3000} onClose={() => setError(null)}>
-        <Alert severity="error">{error}</Alert>
-      </Snackbar>
+        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleEditClick}
+            startIcon={<EditIcon />}
+            sx={{
+              px: 4,
+              py: 1.5,
+              borderRadius: 2,
+              textTransform: 'none',
+              fontSize: '1.1rem',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: 4
+              },
+              transition: 'all 0.3s ease'
+            }}
+          >
+            Modificar mis datos
+          </Button>
+        </Box>
+      </Paper>
     </Container>
   );
 };
 
-export default MisDatos;
+export default VerMisDatos;
