@@ -678,23 +678,36 @@ const Hoteles = () => {
                   />
                 </Grid>
                 <TextField
-                  fullWidth
-                  label="Check-In"
-                  type="time"
-                  value={checkIn}
-                  onChange={(e) =>
-                    setCheckIn(e.target.value)
-                  }
-                  margin="normal"
-                />
-                <TextField
                     fullWidth
                     label="Check-In"
-                    type="time"
+                    type="text" 
+                    value={checkIn}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                    
+                      const regex = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
+                      if (regex.test(newValue) || newValue === '') {
+                        setCheckIn(newValue); 
+                      }
+                    }}
+                    helperText="Formato: 00:00"
+                    margin="normal"
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Check-Out"
+                    type="text"  
                     value={checkOut}
-                    onChange={(e) =>
-                      setCheckOut(e.target.value)
-                    }
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      
+                      const regex = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
+                      if (regex.test(newValue) || newValue === '') {
+                        setCheckOut(newValue); 
+                      }
+                    }}
+                    helperText="Formato: 00:00"
                     margin="normal"
                   />
                 <Grid item xs={12} sm={6}>
