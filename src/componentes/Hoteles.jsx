@@ -38,7 +38,9 @@ const Hoteles = () => {
     checkIn: "",
     checkOut: "",
     paginaWeb: "",
+    tips: ""
   });
+  console.log("newHotel", nuevoHotel)
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const baseUrl = process.env.REACT_APP_API_URL;
@@ -168,6 +170,7 @@ useEffect(() => {
           <TextField fullWidth label="Check-In" type="time" value={nuevoHotel.checkIn} onChange={(e) => setNuevoHotel({ ...nuevoHotel, checkIn: e.target.value })} />
           <TextField fullWidth label="Check-Out" type="time" value={nuevoHotel.checkOut} onChange={(e) => setNuevoHotel({ ...nuevoHotel, checkOut: e.target.value })}/>
           <TextField fullWidth label="Página Web" value={nuevoHotel.paginaWeb} onChange={(e) => setNuevoHotel({ ...nuevoHotel, paginaWeb: e.target.value })} />
+          <TextField fullWidth label="Tips" value={nuevoHotel.tips} onChange={(e) => setNuevoHotel({ ...nuevoHotel, tips: e.target.value })} />
           <Button variant="contained" onClick={handleGuardar}>Guardar</Button>
           <Button variant="outlined" 
           onClick={() => Navigate('/catalogos')} 
@@ -175,8 +178,7 @@ useEffect(() => {
           mb: 2, 
           backgroundColor: 'rgb(227, 242, 253)', 
           color: '#1976d2'
-    }}
-  >
+          }}>
           Volver a Catálogos
         </Button>
         </Box>
