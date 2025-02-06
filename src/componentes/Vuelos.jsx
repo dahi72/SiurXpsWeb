@@ -32,7 +32,7 @@ const Vuelos = () => {
   const isFormComplete = () => {
     return (
       nombre &&
-      horario !== '00:00:00' 
+      horario
     );
   };
 
@@ -111,6 +111,9 @@ const Vuelos = () => {
     try {
       const response = await fetch(`${baseUrl}/Vuelo/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
@@ -121,14 +124,6 @@ const Vuelos = () => {
     } catch (error) {
       console.error('Error de red:', error);
     }
-  };
-  const handleHorarioChange = (e) => {
-    let time = e.target.value;
-   
-    if (/^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/.test(time)) {
-      time = `${time}:00`; 
-    }
-    setHorario(time); 
   };
 
   const handleEditar = (vuelo) => {
@@ -210,19 +205,16 @@ const Vuelos = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Horario Check-in"
-                      value={horario} 
-                      onChange={handleHorarioChange}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      variant="outlined"
-                      inputProps={{
-                        pattern: "([0-1]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])", 
-                      }}
-                    />
+              <TextField
+                  fullWidth
+                  label="Horario"
+                  type="time"
+                  value={horario}
+                  onChange={(e) =>
+                    setHorario({checkIn: e.target.value })
+                  }
+                  margin="normal"
+                />
                   </Grid>
             </Grid>
             <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
