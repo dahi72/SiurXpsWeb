@@ -25,26 +25,37 @@ function CrearEvento() {
     const [aerolineas, setAerolineas] = useState([]);
     const [hoteles, setHoteles] = useState([]);
     const [mensajeExito, setMensajeExito] = useState(false);
+    const token = localStorage.getItem('token');
+
     useEffect(() => {
-        const cargarActividades = async () => {
-            try {
-                const response = await fetch(`${baseUrl}/Actividad/listado`);
-                const data = await response.json();
-                setActividades(data);
-            } catch (error) {
-                console.error('Error al cargar las actividades:', error);
-            }
-        };
+  
+    const cargarActividades = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/Actividad/listado`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            setActividades(data);
+        } catch (error) {
+            console.error('Error al cargar las actividades:', error);
+        }
+    };
         
-        const cargarTraslados = async () => {
-            try {
-                const response = await fetch(`${baseUrl}/Traslado/listado`);
-                const data = await response.json();
-                setTraslados(data);
-            } catch (error) {
-                console.error('Error al cargar los traslados:', error);
-            }
-        };
+    const cargarTraslados = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/Traslado/listado`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            setTraslados(data);
+        } catch (error) {
+            console.error('Error al cargar los traslados:', error);
+        }
+    };
 
         cargarActividades();
         cargarTraslados();
@@ -52,13 +63,13 @@ function CrearEvento() {
         const cargarDatos = async () => {
             try {
                 const [trasladosRes, vuelosRes, aeropuertosRes, aerolineasRes, hotelesRes] = await Promise.all([
-                    fetch(`${baseUrl}/Traslado/listado`).then(res => res.json()),
-                    fetch(`${baseUrl}/Vuelo/vuelos`).then(res => res.json()),
-                    fetch(`${baseUrl}/Aeropuerto/aeropuertos`).then(res => res.json()),
-                    fetch(`${baseUrl}/Aerolinea/aerolineas`).then(res => res.json()),
-                    fetch(`${baseUrl}/Hotel/hoteles`).then(res => res.json()),
+                    fetch(`${baseUrl}/Traslado/listado`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+                    fetch(`${baseUrl}/Vuelo/vuelos`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+                    fetch(`${baseUrl}/Aeropuerto/aeropuertos`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+                    fetch(`${baseUrl}/Aerolinea/aerolineas`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+                    fetch(`${baseUrl}/Hotel/hoteles`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
                 ]);
-
+    
                 setTraslados(Array.isArray(trasladosRes) ? trasladosRes : []);
                 setVuelos(Array.isArray(vuelosRes) ? vuelosRes : []);
                 setAeropuertos(Array.isArray(aeropuertosRes) ? aeropuertosRes : []);
@@ -68,9 +79,12 @@ function CrearEvento() {
                 console.error('Error al cargar los datos:', error);
             }
         };
-
+    
+        cargarActividades();
+        cargarTraslados();
         cargarDatos();
-    }, [baseUrl]);
+    
+    }, [baseUrl, token]);
     
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -94,7 +108,7 @@ function CrearEvento() {
             const response = await fetch(`${baseUrl}/Itinerario/${itinerarioId}/evento`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+                    'Authorization': `Bearer  ${token}`, 
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(nuevoEvento)
