@@ -14,6 +14,7 @@ const CambioContrasena = () => {
   const [error, setError] = useState(null);
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
   const navigate = useNavigate();
+  
   const baseUrl = process.env.REACT_APP_API_URL;
 
   const manejarCambioContrasena = (e) => {
