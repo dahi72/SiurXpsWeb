@@ -31,7 +31,7 @@ const CrearItinerario = () => {
                         setSnackbarMessage('No tienes grupos de viaje creados. No puede crear un itinerario.');
                         setSnackbarSeverity('info');
                         setOpenSnackbar(true);
-                        return []; // Retornamos un array vacío en caso de 404
+                        return []; 
                     }
                     throw new Error('Ocurrió un error al cargar los grupos');
                 }
@@ -70,7 +70,7 @@ const CrearItinerario = () => {
                 fechaInicio,
                 fechaFin,
             };
-            console.log("itinerarionuevo", nuevoItinerario)
+          
             const response = await fetch(`${baseUrl}/Itinerario/altaItinerario`, {
                 method: 'POST',
                 headers: {

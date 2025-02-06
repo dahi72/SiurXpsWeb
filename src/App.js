@@ -95,7 +95,6 @@ const App = () => {
               <Route path="/agregarViajeroAGrupo/:grupoId" element={<AgregarViajeroAGrupo />} />
               <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
               <Route path="/verDatosViajero" element={<VerDatosViajero />} />
-             
           </Routes>
          
           </Layout>
