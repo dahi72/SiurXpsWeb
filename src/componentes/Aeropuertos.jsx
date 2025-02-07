@@ -150,7 +150,8 @@ useEffect(() => {
     e.preventDefault();
     const url = aeropuertoEditando ? `${baseUrl}/Aeropuerto/${aeropuertoEditando.id}` : `${baseUrl}/Aeropuerto/altaAeropuerto`;
     const method = aeropuertoEditando ? 'PUT' : 'POST';
-    console.log("aeropuerto", nombre, paginaWeb, paisSeleccionado, ciudadSeleccionada, direccion, tips)
+    console.log("aeropuertoPais", paisSeleccionado)
+    console.log("aeropuertoCiudad", ciudadSeleccionada)
 
     try {
       const response = await fetch(url, {
@@ -162,7 +163,7 @@ useEffect(() => {
         body: JSON.stringify({ 
           nombre, 
           paginaWeb, 
-          paisId: paisSeleccionado.id,
+          paisId: paisSeleccionado,
           ciudadId: ciudadSeleccionada.id,
           direccion,
           tips
@@ -401,7 +402,7 @@ useEffect(() => {
                       onChange={(e) => {
                         const selectedPais = paises.find(pais => pais.id === e.target.value);
                         if (selectedPais) {
-                          setPaisSeleccionado(selectedPais); 
+                          setPaisSeleccionado(selectedPais.id); 
                           setCiudades([]);  
                           handleCiudadChange(selectedPais.codigoIso); 
                         }
