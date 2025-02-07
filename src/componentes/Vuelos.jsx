@@ -35,8 +35,9 @@ const Vuelos = () => {
   }, [baseUrl, token]);
 
   const formatHorario = (hora) => {
-    const date = new Date(`1970-01-01T${hora}`);
-    return date.toLocaleTimeString('es-ES', { hour12: false });
+    if (!hora) return "00:00:00"; 
+    const [hh, mm] = hora.split(":");
+    return `${hh.padStart(2, "0")}:${mm.padStart(2, "0")}:00`;
   };
 
   const isFormComplete = () => nombre.trim() !== '' && horario.trim() !== '';
@@ -50,7 +51,7 @@ const Vuelos = () => {
     const url = vueloEditando ? `${baseUrl}/Vuelo/${vueloEditando.id}` : `${baseUrl}/Vuelo/altaVuelo`;
     const method = vueloEditando ? 'PUT' : 'POST';
     const vueloData = { nombre, horario: formatHorario(horario) };
-    
+    console.log("vuelo", vueloData)
     try {
       const response = await fetch(url, {
         method,
