@@ -43,7 +43,7 @@ const Dashboard = () => {
                 }}
             >
                 <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
-                    Panel de Control
+                    Dashboard
                 </Typography>
                 <Divider sx={{ mb: 3 }} />
 
