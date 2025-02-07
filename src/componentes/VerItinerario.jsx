@@ -151,7 +151,7 @@ const VerItinerario = () => {
                                 }}
                             >
                                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                                    {grupo ? grupo.nombre : 'Grupo Desconocido'}
+                                {`Itinerario del ${grupo ? grupo.nombre : 'Grupo Desconocido'}`}
                                 </Typography>
                                 <Divider sx={{ mb: 2 }} />
                                 <Typography variant="body2" sx={{ mb: 2 }}>
