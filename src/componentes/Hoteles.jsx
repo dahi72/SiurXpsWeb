@@ -16,7 +16,7 @@ const Hoteles = () => {
   const [ciudades, setCiudades] = useState([]);
   const [paisId, setPaisId] = useState('');
   const [ciudadId, setCiudadId] = useState('');
-  const [hoteles, setHoteles] = useState([]); 
+  const [hotelesFiltrados, setHotelesFiltrados] = useState([]); 
   const [filtros, setFiltros] = useState({
     pais: '',
     ciudad: '',
@@ -147,14 +147,19 @@ const Hoteles = () => {
       }
     
       const hotelesData = await hotelesResponse.json();
-      // Filtra los hoteles según los filtros
-      const hotelesFiltrados = hotelesData.filter(hotel => {
-        return (
-          (filtros.pais ? hotel.paisId === filtros.pais : true) &&
-          (filtros.ciudad ? hotel.ciudadId === filtros.ciudad : true) &&
-          (filtros.nombre ? hotel.nombre.toLowerCase().includes(filtros.nombre.toLowerCase()) : true)
-        );
-      });
+      // Si no hay filtros, mostramos todos los hoteles
+      let hotelesFiltrados = hotelesData;
+
+      if (filtros.pais || filtros.ciudad || filtros.nombre) {
+        // Filtra los hoteles según los filtros
+         hotelesFiltrados = hotelesData.filter(hotel => {
+          return (
+            (filtros.pais ? hotel.paisId === filtros.pais : true) &&
+            (filtros.ciudad ? hotel.ciudadId === filtros.ciudad : true) &&
+            (filtros.nombre ? hotel.nombre.toLowerCase().includes(filtros.nombre.toLowerCase()) : true)
+          );
+        })
+      };
 
       // Mapea los nombres de país y ciudad
       const hotelesConNombres = hotelesFiltrados.map(hotel => ({
@@ -163,7 +168,7 @@ const Hoteles = () => {
         ciudadNombre: ciudades.find(ciudad => ciudad.id === hotel.ciudadId)?.nombre || 'No disponible'
       }));
 
-      setHoteles(hotelesConNombres);
+      setHotelesFiltrados(hotelesConNombres);
       
     } catch (error) {
       console.error('Error en la solicitud de hoteles:', error.message);
@@ -282,8 +287,8 @@ const Hoteles = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {hoteles.length > 0 ? (
-                    hoteles.map((hotel) => (
+                  {hotelesFiltrados.length > 0 ? (
+                    hotelesFiltrados.map((hotel) => (
                       <TableRow key={hotel.id}>
                         <TableCell>{hotel.nombre}</TableCell>
                         <TableCell>{hotel.checkIn}</TableCell>
