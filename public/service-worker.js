@@ -29,8 +29,12 @@ this.addEventListener("activate", (event) => {
   this.clients.claim(); // Reclama control sobre las pestañas abiertas
 });
 
-// Intercepción de peticiones para servir desde caché
+// Intercepción de peticiones para servir desde caché (solo GET)
 this.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") {
+    return; // Ignora métodos que no sean GET
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -38,8 +42,10 @@ this.addEventListener("fetch", (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clonedResponse));
         return response;
       })
-      .catch(() => caches.match(event.request)))
+      .catch(() => caches.match(event.request))
+  );
 });
+
 // Manejo de notificaciones Push
 this.addEventListener("push", (event) => {
   if (event.data) {
