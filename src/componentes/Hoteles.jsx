@@ -17,14 +17,11 @@ const Hoteles = () => {
   const [paisId, setPaisId] = useState('');
   const [ciudadId, setCiudadId] = useState('');
   const [hoteles, setHoteles] = useState([]); 
-  const [filtroPais, setFiltroPais] = useState('');
-  const [filtroCiudad, setFiltroCiudad] = useState('');
-  const [filtroNombre, setFiltroNombre] = useState('');
-  const [filtroCheckIn] = useState('');
-  const [filtroCheckOut] = useState('');
-  const [filtroPaginaWeb] = useState('');
-  const [filtroDireccion] = useState('');
-  const [filtroTips] = useState('');
+  const [filtros, setFiltros] = useState({
+    pais: '',
+    ciudad: '',
+    nombre: ''
+  });
   const token = localStorage.getItem('token');
   const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -94,13 +91,18 @@ const Hoteles = () => {
         console.error('Error al cargar las ciudades:', error);
     }
   };
+  const formatHorario = (hora) => {
+    if (!hora) return "00:00:00"; 
+    const [hh, mm] = hora.split(":");
+    return `${hh.padStart(2, "0")}:${mm.padStart(2, "0")}:00`;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const nuevoHotel = {
       nombre,
-      checkIn,
-      checkOut,
+      checkIn : formatHorario(checkIn),
+      checkOut : formatHorario(checkOut),
       paginaWeb,
       direccion,
       paisId : paisId.id,
@@ -145,44 +147,35 @@ const Hoteles = () => {
       }
     
       const hotelesData = await hotelesResponse.json();
-      
-      setHoteles(Array.isArray(hotelesData) ? hotelesData : []);
+      // Filtra los hoteles según los filtros
+      const hotelesFiltrados = hotelesData.filter(hotel => {
+        return (
+          (filtros.pais ? hotel.paisId === filtros.pais : true) &&
+          (filtros.ciudad ? hotel.ciudadId === filtros.ciudad : true) &&
+          (filtros.nombre ? hotel.nombre.toLowerCase().includes(filtros.nombre.toLowerCase()) : true)
+        );
+      });
+
+      // Mapea los nombres de país y ciudad
+      const hotelesConNombres = hotelesFiltrados.map(hotel => ({
+        ...hotel,
+        paisNombre: paises.find(pais => pais.id === hotel.paisId)?.nombre || 'No disponible',
+        ciudadNombre: ciudades.find(ciudad => ciudad.id === hotel.ciudadId)?.nombre || 'No disponible'
+      }));
+
+      setHoteles(hotelesConNombres);
       
     } catch (error) {
       console.error('Error en la solicitud de hoteles:', error.message);
     }
   };
 
-
-  const handleFiltroPaisChange = async (e) => {
-    setFiltroPais(e.target.value);
-    setFiltroCiudad('');
-    if (e.target.value) {
-      handleCiudadChange(e.target.value);
-    }
+  const handleFiltroChange = (e) => {
+    setFiltros({
+      ...filtros,
+      [e.target.name]: e.target.value
+    });
   };
-
-  const handleFiltroCiudadChange = (e) => {
-    setFiltroCiudad(e.target.value);
-  };
-
-  const handleFiltroNombreChange = (e) => {
-    setFiltroNombre(e.target.value);
-  };
-
-  const filteredHoteles = hoteles.filter(hotel => {
-    return (
-      (filtroNombre ? hotel.nombre.toLowerCase().includes(filtroNombre.toLowerCase()) : true) &&
-      (filtroCheckIn ? hotel.checkIn === filtroCheckIn : true) &&
-      (filtroCheckOut ? hotel.checkOut === filtroCheckOut : true) &&
-      (filtroPaginaWeb ? hotel.paginaWeb === filtroPaginaWeb : true) &&
-      (filtroDireccion ? hotel.direccion === filtroDireccion : true) &&
-      (filtroPais ? hotel.paisId === filtroPais : true) && // Usa == en lugar de === para evitar problemas de tipo
-      (filtroCiudad ? hotel.ciudadId === filtroCiudad : true) &&
-      (filtroTips ? hotel.tips.toLowerCase().includes(filtroTips.toLowerCase()) : true)
-    );
-});
-
 
 
   return (
@@ -235,16 +228,16 @@ const Hoteles = () => {
                   fullWidth 
                   label="Nombre del Hotel" 
                   variant="outlined" 
-                  value={filtroNombre}
-                  onChange={handleFiltroNombreChange}
+                  value={filtros.nombre}
+                  onChange={handleFiltroChange}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>País</InputLabel>
                   <Select
-                    value={filtroPais}
-                    onChange={handleFiltroPaisChange}
+                    value={filtros.pais}
+                    onChange={handleFiltroChange}
                     label="País"
                   >
                     {paises.map((pais) => (
@@ -259,8 +252,8 @@ const Hoteles = () => {
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Ciudad</InputLabel>
                   <Select
-                    value={filtroCiudad}
-                    onChange={handleFiltroCiudadChange}
+                    value={filtros.ciudad}
+                    onChange={handleFiltroChange}
                     label="Ciudad"
                   >
                     {ciudades.map((ciudad) => (
@@ -289,8 +282,8 @@ const Hoteles = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredHoteles.length > 0 ? (
-                    filteredHoteles.map((hotel) => (
+                  {hoteles.length > 0 ? (
+                    hoteles.map((hotel) => (
                       <TableRow key={hotel.id}>
                         <TableCell>{hotel.nombre}</TableCell>
                         <TableCell>{hotel.checkIn}</TableCell>
@@ -335,22 +328,6 @@ const Hoteles = () => {
                     type="time"
                     value={checkIn}
                     onChange={(e) => setCheckIn(e.target.value)} InputLabelProps={{ shrink: true }} />
-
-                {/* <TextField
-                  fullWidth
-                  label="Horario"
-                  type="text"
-                  value={checkIn}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    // Solo permitir caracteres válidos (números y dos puntos)
-                    if (/^([0-9]{0,2}[:]{0,1}[0-9]{0,2})$/.test(newValue)) {
-                      setCheckIn(newValue);
-                    }
-                  }}
-                  helperText="Formato: 00:00"
-                  margin="normal"
-                /> */}
               </Grid>
                 <Grid item xs={12} sm={6}>
                 <TextField
@@ -358,24 +335,7 @@ const Hoteles = () => {
                     label="Check-Out"
                     type="time"
                     value={checkOut}
-                    onChange={(e) => checkOut(e.target.value)} InputLabelProps={{ shrink: true }} />
-
-                {/* <TextField
-                    fullWidth
-                    label="Check-Out"
-                    type="text"  
-                    value={checkOut}
-                    onChange={(e) => {
-                      const newValue = e.target.value;
-                      
-                      const regex = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
-                      if (regex.test(newValue) || newValue === '') {
-                        checkOut(newValue); 
-                      }
-                    }}
-                    helperText="Formato: 00:00"
-                    margin="normal"
-                  /> */}
+                    onChange={(e) => setCheckOut(e.target.value)} InputLabelProps={{ shrink: true }} />
                   <TextField 
                     fullWidth 
                     label="Página Web" 

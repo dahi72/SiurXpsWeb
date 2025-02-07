@@ -51,7 +51,7 @@ const handleCloseSnackbar = (_, reason) => {
     } catch (error) {
       console.error('Error al cargar los vuelos:', error);
     }
-  }, [baseUrl, token]); // ✅ Solo se ejecutará si baseUrl o token cambian
+  }, [baseUrl, token]); 
 
   useEffect(() => {
     cargarVuelos();
