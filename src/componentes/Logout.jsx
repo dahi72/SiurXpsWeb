@@ -22,8 +22,10 @@ const Logout = () => {
         try {
             const response = await fetch(`${baseUrl}/Usuario/logout`, {
                 method: 'POST',
+                
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer  ${token}`, 
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ token })
             });
