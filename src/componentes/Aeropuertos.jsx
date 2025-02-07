@@ -381,10 +381,10 @@ const Aeropuertos = () => {
                   <FormControl fullWidth>
                     <InputLabel>País</InputLabel>
                     <Select
-                      value={paisId}
+                     value={paisId || ''}
                       onChange={(e) => {
                         const selectedPais = paises.find(pais => pais.id === parseInt(e.target.value));
-                        setPaisId(e.target.value);
+                        setPaisId(Number(e.target.value));
                         if (selectedPais) {
                           setPaisCodigoIso(selectedPais.codigoIso);
                           setCiudadId('');
