@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Tabs, Tab, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Grid } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -13,7 +13,12 @@ const Vuelos = () => {
   const [tabValue, setTabValue] = useState(0);
   const baseUrl = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem('token');
-  
+
+  const formatHorario = (hora) => {
+    if (!hora) return "00:00:00"; 
+    const [hh, mm] = hora.split(":");
+    return `${hh.padStart(2, "0")}:${mm.padStart(2, "0")}:00`;
+  };
 
   const cargarVuelos = useCallback(async () => {
     try {
@@ -24,25 +29,18 @@ const Vuelos = () => {
           'Content-Type': 'application/json',
         },
       });
-
       if (!response.ok) throw new Error('Error al obtener los vuelos');
-
       const data = await response.json();
       setVuelos(Array.isArray(data) ? data.map(vuelo => ({ ...vuelo, horario: formatHorario(vuelo.horario) })) : []);
     } catch (error) {
       console.error('Error al cargar los vuelos:', error);
     }
-  }, [baseUrl, token]); 
+  }, [baseUrl, token]); // ✅ Solo se ejecutará si baseUrl o token cambian
 
   useEffect(() => {
     cargarVuelos();
-  }, [cargarVuelos]);
+  }, [cargarVuelos]); // 
 
-  const formatHorario = (hora) => {
-    if (!hora) return "00:00:00"; 
-    const [hh, mm] = hora.split(":");
-    return `${hh.padStart(2, "0")}:${mm.padStart(2, "0")}:00`;
-  };
 
   const isFormComplete = () => nombre.trim() !== '' && horario.trim() !== '';
 
@@ -51,11 +49,11 @@ const Vuelos = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormComplete()) return console.error('Nombre y horario son requeridos');
-    
+  
     const url = vueloEditando ? `${baseUrl}/Vuelo/${vueloEditando.id}` : `${baseUrl}/Vuelo/altaVuelo`;
     const method = vueloEditando ? 'PUT' : 'POST';
     const vueloData = { nombre, horario: formatHorario(horario) };
-   
+  
     try {
       const response = await fetch(url, {
         method,
@@ -65,11 +63,11 @@ const Vuelos = () => {
         },
         body: JSON.stringify(vueloData),
       });
-      
+  
       if (!response.ok) throw await response.json();
-      await cargarVuelos();
-      const data = await response.json();
-      setVuelos(vueloEditando ? vuelos.map(v => (v.id === data.id ? { ...data, horario: formatHorario(data.horario) } : v)) : [...vuelos, { ...data, horario: formatHorario(data.horario) }]);
+      
+      await cargarVuelos(); // Recargar la lista completa desde el backend
+  
       setNombre('');
       setHorario('');
       setVueloEditando(null);
@@ -102,7 +100,6 @@ const Vuelos = () => {
   const filteredVuelos = vuelos.filter(vuelo => 
     vuelo.nombre?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
   );
-  
 
   return (
     <Box>
