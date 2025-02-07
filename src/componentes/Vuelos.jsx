@@ -95,6 +95,8 @@ const handleCloseSnackbar = (_, reason) => {
   };
 
   const handleEliminar = async (id) => {
+    const confirmacion = window.confirm("¿Está seguro de que desea eliminar este vuelo?");
+    if (!confirmacion) return;
     try {
       const response = await fetch(`${baseUrl}/Vuelo/${id}`, {
         method: 'DELETE',
