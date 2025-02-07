@@ -9,8 +9,37 @@ const Logout = () => {
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
 
-    const handleLogout = () => {
-       
+    const handleLogout = async () => {
+        const token = localStorage.getItem('token');
+    
+        if (!token) {
+            console.warn("No hay token en el localStorage.");
+            finalizarLogout();
+            return;
+        }
+    
+        try {
+            const response = await fetch('http://localhost:5000/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token })
+            });
+    
+            if (response.ok) {
+                console.log("Token enviado al backend para ser revocado.");
+            } else {
+                console.error("Error al revocar el token:", await response.json());
+            }
+        } catch (error) {
+            console.error("Error en la solicitud de logout:", error);
+        }
+    
+        finalizarLogout();
+    };
+    
+    const finalizarLogout = () => {
         setUsuario(null);
         localStorage.removeItem('token');
         localStorage.removeItem('pasaporte');
