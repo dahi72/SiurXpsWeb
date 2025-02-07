@@ -31,6 +31,7 @@ const Aeropuertos = () => {
   const [paisSeleccionado, setPaisSeleccionado] = useState('');
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState('');
   const [nombre, setNombre] = useState('');
+  const [tips, setTips] = useState('');
   const [paginaWeb, setPaginaWeb] = useState('');
   const [direccion, setDireccion] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,7 +90,13 @@ useEffect(() => {
             if (!response.ok) throw new Error('Error al obtener los países');
 
             const data = await response.json();
-            setPaises(data);
+            const paisesOrdenados = data.sort((a, b) => {
+              if (a.nombre < b.nombre) return -1;
+              if (a.nombre > b.nombre) return 1;
+              return 0;
+          });
+
+          setPaises(paisesOrdenados);
         } catch (error) {
             console.error('Error al cargar los países:', error);
         }
@@ -116,7 +123,13 @@ useEffect(() => {
                 if (!response.ok) throw new Error('Error al obtener las ciudades');
 
                 const data = await response.json();
-                setCiudades(data);
+                const ciudadesOrdenadas = data.sort((a, b) => {
+                  if (a.nombre < b.nombre) return -1;
+                  if (a.nombre > b.nombre) return 1;
+                  return 0;
+              });
+      
+              setCiudades(ciudadesOrdenadas);
             } catch (error) {
                 console.error('Error al cargar las ciudades:', error);
             }
@@ -137,7 +150,7 @@ useEffect(() => {
     e.preventDefault();
     const url = aeropuertoEditando ? `${baseUrl}/Aeropuerto/${aeropuertoEditando.id}` : `${baseUrl}/Aeropuerto/altaAeropuerto`;
     const method = aeropuertoEditando ? 'PUT' : 'POST';
-    console.log('aeropuerto', nombre, paginaWeb, paisSeleccionado, ciudadSeleccionada, direccion)
+    console.log("aeropuerto", nombre, paginaWeb, paisSeleccionado, ciudadSeleccionada, direccion, tips)
 
     try {
       const response = await fetch(url, {
@@ -151,7 +164,8 @@ useEffect(() => {
           paginaWeb, 
           paisId: paisSeleccionado,
           ciudadId: ciudadSeleccionada,
-          direccion 
+          direccion,
+          tips
         }),
       });
 
@@ -172,6 +186,7 @@ useEffect(() => {
         setPaisSeleccionado('');
         setCiudadSeleccionada('');
         setDireccion('');
+        setTips('');
         setAeropuertoEditando(null);
         setTabValue(0);
       } else {
@@ -212,6 +227,7 @@ useEffect(() => {
     setPaisSeleccionado(aeropuerto.pais);
     setCiudadSeleccionada(aeropuerto.ciudad);
     setDireccion(aeropuerto.direccion);
+    setTips(aeropuerto.tips);
     setTabValue(1); 
   };
 
@@ -220,7 +236,7 @@ useEffect(() => {
       const response = await fetch(`${baseUrl}/Aeropuerto/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Authorization': `Bearer  ${token}`, 
           'Content-Type': 'application/json'
       },
       });
@@ -234,9 +250,10 @@ useEffect(() => {
       console.error('Error de red:', error);
     }
   };
-  const filteredAeropuertos = aeropuertos.filter(aeropuerto =>
-    aeropuerto.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredAeropuertos = (aeropuertos ?? []).filter(aeropuerto =>
+    aeropuerto?.nombre?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
   );
+  
 
   return (
     <Box
@@ -247,6 +264,17 @@ useEffect(() => {
         padding: '2rem'
       }}
     >
+      <Box>
+        <Button variant="outlined" 
+            onClick={() => navigate('/catalogos')} 
+            sx={{ 
+            mb: 2, 
+            backgroundColor: 'rgb(227, 242, 253)', 
+            color: '#1976d2'
+            }}
+              >Volver a Catálogos
+        </Button>
+      </Box>
       <Box
         sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -304,6 +332,7 @@ useEffect(() => {
                     <TableCell>País</TableCell>
                     <TableCell>Ciudad</TableCell>
                     <TableCell>Dirección</TableCell>
+                    <TableCell>Tips</TableCell>
                     <TableCell>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
@@ -320,6 +349,7 @@ useEffect(() => {
                         <TableCell>{aeropuerto.pais}</TableCell>
                         <TableCell>{aeropuerto.ciudad}</TableCell>
                         <TableCell>{aeropuerto.direccion}</TableCell>
+                        <TableCell>{aeropuerto.tips}</TableCell>
                         <TableCell>
                           <Button size="small" color="primary" onClick={() => handleEditar(aeropuerto)}>Editar</Button>
                           <Button size="small" color="error" onClick={() => handleEliminar(aeropuerto.id)}>Eliminar</Button>
@@ -410,6 +440,15 @@ useEffect(() => {
                     onChange={(e) => setDireccion(e.target.value)} 
                   />
                 </Grid>
+                <Grid item xs={12}>
+                  <TextField 
+                    fullWidth 
+                    label="Tips" 
+                    variant="outlined" 
+                    value={tips} 
+                    onChange={(e) => setTips(e.target.value)} 
+                  />
+                </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
                 <Button variant="contained" color="primary" type="submit"  disabled={!isFormComplete()} >
@@ -419,17 +458,6 @@ useEffect(() => {
             </form>
           </Box>
         )}
-      </Box>
-      <Box>
-      <Button variant="outlined" 
-          onClick={() => navigate('/catalogos')} 
-          sx={{ 
-          mb: 2, 
-          backgroundColor: 'rgb(227, 242, 253)', 
-          color: '#1976d2'
-    }}
-  >Volver a Catálogos
-          </Button>
       </Box>
     </Box>
   );
