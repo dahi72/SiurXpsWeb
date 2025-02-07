@@ -160,8 +160,8 @@ useEffect(() => {
         body: JSON.stringify({ 
           nombre, 
           paginaWeb, 
-          paisId: paisSeleccionado,
-          ciudadId: ciudadSeleccionada,
+          paisId: paisSeleccionado.id,
+          ciudadId: ciudadSeleccionada.id,
           direccion,
           tips
         }),
