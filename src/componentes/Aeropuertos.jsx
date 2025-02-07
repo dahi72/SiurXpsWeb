@@ -28,9 +28,9 @@ const Aeropuertos = () => {
   const [aeropuertos, setAeropuertos] = useState([]);
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
-  const [paisSeleccionado, setPaisSeleccionado] = useState('');
+  const [paisId, setPaisId] = useState('');
   const [paisCodigoIso, setPaisCodigoIso] = useState('');
-  const [ciudadSeleccionada, setCiudadSeleccionada] = useState('');
+  const [ciudadId, setCiudadId] = useState('');
   const [nombre, setNombre] = useState('');
   const [tips, setTips] = useState('');
   const [paginaWeb, setPaginaWeb] = useState('');
@@ -45,99 +45,95 @@ const Aeropuertos = () => {
       nombre &&
       paginaWeb &&
       direccion &&
-      paisSeleccionado &&
-      ciudadSeleccionada 
+      paisId &&
+      ciudadId 
     );
   };
 
   useEffect(() => {
     const cargarAeropuertos = async () => {
-        try {
-         const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+      try {
+        const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-            if (!response.ok) throw new Error('Error al obtener los aeropuertos');
+        if (!response.ok) throw new Error('Error al obtener los aeropuertos');
 
-            const data = await response.json();
-            setAeropuertos(Array.isArray(data) ? data : []);
-        } catch (error) {
-            console.error('Error al cargar los aeropuertos:', error);
-        }
+        const data = await response.json();
+        setAeropuertos(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error al cargar los aeropuertos:', error);
+      }
     };
 
     cargarAeropuertos();
-}, [baseUrl, token]);
+  }, [baseUrl, token]);
 
-useEffect(() => {
+  useEffect(() => {
     const cargarPaises = async () => {
-        try {
-            const token = localStorage.getItem('token');
+      try {
+        const response = await fetch(`${baseUrl}/Pais/listado`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-            const response = await fetch(`${baseUrl}/Pais/listado`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+        if (!response.ok) throw new Error('Error al obtener los países');
 
-            if (!response.ok) throw new Error('Error al obtener los países');
+        const data = await response.json();
+        const paisesOrdenados = data.sort((a, b) => {
+          if (a.nombre < b.nombre) return -1;
+          if (a.nombre > b.nombre) return 1;
+          return 0;
+        });
 
-            const data = await response.json();
-            const paisesOrdenados = data.sort((a, b) => {
-              if (a.nombre < b.nombre) return -1;
-              if (a.nombre > b.nombre) return 1;
-              return 0;
-          });
-
-          setPaises(paisesOrdenados);
-        } catch (error) {
-            console.error('Error al cargar los países:', error);
-        }
+        setPaises(paisesOrdenados);
+      } catch (error) {
+        console.error('Error al cargar los países:', error);
+      }
     };
 
     cargarPaises();
-}, [baseUrl]);
-
+  }, [baseUrl, token]);
 
   useEffect(() => {
     const cargarCiudades = async () => {
-        if (paisSeleccionado) {
-            try {
-                const response = await fetch(`${baseUrl}/Ciudad/${paisCodigoIso}/ciudades`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, 
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) throw new Error('Error al obtener las ciudades');
-
-                const data = await response.json();
-                const ciudadesOrdenadas = data.sort((a, b) => {
-                  if (a.nombre < b.nombre) return -1;
-                  if (a.nombre > b.nombre) return 1;
-                  return 0;
-              });
-      
-              setCiudades(ciudadesOrdenadas);
-            } catch (error) {
-                console.error('Error al cargar las ciudades:', error);
+      if (paisCodigoIso) {
+        try {
+          const response = await fetch(`${baseUrl}/Ciudad/${paisCodigoIso}/ciudades`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
             }
-        } else {
-            setCiudades([]); 
+          });
+
+          if (!response.ok) throw new Error('Error al obtener las ciudades');
+
+          const data = await response.json();
+          const ciudadesOrdenadas = data.sort((a, b) => {
+            if (a.nombre < b.nombre) return -1;
+            if (a.nombre > b.nombre) return 1;
+            return 0;
+          });
+
+          setCiudades(ciudadesOrdenadas);
+        } catch (error) {
+          console.error('Error al cargar las ciudades:', error);
         }
+      } else {
+        setCiudades([]);
+      }
     };
 
     cargarCiudades();
-}, [baseUrl, paisSeleccionado, token, paisCodigoIso]);
-
+  }, [baseUrl, paisCodigoIso, token]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -147,42 +143,46 @@ useEffect(() => {
     e.preventDefault();
     const url = aeropuertoEditando ? `${baseUrl}/Aeropuerto/${aeropuertoEditando.id}` : `${baseUrl}/Aeropuerto/altaAeropuerto`;
     const method = aeropuertoEditando ? 'PUT' : 'POST';
-    console.log("aeropuertoPais", paisSeleccionado)
-    console.log("aeropuertoCiudad", ciudadSeleccionada)
+
+    const aeropuertoData = {
+      nombre,
+      paginaWeb,
+      paisId: parseInt(paisId),
+      ciudadId: parseInt(ciudadId),
+      direccion,
+      tips
+    };
 
     try {
       const response = await fetch(url, {
         method,
         headers: {
-          'Authorization': `Bearer  ${token}`, 
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-      },
-        body: JSON.stringify({ 
-          nombre, 
-          paginaWeb, 
-          paisId: paisSeleccionado.id,
-          ciudadId: ciudadSeleccionada.id,
-          direccion,
-          tips
-        }),
+        },
+        body: JSON.stringify(aeropuertoData),
       });
 
       if (response.ok) {
         const message = await response.json();
         console.log('Mensaje de la API:', message);
 
-        const aeropuertosResponse = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`);
+        const aeropuertosResponse = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
         if (aeropuertosResponse.ok) {
           const aeropuertosData = await aeropuertosResponse.json();
           setAeropuertos(aeropuertosData);
-        } else {
-          console.error('Error al cargar la lista de aeropuertos:', await aeropuertosResponse.json());
         }
 
         setNombre('');
         setPaginaWeb('');
-        setPaisSeleccionado('');
-        setCiudadSeleccionada('');
+        setPaisId('');
+        setCiudadId('');
         setDireccion('');
         setTips('');
         setAeropuertoEditando(null);
@@ -195,38 +195,23 @@ useEffect(() => {
       console.error('Error de red:', error);
     }
   };
-  const handleCiudadChange = async (codigoIso) => {
-    if (codigoIso) {
-      try {
-        const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        if (!response.ok) throw new Error('Error al obtener las ciudades');
-  
-        const data = await response.json();
-        setCiudades(data); 
-      } catch (error) {
-        console.error('Error al cargar las ciudades:', error);
-      }
-    } else {
-      setCiudades([]);  
-    }
-  };
 
   const handleEditar = (aeropuerto) => {
     setAeropuertoEditando(aeropuerto);
     setNombre(aeropuerto.nombre);
     setPaginaWeb(aeropuerto.paginaWeb);
-    setPaisSeleccionado(aeropuerto.pais);
-    setCiudadSeleccionada(aeropuerto.ciudad);
+    setPaisId(aeropuerto.paisId.toString());
+    setCiudadId(aeropuerto.ciudadId.toString());
     setDireccion(aeropuerto.direccion);
     setTips(aeropuerto.tips);
-    setTabValue(1); 
+    
+    // Cargar las ciudades del país seleccionado
+    const pais = paises.find(p => p.id === aeropuerto.paisId);
+    if (pais) {
+      setPaisCodigoIso(pais.codigoIso);
+    }
+    
+    setTabValue(1);
   };
 
   const handleEliminar = async (id) => {
@@ -234,9 +219,9 @@ useEffect(() => {
       const response = await fetch(`${baseUrl}/Aeropuerto/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer  ${token}`, 
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-      },
+        },
       });
 
       if (response.ok) {
@@ -248,29 +233,32 @@ useEffect(() => {
       console.error('Error de red:', error);
     }
   };
+
   const filteredAeropuertos = (aeropuertos ?? []).filter(aeropuerto =>
     aeropuerto?.nombre?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
   );
-  
 
   return (
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column',        backgroundSize: 'cover',
+        flexDirection: 'column',
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '2rem'
       }}
     >
       <Box>
-        <Button variant="outlined" 
-            onClick={() => navigate('/catalogos')} 
-            sx={{ 
+        <Button 
+          variant="outlined" 
+          onClick={() => navigate('/catalogos')} 
+          sx={{ 
             mb: 2, 
             backgroundColor: 'rgb(227, 242, 253)', 
             color: '#1976d2'
-            }}
-              >Volver a Catálogos
+          }}
+        >
+          Volver a Catálogos
         </Button>
       </Box>
       <Box
@@ -306,7 +294,6 @@ useEffect(() => {
 
         {tabValue === 0 && (
           <Box sx={{ mt: 3 }}>
-            {/* Sección de Búsqueda */}
             <Grid container spacing={2} sx={{ mb: 3 }}>
               <Grid item xs={12} md={8}>
                 <TextField 
@@ -356,7 +343,7 @@ useEffect(() => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} style={{ textAlign: 'center' }}>
+                      <TableCell colSpan={7} style={{ textAlign: 'center' }}>
                         No hay aeropuertos disponibles.
                       </TableCell>
                     </TableRow>
@@ -391,44 +378,39 @@ useEffect(() => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth margin="normal">
+                  <FormControl fullWidth>
                     <InputLabel>País</InputLabel>
                     <Select
-                      value={paisSeleccionado ? paisSeleccionado.id : ''}
+                      value={paisId}
                       onChange={(e) => {
-                        const selectedPais = paises.find(pais => pais.id === e.target.value);
+                        const selectedPais = paises.find(pais => pais.id === parseInt(e.target.value));
+                        setPaisId(e.target.value);
                         if (selectedPais) {
-                          setPaisSeleccionado(selectedPais.id); 
                           setPaisCodigoIso(selectedPais.codigoIso);
-                          setCiudades([]);  
-                          handleCiudadChange(selectedPais.codigoIso); 
+                          setCiudadId('');
                         }
                       }}
                     >
-                      <MenuItem value="">Seleccione un país</MenuItem>  
+                      <MenuItem value="">Seleccione un país</MenuItem>
                       {paises.map((pais) => (
-                        <MenuItem key={pais.id} value={pais.id}>{pais.nombre}</MenuItem>  
+                        <MenuItem key={pais.id} value={pais.id}>{pais.nombre}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
                 </Grid>
-
                 <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth margin="normal" disabled={ciudades.length === 0}>
+                  <FormControl fullWidth disabled={!paisId}>
                     <InputLabel>Ciudad</InputLabel>
                     <Select
-                      value={ciudadSeleccionada || ''}
-                      onChange={(e) => setCiudadSeleccionada(e.target.value)}  
+                      value={ciudadId}
+                      onChange={(e) => setCiudadId(e.target.value)}
                     >
                       <MenuItem value="">Seleccione una ciudad</MenuItem>
                       {ciudades.map((ciudad) => (
-                        <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>  
+                        <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
-                </Grid>
-
                 </Grid>
                 <Grid item xs={12}>
                   <TextField 
@@ -450,7 +432,12 @@ useEffect(() => {
                 </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-                <Button variant="contained" color="primary" type="submit"  disabled={!isFormComplete()} >
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  type="submit" 
+                  disabled={!isFormComplete()}
+                >
                   {aeropuertoEditando ? 'Actualizar' : 'Cargar'}
                 </Button>
               </Box>
