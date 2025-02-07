@@ -52,9 +52,7 @@ const Aeropuertos = () => {
   useEffect(() => {
     const cargarAeropuertos = async () => {
         try {
-            const token = localStorage.getItem('token');
-
-            const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
+         const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -72,7 +70,7 @@ const Aeropuertos = () => {
     };
 
     cargarAeropuertos();
-}, [baseUrl]);
+}, [baseUrl, token]);
 
 useEffect(() => {
     const cargarPaises = async () => {
@@ -110,8 +108,6 @@ useEffect(() => {
     const cargarCiudades = async () => {
         if (paisSeleccionado) {
             try {
-               
-
                 const response = await fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, {
                     method: 'GET',
                     headers: {
