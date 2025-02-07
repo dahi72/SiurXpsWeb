@@ -157,14 +157,14 @@ useEffect(() => {
       const response = await fetch(url, {
         method,
         headers: {
-          'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
+          'Authorization': `Bearer  ${token}`, 
           'Content-Type': 'application/json'
       },
         body: JSON.stringify({ 
           nombre, 
           paginaWeb, 
           paisId: paisSeleccionado,
-          ciudadId: ciudadSeleccionada.id,
+          ciudadId: ciudadSeleccionada,
           direccion,
           tips
         }),
