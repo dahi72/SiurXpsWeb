@@ -1,7 +1,8 @@
 import React, { useState, useEffect,useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Tabs, Tab, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Grid } from '@mui/material';
+import { Box, Typography, Tabs, Tab, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Grid  } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { Snackbar, Alert } from '@mui/material';
 
 const Vuelos = () => {
   const navigate = useNavigate();
@@ -13,12 +14,27 @@ const Vuelos = () => {
   const [tabValue, setTabValue] = useState(0);
   const baseUrl = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem('token');
+  const [mensaje, setMensaje] = useState('');
+  const [tipoAlerta, setTipoAlerta] = useState('success'); 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const formatHorario = (hora) => {
     if (!hora) return "00:00:00"; 
     const [hh, mm] = hora.split(":");
     return `${hh.padStart(2, "0")}:${mm.padStart(2, "0")}:00`;
   };
+
+  const mostrarMensaje = (texto, tipo = 'success') => {
+    setMensaje(texto);
+    setTipoAlerta(tipo);
+    setOpenSnackbar(true);
+  };
+
+  // Cerrar el Snackbar
+const handleCloseSnackbar = (_, reason) => {
+  if (reason === 'clickaway') return;
+  setOpenSnackbar(false);
+};
 
   const cargarVuelos = useCallback(async () => {
     try {
@@ -48,7 +64,7 @@ const Vuelos = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isFormComplete()) return console.error('Nombre y horario son requeridos');
+    if (!isFormComplete()) return mostrarMensaje('Nombre y horario son requeridos', 'error');
   
     const url = vueloEditando ? `${baseUrl}/Vuelo/${vueloEditando.id}` : `${baseUrl}/Vuelo/altaVuelo`;
     const method = vueloEditando ? 'PUT' : 'POST';
@@ -72,8 +88,9 @@ const Vuelos = () => {
       setHorario('');
       setVueloEditando(null);
       setTabValue(0);
+      mostrarMensaje(vueloEditando ? 'Vuelo actualizado correctamente' : 'Vuelo agregado correctamente', 'success');
     } catch (error) {
-      console.error('Error al guardar el vuelo:', error);
+      mostrarMensaje('Error al guardar el vuelo', 'error');
     }
   };
 
@@ -85,8 +102,9 @@ const Vuelos = () => {
       });
       if (!response.ok) throw new Error('Error al eliminar el vuelo');
       setVuelos(vuelos.filter(vuelo => vuelo.id !== id));
+      mostrarMensaje('Vuelo eliminado correctamente', 'success');
     } catch (error) {
-      console.error(error);
+      mostrarMensaje('Error al eliminar el vuelo', 'error');
     }
   };
 
@@ -102,7 +120,16 @@ const Vuelos = () => {
   );
 
   return (
+    
     <Box>
+      <Box>
+        {/* Snackbar con Alert para mostrar mensajes */}
+        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+          <Alert onClose={handleCloseSnackbar} severity={tipoAlerta} variant="filled">
+            {mensaje}
+          </Alert>
+        </Snackbar>
+      </Box>
       <Button variant="outlined" color="primary" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
         Volver a Catálogos
       </Button>

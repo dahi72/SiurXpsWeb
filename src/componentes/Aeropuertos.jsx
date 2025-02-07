@@ -29,6 +29,7 @@ const Aeropuertos = () => {
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [paisSeleccionado, setPaisSeleccionado] = useState('');
+  const [paisCodigoIso, setPaisCodigoIso] = useState('');
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState('');
   const [nombre, setNombre] = useState('');
   const [tips, setTips] = useState('');
@@ -108,7 +109,7 @@ useEffect(() => {
     const cargarCiudades = async () => {
         if (paisSeleccionado) {
             try {
-                const response = await fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, {
+                const response = await fetch(`${baseUrl}/Ciudad/${paisCodigoIso}/ciudades`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`, 
@@ -135,7 +136,7 @@ useEffect(() => {
     };
 
     cargarCiudades();
-}, [baseUrl, paisSeleccionado, token]);
+}, [baseUrl, paisSeleccionado, token, paisCodigoIso]);
 
 
   const handleTabChange = (event, newValue) => {
@@ -399,6 +400,7 @@ useEffect(() => {
                         const selectedPais = paises.find(pais => pais.id === e.target.value);
                         if (selectedPais) {
                           setPaisSeleccionado(selectedPais.id); 
+                          setPaisCodigoIso(selectedPais.codigoIso);
                           setCiudades([]);  
                           handleCiudadChange(selectedPais.codigoIso); 
                         }
