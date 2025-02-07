@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Tabs, Tab, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Grid } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
-const Vuelos = ({ baseUrl, token }) => {
+const Vuelos = () => {
   const navigate = useNavigate();
   const [vuelos, setVuelos] = useState([]);
   const [nombre, setNombre] = useState('');
@@ -11,7 +11,9 @@ const Vuelos = ({ baseUrl, token }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [vueloEditando, setVueloEditando] = useState(null);
   const [tabValue, setTabValue] = useState(0);
-
+  const baseUrl = process.env.REACT_APP_API_URL;
+  const token = localStorage.getItem('token');
+  
   useEffect(() => {
     const cargarVuelos = async () => {
       try {
