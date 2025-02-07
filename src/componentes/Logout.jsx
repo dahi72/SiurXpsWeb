@@ -8,6 +8,7 @@ const Logout = () => {
     const { setUsuario } = useUsuario();
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
+    const baseUrl = process.env.REACT_APP_API_URL;
 
     const handleLogout = async () => {
         const token = localStorage.getItem('token');
@@ -19,7 +20,7 @@ const Logout = () => {
         }
     
         try {
-            const response = await fetch('http://localhost:5000/api/logout', {
+            const response = await fetch(`${baseUrl}/Usuario/logout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
