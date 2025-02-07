@@ -145,8 +145,20 @@ const Aerolineas = () => {
         padding: '2rem'
       }}
     >
-    
-
+     <Box>
+        <Button
+           fullWidth
+          variant="contained"
+          onClick={() => navigate('/catalogos')} 
+          sx={{ 
+          mb: 2, 
+          backgroundColor: 'rgb(227, 242, 253)', 
+          color: '#1976d2'
+    }}
+  >
+            Volver a Catálogos
+        </Button>
+      </Box>
       <Box
         sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -267,18 +279,6 @@ const Aerolineas = () => {
             </form>
           </Box>
         )}
-      </Box>
-      <Box>
-        <Button variant="outlined" 
-          onClick={() => navigate('/catalogos')} 
-          sx={{ 
-          mb: 2, 
-          backgroundColor: 'rgb(227, 242, 253)', 
-          color: '#1976d2'
-    }}
-  >
-            Volver a Catálogos
-        </Button>
       </Box>
     </Box>
   );

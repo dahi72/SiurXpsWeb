@@ -106,7 +106,8 @@ const Viajeros = () => {
           Viajeros del Grupo
         </Typography>
         <Button 
-          variant="outlined" 
+          fullWidth
+          variant="contained"
           onClick={handleBack} 
           sx={{ mb: 4, fontSize: "0.85rem" }}
         >

@@ -132,7 +132,7 @@ const handleCloseSnackbar = (_, reason) => {
           </Alert>
         </Snackbar>
       </Box>
-      <Button variant="outlined" color="primary" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+      <Button fullWidth variant="contained" color="primary" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
         Volver a Catálogos
       </Button>
       <Typography variant="h4">Gestión de Vuelos</Typography>

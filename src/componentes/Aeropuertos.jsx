@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { 
   Box, 
   Button, 
@@ -50,28 +50,30 @@ const Aeropuertos = () => {
     );
   };
 
-  useEffect(() => {
-    const cargarAeropuertos = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+ 
+  const cargarAeropuertos = useCallback(async () => {
+    try {
+      const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-        if (!response.ok) throw new Error('Error al obtener los aeropuertos');
+      if (!response.ok) throw new Error('Error al obtener los aeropuertos');
 
-        const data = await response.json();
-        setAeropuertos(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error al cargar los aeropuertos:', error);
-      }
-    };
-
-    cargarAeropuertos();
+      const data = await response.json();
+      setAeropuertos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar los aeropuertos:', error);
+    }
   }, [baseUrl, token]);
+    
+  
+  useEffect(() => {
+    cargarAeropuertos();
+  }, [cargarAeropuertos]);
 
   useEffect(() => {
     const cargarPaises = async () => {
@@ -167,17 +169,7 @@ const Aeropuertos = () => {
         const message = await response.json();
         console.log('Mensaje de la API:', message);
 
-        const aeropuertosResponse = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (aeropuertosResponse.ok) {
-          const aeropuertosData = await aeropuertosResponse.json();
-          setAeropuertos(aeropuertosData);
-        }
+        await cargarAeropuertos();
 
         setNombre('');
         setPaginaWeb('');
