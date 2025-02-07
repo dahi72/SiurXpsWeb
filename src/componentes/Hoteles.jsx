@@ -20,8 +20,8 @@ const Hoteles = () => {
   const [filtroPais, setFiltroPais] = useState('');
   const [filtroCiudad, setFiltroCiudad] = useState('');
   const [filtroNombre, setFiltroNombre] = useState('');
-  const [filtroChechIn] = useState('');
-  const [filtroChechOut] = useState('');
+  const [filtroCheckIn] = useState('');
+  const [filtroCheckOut] = useState('');
   const [filtroPaginaWeb] = useState('');
   const [filtroDireccion] = useState('');
   const [filtroTips] = useState('');
@@ -40,8 +40,6 @@ const Hoteles = () => {
       tips
     );
   };
-
-
   useEffect(() => {
     const cargarPaises = async () => {
         try {
@@ -175,15 +173,16 @@ const Hoteles = () => {
   const filteredHoteles = hoteles.filter(hotel => {
     return (
       (filtroNombre ? hotel.nombre.toLowerCase().includes(filtroNombre.toLowerCase()) : true) &&
-      (filtroChechIn ? hotel.checkIn === filtroChechIn : true) &&
-      (filtroChechOut ? hotel.checkOut === filtroChechOut : true) &&
+      (filtroCheckIn ? hotel.checkIn === filtroCheckIn : true) &&
+      (filtroCheckOut ? hotel.checkOut === filtroCheckOut : true) &&
       (filtroPaginaWeb ? hotel.paginaWeb === filtroPaginaWeb : true) &&
       (filtroDireccion ? hotel.direccion === filtroDireccion : true) &&
-      (filtroPais ? hotel.paisId === filtroPais : true) &&
-      (filtroCiudad ? hotel.ciudadId === filtroCiudad : true) && 
-      (filtroTips ? hotel.tips === filtroTips : true)
+      (filtroPais ? hotel.paisId === filtroPais : true) && // Usa == en lugar de === para evitar problemas de tipo
+      (filtroCiudad ? hotel.ciudadId === filtroCiudad : true) &&
+      (filtroTips ? hotel.tips.toLowerCase().includes(filtroTips.toLowerCase()) : true)
     );
-  });
+});
+
 
 
   return (
@@ -330,7 +329,14 @@ const Hoteles = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                <TextField
+                  <TextField
+                    fullWidth
+                    label="Check-In"
+                    type="time"
+                    value={checkIn}
+                    onChange={(e) => setCheckIn(e.target.value)} InputLabelProps={{ shrink: true }} />
+
+                {/* <TextField
                   fullWidth
                   label="Horario"
                   type="text"
@@ -344,10 +350,17 @@ const Hoteles = () => {
                   }}
                   helperText="Formato: 00:00"
                   margin="normal"
-                />
+                /> */}
               </Grid>
                 <Grid item xs={12} sm={6}>
                 <TextField
+                    fullWidth
+                    label="Check-Out"
+                    type="time"
+                    value={checkOut}
+                    onChange={(e) => checkOut(e.target.value)} InputLabelProps={{ shrink: true }} />
+
+                {/* <TextField
                     fullWidth
                     label="Check-Out"
                     type="text"  
@@ -357,12 +370,12 @@ const Hoteles = () => {
                       
                       const regex = /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])$/;
                       if (regex.test(newValue) || newValue === '') {
-                        setCheckOut(newValue); 
+                        checkOut(newValue); 
                       }
                     }}
                     helperText="Formato: 00:00"
                     margin="normal"
-                  />
+                  /> */}
                   <TextField 
                     fullWidth 
                     label="Página Web" 
@@ -462,6 +475,5 @@ const Hoteles = () => {
     </Box>
   );
 };
-
 export default Hoteles;
 
