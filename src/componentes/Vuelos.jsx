@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Tabs, Tab, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Grid } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -14,25 +14,29 @@ const Vuelos = () => {
   const baseUrl = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem('token');
   
+
+  const cargarVuelos = useCallback(async () => {
+    try {
+      const response = await fetch(`${baseUrl}/Vuelo/vuelos`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error('Error al obtener los vuelos');
+
+      const data = await response.json();
+      setVuelos(Array.isArray(data) ? data.map(vuelo => ({ ...vuelo, horario: formatHorario(vuelo.horario) })) : []);
+    } catch (error) {
+      console.error('Error al cargar los vuelos:', error);
+    }
+  }, [baseUrl, token]); 
+
   useEffect(() => {
-    const cargarVuelos = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Vuelo/vuelos`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        if (!response.ok) throw new Error('Error al obtener los vuelos');
-        const data = await response.json();
-        setVuelos(Array.isArray(data) ? data.map(vuelo => ({ ...vuelo, horario: formatHorario(vuelo.horario) })) : []);
-      } catch (error) {
-        console.error('Error al cargar los vuelos:', error);
-      }
-    };
     cargarVuelos();
-  }, [baseUrl, token]);
+  }, [cargarVuelos]);
 
   const formatHorario = (hora) => {
     if (!hora) return "00:00:00"; 
@@ -51,7 +55,7 @@ const Vuelos = () => {
     const url = vueloEditando ? `${baseUrl}/Vuelo/${vueloEditando.id}` : `${baseUrl}/Vuelo/altaVuelo`;
     const method = vueloEditando ? 'PUT' : 'POST';
     const vueloData = { nombre, horario: formatHorario(horario) };
-    console.log("vuelo", vueloData)
+   
     try {
       const response = await fetch(url, {
         method,
@@ -63,7 +67,7 @@ const Vuelos = () => {
       });
       
       if (!response.ok) throw await response.json();
-      
+      await cargarVuelos();
       const data = await response.json();
       setVuelos(vueloEditando ? vuelos.map(v => (v.id === data.id ? { ...data, horario: formatHorario(data.horario) } : v)) : [...vuelos, { ...data, horario: formatHorario(data.horario) }]);
       setNombre('');
