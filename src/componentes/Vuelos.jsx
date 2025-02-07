@@ -95,7 +95,10 @@ const Vuelos = () => {
     setTabValue(1);
   };
 
-  const filteredVuelos = vuelos.filter(vuelo => vuelo.nombre.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredVuelos = vuelos.filter(vuelo => 
+    vuelo.nombre?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
+  );
+  
 
   return (
     <Box>
