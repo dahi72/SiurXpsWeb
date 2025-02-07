@@ -16,6 +16,7 @@ const Hoteles = () => {
   const [ciudades, setCiudades] = useState([]);
   const [paisId, setPaisId] = useState('');
   const [ciudadId, setCiudadId] = useState('');
+  const [hoteles, setHoteles] = useState([]); 
   const [hotelesFiltrados, setHotelesFiltrados] = useState([]); 
   const [filtros, setFiltros] = useState({
     pais: '',
@@ -149,17 +150,15 @@ const Hoteles = () => {
       const hotelesData = await hotelesResponse.json();
       // Si no hay filtros, mostramos todos los hoteles
       let hotelesFiltrados = hotelesData;
-
-      if (filtros.pais || filtros.ciudad || filtros.nombre) {
-        // Filtra los hoteles según los filtros
-         hotelesFiltrados = hotelesData.filter(hotel => {
-          return (
-            (filtros.pais ? hotel.paisId === filtros.pais : true) &&
-            (filtros.ciudad ? hotel.ciudadId === filtros.ciudad : true) &&
-            (filtros.nombre ? hotel.nombre.toLowerCase().includes(filtros.nombre.toLowerCase()) : true)
-          );
-        })
-      };
+      setHoteles(hotelesData)
+      hotelesFiltrados = hoteles.filter((hotel) => {
+        return (
+          (filtros.nombre === '' || hotel.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) &&
+          (filtros.pais === '' || hotel.paisCodigo === filtros.pais) &&
+          (filtros.ciudad === '' || hotel.ciudadId === filtros.ciudad)
+        );
+      });
+      
 
       // Mapea los nombres de país y ciudad
       const hotelesConNombres = hotelesFiltrados.map(hotel => ({
@@ -182,7 +181,38 @@ const Hoteles = () => {
     });
   };
 
+  const handleEliminar = async (id) => {
+    const confirmacion = window.confirm("¿Está seguro de que desea eliminar este hotel?");
+    if (!confirmacion) return;
+    try {
+      const response = await fetch(`${baseUrl}/Hotel/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error('Error al eliminar el hotel');
+      setHoteles(hoteles.filter(hotel => hotel.id !== id));
+    
+    } catch (error) {
+      console.error('Error al eliminar el vuelo', 'error');
+    }
+  };
 
+  const handleEditar = (hotel) => {
+   
+    setNombre(hotel.nombre);
+      setCheckIn(hotel.checkIn);
+      setCheckOut(hotel.checkOut);
+      setPaginaWeb(hotel.paginaWeb);
+      setDireccion(hotel.direccion);
+      setPaisId(hotel.paisId);
+      setCiudadId(hotel.ciudadId);
+      setTips(hotel.tips);
+    setTabValue(1);
+    // const hotelesFiltrados = hotel.filter(hotel => 
+    //   hotel.nombre?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
+    // );
+
+  };
   return (
     <Box
       sx={{
@@ -196,7 +226,7 @@ const Hoteles = () => {
         <Box>
         <Button
            fullWidth
-          variant="contained"
+          //variant="contained"
           onClick={() => navigate('/catalogos')} 
           sx={{ 
           mb: 2, 
@@ -297,6 +327,7 @@ const Hoteles = () => {
                     <TableCell>País</TableCell>
                     <TableCell>Ciudad</TableCell>
                     <TableCell>Tips</TableCell>
+                    <TableCell>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -311,6 +342,10 @@ const Hoteles = () => {
                         <TableCell>{hotel.paisNombre}</TableCell>
                         <TableCell>{hotel.ciudadNombre}</TableCell>
                         <TableCell>{hotel.tips}</TableCell>
+                        <TableCell>
+                        <Button onClick={() => handleEditar(hotel)}>Editar</Button>
+                        <Button onClick={() => handleEliminar(hotel.id)}>Eliminar</Button>
+                      </TableCell>
                       </TableRow>
                     ))
                   ) : (

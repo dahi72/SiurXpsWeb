@@ -1,6 +1,6 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { Container, Typography, Box, Paper, Divider, Stack } from '@mui/material';
+import { useLocation, Link, Navigate } from 'react-router-dom';
+import { Container, Typography, Box, Paper, Divider, Stack, Button } from '@mui/material';
 import dayjs from 'dayjs';
 
 const DataField = ({ label, value }) => (
@@ -27,6 +27,10 @@ const VerDatosViajero = () => {
   console.log(viajero);
  
   const fechaNacFormateada = viajero.fechaNac ? dayjs(viajero.fechaNac).format('DD/MM/YYYY') : 'No especificado';
+
+  const handleBack = () => {
+    Navigate(-1); 
+  };
 
   return (
     <Container maxWidth="md">
@@ -62,6 +66,15 @@ const VerDatosViajero = () => {
           </Box>
         </Box>
       </Paper>
+      <Button 
+        fullWidth
+        variant="contained"
+        color="primary"
+        onClick={handleBack} 
+        sx={{ mb: 4, fontSize: "0.85rem" }}
+        >
+          Volver a grupos
+        </Button>
     </Container>
   );
 };

@@ -55,7 +55,7 @@ const handleCloseSnackbar = (_, reason) => {
 
   useEffect(() => {
     cargarVuelos();
-  }, [cargarVuelos]); // 
+  }, [cargarVuelos]); 
 
 
   const isFormComplete = () => nombre.trim() !== '' && horario.trim() !== '';
@@ -132,9 +132,6 @@ const handleCloseSnackbar = (_, reason) => {
           </Alert>
         </Snackbar>
       </Box>
-      <Button fullWidth variant="contained" color="primary" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
-        Volver a Catálogos
-      </Button>
       <Typography variant="h4">Gestión de Vuelos</Typography>
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="Buscar Vuelos" />
@@ -193,6 +190,9 @@ const handleCloseSnackbar = (_, reason) => {
               </Button>
             </Box>
           </form>
+        <Button fullWidth variant="contained" color="primary" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+          Volver a Catálogos
+        </Button>
         </Box>
       )}
     </Box>

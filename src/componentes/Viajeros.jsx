@@ -105,14 +105,6 @@ const Viajeros = () => {
         <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 4 }}>
           Viajeros del Grupo
         </Typography>
-        <Button 
-          fullWidth
-          variant="contained"
-          onClick={handleBack} 
-          sx={{ mb: 4, fontSize: "0.85rem" }}
-        >
-          Volver a grupos
-        </Button>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
             <CircularProgress />
@@ -196,7 +188,6 @@ const Viajeros = () => {
             </Button>
           </DialogActions>
         </Dialog>
-
         {/* Notificación de éxito */}
         <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
           <Alert onClose={() => setSuccess(false)} severity="success">
@@ -204,6 +195,15 @@ const Viajeros = () => {
           </Alert>
         </Snackbar>
       </Box>
+      <Button 
+        fullWidth
+        color="primary"
+        variant="contained"
+        onClick={handleBack} 
+        sx={{ mb: 4, fontSize: "0.85rem" }}
+        >
+          Volver a grupos
+        </Button>
     </Container>
   );
 };
