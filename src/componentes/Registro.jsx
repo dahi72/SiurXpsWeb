@@ -46,22 +46,24 @@ const Registro = () => {
           });
         } else {
           setMensaje('Usuario creado exitosamente.');
-          setTimeout(() => {
-            navigate("/"); 
-          }, 2000);
         }
       })
       .catch((error) => {
         setMensaje(error.message);
         console.error("Error:", error);
-        setTimeout(() => {
-          setMensaje("");
-        }, 3000);
       });
   };
 
   return (
-      <Container maxWidth="sm">
+    <Container maxWidth="sm">
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={() => navigate("/dashboard")}
+          sx={{ margin: 2 }}
+          >
+              Volver al Dashboard
+        </Button>
         <Box
         sx={{
             height: '100vh', 
