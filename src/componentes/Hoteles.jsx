@@ -1,67 +1,98 @@
-
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Tabs, Tab, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, TextField, Grid, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Box, Typography, Tabs, Tab, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, TextField, Grid, Button, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const Hoteles = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [tips, setTips] = useState('');
   const [tabValue, setTabValue] = useState(0);
   const [nombre, setNombre] = useState('');
-  const [checkIn, setCheckIn] = useState('00:00:00'); 
-  const [checkOut, setCheckOut] = useState('00:00:00'); 
+  const [checkIn, setCheckIn] = useState('00:00:00');
+  const [checkOut, setCheckOut] = useState('00:00:00');
   const [paginaWeb, setPaginaWeb] = useState('');
   const [direccion, setDireccion] = useState('');
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [paisId, setPaisId] = useState('');
   const [ciudadId, setCiudadId] = useState('');
-  const [hoteles, setHoteles] = useState([]); 
-  const [hotelesFiltrados, setHotelesFiltrados] = useState([]); 
-  const [filtros, setFiltros] = useState({
-    pais: '',
-    ciudad: '',
-    nombre: ''
-  });
+  const [hoteles, setHoteles] = useState([]);
+  const [filtroPais, setFiltroPais] = useState('');
+  const [filtroCiudad, setFiltroCiudad] = useState('');
+  const [filtroNombre, setFiltroNombre] = useState('');
   const token = localStorage.getItem('token');
   const baseUrl = process.env.REACT_APP_API_URL;
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [tipoAlerta, setTipoAlerta] = useState('success');
+  const [mensaje, setMensaje] = useState('');
 
-  const isFormComplete = () => {
-    return (
-      nombre &&
-      checkIn &&
-      checkOut &&
-      paginaWeb &&
-      direccion &&
-      paisId.id &&
-      ciudadId &&
-      tips
-    );
+  const formatHorario = (hora) => {
+    if (!hora) return "00:00:00";
+    const [hh, mm] = hora.split(":");
+    return `${hh.padStart(2, "0")}:${mm.padStart(2, "0")}:00`;
   };
+  
+
+  const mostrarMensaje = (texto, tipo = 'success') => {
+    setMensaje(texto);
+    setTipoAlerta(tipo);
+    setOpenSnackbar(true);
+  };
+
+  // Cerrar el Snackbar
+  const handleCloseSnackbar = (_, reason) => {
+    if (reason === 'clickaway') return;
+    setOpenSnackbar(false);
+  };
+
+  const fetchHoteles = useCallback(async () => {
+    try {
+      const response = await fetch(`${baseUrl}/Hotel/hoteles`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setHoteles(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar los hoteles:', error);
+    }
+  }, [baseUrl, token]);
+
+  useEffect(() => {
+    fetchHoteles();
+  }, [fetchHoteles]);
+
   useEffect(() => {
     const cargarPaises = async () => {
-        try {
-          const response = await fetch(`${baseUrl}/Pais/listado`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            }
+      try {
+        const response = await fetch(`${baseUrl}/Pais/listado`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
 
-            if (!response.ok) throw new Error('Error al obtener los países');
+        if (!response.ok) throw new Error('Error al obtener los países');
 
-            const data = await response.json();
-            
-            const paisesOrdenados = data.sort((a, b) => {
-                if (a.nombre < b.nombre) return -1;
-                if (a.nombre > b.nombre) return 1;
-                return 0;
-            });
+        const data = await response.json();
+        const paisesOrdenados = data.sort((a, b) => {
+          if (a.nombre < b.nombre) return -1;
+          if (a.nombre > b.nombre) return 1;
+          return 0;
+        });
 
-            setPaises(paisesOrdenados);
-        } catch (error) {
-            console.error('Error al cargar los países:', error);
-        }
+        setPaises(paisesOrdenados);
+      } catch (error) {
+        console.error('Error al cargar los países:', error);
+      }
     };
 
     cargarPaises();
@@ -69,46 +100,53 @@ const Hoteles = () => {
 
   const handleCiudadChange = async (codigoIso) => {
     try {
-        const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
+      const response = await fetch(`${baseUrl}/Ciudad/${codigoIso}/ciudades`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-        if (!response.ok) throw new Error('Error al obtener las ciudades');
+      if (!response.ok) throw new Error('Error al obtener las ciudades');
 
-        const data = await response.json();
-        
-        const ciudadesOrdenadas = data.sort((a, b) => {
-            if (a.nombre < b.nombre) return -1;
-            if (a.nombre > b.nombre) return 1;
-            return 0;
-        });
+      const data = await response.json();
+      const ciudadesOrdenadas = data.sort((a, b) => {
+        if (a.nombre < b.nombre) return -1;
+        if (a.nombre > b.nombre) return 1;
+        return 0;
+      });
 
-        setCiudades(ciudadesOrdenadas);
+      setCiudades(ciudadesOrdenadas);
     } catch (error) {
-        console.error('Error al cargar las ciudades:', error);
+      console.error('Error al cargar las ciudades:', error);
     }
   };
-  const formatHorario = (hora) => {
-    if (!hora) return "00:00:00"; 
-    const [hh, mm] = hora.split(":");
-    return `${hh.padStart(2, "0")}:${mm.padStart(2, "0")}:00`;
+
+  const isFormComplete = () => {
+    return (
+      nombre &&
+      checkIn.trim() !== '' &&
+      checkOut.trim() !== '' &&
+      paginaWeb &&
+      direccion &&
+      paisId &&
+      ciudadId
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isFormComplete()) return mostrarMensaje('Todos los campos son requeridos', 'error');
     const nuevoHotel = {
       nombre,
-      checkIn : formatHorario(checkIn),
-      checkOut : formatHorario(checkOut),
-      paginaWeb,
+      checkIn: formatHorario(checkIn.slice(0, 5)),
+      checkOut: formatHorario(checkOut.slice(0, 5)),
+      paginaWeb: paginaWeb || null,
       direccion,
-      paisId : paisId.id,
-      ciudadId,
-      tips
+      paisId: parseInt(paisId),
+      ciudadId: parseInt(ciudadId),
+      tips: tips || null
     };
 
     try {
@@ -120,13 +158,13 @@ const Hoteles = () => {
         },
         body: JSON.stringify(nuevoHotel),
       });
-  
-      const data = await response.json(); 
-      console.log('Respuesta del servidor:', data);
+      
+      //const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(data?.mensaje || 'Error al agregar el hotel');
+        mostrarMensaje('Error al agregar el hotel', 'error');
       }
-  
+
       setNombre('');
       setCheckIn('');
       setCheckOut('');
@@ -136,50 +174,40 @@ const Hoteles = () => {
       setCiudadId('');
       setTips('');
       
-      const hotelesResponse = await fetch(`${baseUrl}/Hotel/hoteles`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-      });
-    
-      if (!hotelesResponse.ok) {
-        throw new Error(`Error ${hotelesResponse.status}: ${hotelesResponse.statusText}`);
-      }
-    
-      const hotelesData = await hotelesResponse.json();
-      // Si no hay filtros, mostramos todos los hoteles
-      let hotelesFiltrados = hotelesData;
-      setHoteles(hotelesData)
-      hotelesFiltrados = hoteles.filter((hotel) => {
-        return (
-          (filtros.nombre === '' || hotel.nombre.toLowerCase().includes(filtros.nombre.toLowerCase())) &&
-          (filtros.pais === '' || hotel.paisCodigo === filtros.pais) &&
-          (filtros.ciudad === '' || hotel.ciudadId === filtros.ciudad)
-        );
-      });
-      
-
-      // Mapea los nombres de país y ciudad
-      const hotelesConNombres = hotelesFiltrados.map(hotel => ({
-        ...hotel,
-        paisNombre: paises.find(pais => pais.id === hotel.paisId)?.nombre || 'No disponible',
-        ciudadNombre: ciudades.find(ciudad => ciudad.id === hotel.ciudadId)?.nombre || 'No disponible'
-      }));
-
-      setHotelesFiltrados(hotelesConNombres);
-      
+      await fetchHoteles();
+      setTabValue(0);
+     
+      alert('Hotel agregado exitosamente');
     } catch (error) {
-      console.error('Error en la solicitud de hoteles:', error.message);
+      mostrarMensaje('Error al guardar el hotel', 'error');
     }
   };
 
-  const handleFiltroChange = (e) => {
-    setFiltros({
-      ...filtros,
-      [e.target.name]: e.target.value
-    });
+ 
+
+  const handleFiltroPaisChange = async (e) => {
+    setFiltroPais(e.target.value);
+    setFiltroCiudad('');
+    if (e.target.value) {
+      handleCiudadChange(e.target.value);
+    }
   };
+
+  const handleFiltroCiudadChange = (e) => {
+    setFiltroCiudad(e.target.value);
+  };
+
+  const handleFiltroNombreChange = (e) => {
+    setFiltroNombre(e.target.value);
+  };
+
+  const filteredHoteles = hoteles.filter(hotel => {
+    return (
+      (filtroPais ? hotel.paisId === filtroPais : true) &&
+      (filtroCiudad ? hotel.ciudadId === filtroCiudad : true) &&
+      (filtroNombre ? hotel.nombre.toLowerCase().includes(filtroNombre.toLowerCase()) : true)
+    );
+  });
 
   const handleEliminar = async (id) => {
     const confirmacion = window.confirm("¿Está seguro de que desea eliminar este hotel?");
@@ -191,28 +219,64 @@ const Hoteles = () => {
       });
       if (!response.ok) throw new Error('Error al eliminar el hotel');
       setHoteles(hoteles.filter(hotel => hotel.id !== id));
-    
+      mostrarMensaje('Hotel eliminado correctamente', 'success');
     } catch (error) {
-      console.error('Error al eliminar el vuelo', 'error');
+      mostrarMensaje('Error al eliminar el hotel', 'error');
     }
   };
 
-  const handleEditar = (hotel) => {
-   
-    setNombre(hotel.nombre);
-      setCheckIn(hotel.checkIn);
-      setCheckOut(hotel.checkOut);
-      setPaginaWeb(hotel.paginaWeb);
-      setDireccion(hotel.direccion);
-      setPaisId(hotel.paisId);
-      setCiudadId(hotel.ciudadId);
-      setTips(hotel.tips);
-    setTabValue(1);
-    // const hotelesFiltrados = hotel.filter(hotel => 
-    //   hotel.nombre?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
-    // );
-
+  const handleEditar = async (hotel) => {
+    hotel.preventDefault();
+    if (!isFormComplete()) return mostrarMensaje('Todos los campos son requeridos', 'error');
+    
+    // setVueloEditando(vuelo);
+    // setNombre(vuelo.nombre);
+    // setHorario(vuelo.horario);
+    // setTabValue(1);
+    const hotelActualizado = {
+      id : hotel.id, // Asegúrate de tener el ID del hotel a actualizar
+      nombre,
+      checkIn : formatHorario(checkIn.slice(0, 5)),
+      checkOut : formatHorario(checkOut.slice(0, 5)),
+      paginaWeb : paginaWeb || null,
+      direccion,
+      paisId : parseInt(paisId),
+      ciudadId : parseInt(ciudadId),
+      tips : tips || null
+    }
+    
+    try {
+      const response = await fetch(`${baseUrl}/Hotel/${hotel.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(hotelActualizado),
+      });
+    
+      if (!response.ok) {
+        return mostrarMensaje('Error al actualizar el hotel', 'error');
+      }
+      setNombre('');
+      setCheckIn('');
+      setCheckOut('');
+      setPaginaWeb('');
+      setDireccion('');
+      setPaisId('');
+      setCiudadId('');
+      setTips('');
+    
+      await fetchHoteles(); // Recargar la lista de hoteles
+      setTabValue(0);
+    
+      alert('Hotel actualizado exitosamente');
+    } catch (error) {
+      mostrarMensaje('Error al actualizar el hotel', 'error');
+    }
   };
+
+
   return (
     <Box
       sx={{
@@ -223,18 +287,13 @@ const Hoteles = () => {
         padding: '2rem'
       }}
     >
-        <Box>
-        <Button
-           fullWidth
-          //variant="contained"
-          onClick={() => navigate('/catalogos')} 
-          sx={{ 
-          mb: 2, 
-          backgroundColor: 'rgb(227, 242, 253)', 
-          color: '#1976d2'
-          }} >
-          Volver a Catálogos
-        </Button>
+      <Box>
+        {/* Snackbar con Alert para mostrar mensajes */}
+        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+          <Alert onClose={handleCloseSnackbar} severity={tipoAlerta} variant="filled">
+            {mensaje}
+          </Alert>
+        </Snackbar>
       </Box>
       <Box
         sx={{
@@ -269,25 +328,25 @@ const Hoteles = () => {
 
         {tabValue === 0 && (
           <Box>
-            {/* Filtros */}
             <Grid container spacing={2} sx={{ mb: 3 }}>
               <Grid item xs={12} sm={4}>
                 <TextField 
                   fullWidth 
                   label="Nombre del Hotel" 
                   variant="outlined" 
-                  value={filtros.nombre}
-                  onChange={handleFiltroChange}
+                  value={filtroNombre}
+                  onChange={handleFiltroNombreChange}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>País</InputLabel>
                   <Select
-                    value={filtros.pais}
-                    onChange={handleFiltroChange}
+                    value={filtroPais}
+                    onChange={handleFiltroPaisChange}
                     label="País"
                   >
+                    <MenuItem value="">Todos</MenuItem>
                     {paises.map((pais) => (
                       <MenuItem key={pais.codigoIso} value={pais.codigoIso}>
                         {pais.nombre}
@@ -300,10 +359,12 @@ const Hoteles = () => {
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Ciudad</InputLabel>
                   <Select
-                    value={filtros.ciudad}
-                    onChange={handleFiltroChange}
+                    value={filtroCiudad}
+                    onChange={handleFiltroCiudadChange}
                     label="Ciudad"
+                    disabled={!filtroPais}
                   >
+                    <MenuItem value="">Todas</MenuItem>
                     {ciudades.map((ciudad) => (
                       <MenuItem key={ciudad.id} value={ciudad.id}>
                         {ciudad.nombre}
@@ -314,7 +375,6 @@ const Hoteles = () => {
               </Grid>
             </Grid>
 
-            {/* Tabla de Hoteles Filtrados */}
             <TableContainer component={Paper} sx={{ mb: 3 }}>
               <Table>
                 <TableHead>
@@ -331,8 +391,8 @@ const Hoteles = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {hotelesFiltrados.length > 0 ? (
-                    hotelesFiltrados.map((hotel) => (
+                  {filteredHoteles.length > 0 ? (
+                    filteredHoteles.map((hotel) => (
                       <TableRow key={hotel.id}>
                         <TableCell>{hotel.nombre}</TableCell>
                         <TableCell>{hotel.checkIn}</TableCell>
@@ -375,20 +435,28 @@ const Hoteles = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Check-In"
+                  <TextField 
+                    fullWidth 
+                    label="Check-in" 
                     type="time"
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)} InputLabelProps={{ shrink: true }} />
-              </Grid>
+                    variant="outlined" 
+                    value={checkIn === '00:00:00' ? '' : checkIn.slice(0, 5)} 
+                    onChange={(e) => setCheckIn(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
                 <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label="Check-Out"
+                  <TextField 
+                    fullWidth 
+                    label="Check-out" 
                     type="time"
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)} InputLabelProps={{ shrink: true }} />
+                    variant="outlined" 
+                    value={checkOut === '00:00:00' ? '' : checkOut.slice(0, 5)} 
+                    onChange={(e) => setCheckOut(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
                   <TextField 
                     fullWidth 
                     label="Página Web" 
@@ -410,14 +478,10 @@ const Hoteles = () => {
                   <FormControl fullWidth variant="outlined">
                     <InputLabel>País</InputLabel>
                     <Select
-                      value={paisId ? paisId.id : ''}
+                      value={paisId}
                       onChange={(e) => {
-                        const selectedPais = paises.find(pais => pais.id === e.target.value);
-                        if (selectedPais) {
-                          setPaisId(selectedPais);
-                          setCiudades([]);  
-                          handleCiudadChange(selectedPais.codigoIso); 
-                        }
+                        setPaisId(e.target.value);
+                        handleCiudadChange(e.target.value);
                       }}
                       label="País"
                     >
@@ -436,6 +500,7 @@ const Hoteles = () => {
                       value={ciudadId}
                       onChange={(e) => setCiudadId(e.target.value)}
                       label="Ciudad"
+                      disabled={!paisId}
                     >
                       {ciudades.map((ciudad) => (
                         <MenuItem key={ciudad.id} value={ciudad.id}>
@@ -473,8 +538,21 @@ const Hoteles = () => {
           </Box>
         )}
       </Box>
+      <Box>
+        <Button 
+          variant="outlined" 
+          onClick={() => navigate('/catalogos')} 
+          sx={{ 
+            mb: 2, 
+            backgroundColor: 'rgb(227, 242, 253)', 
+            color: '#1976d2'
+          }}
+        >
+          Volver a Catálogos
+        </Button>
+      </Box>
     </Box>
   );
 };
-export default Hoteles;
 
+export default Hoteles;

@@ -331,8 +331,8 @@ return (
                 }}
                 sx={{
                     mt: 2,
-                    color: "primary",
-                    '&:hover': { backgroundColor: "black" }
+                    color: "black",
+                    '&:hover': { backgroundColor: "black" }, backgroundColor: "primary" 
                 }}
                 startIcon={showEventMarkers ? <VisibilityOff /> : <Visibility />}
             >
