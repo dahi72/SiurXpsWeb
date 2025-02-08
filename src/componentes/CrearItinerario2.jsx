@@ -85,16 +85,26 @@ const CrearItinerario2 = () => {
         }
     };
 
-    // Crear el itinerario
     const handleCrearItinerario = async () => {
         try {
+            if (!grupoViaje) {
+                throw new Error('Debe seleccionar un grupo de viaje');
+            }
+    
+            const grupoSeleccionado = grupos.find(g => g.id === grupoViaje);
+            if (!grupoSeleccionado) {
+                throw new Error('No se encontró el grupo de viaje seleccionado');
+            }
+    
             const nuevoItinerario = {
                 grupoDeViajeId: grupoViaje,
-                fechaInicio: fechaInicio,
-                fechaFin: fechaFin,
+                fechaInicio: grupoSeleccionado.fechaInicio,
+                fechaFin: grupoSeleccionado.fechaFin,
                 eventos: []
             };
-            console.log("iti", nuevoItinerario)
+    
+            console.log("iti", nuevoItinerario);
+    
             const response = await fetch(`${baseUrl}/Itinerario/altaItinerario`, {
                 method: 'POST',
                 headers: {
@@ -103,34 +113,90 @@ const CrearItinerario2 = () => {
                 },
                 body: JSON.stringify(nuevoItinerario),
             });
-
+    
             if (!response.ok) {
                 throw new Error('Error al crear el itinerario');
             }
-
+    
+            // Obtener los itinerarios actualizados
             const itinerariosResponse = await fetch(`${baseUrl}/Itinerario/Listado`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
             });
-
+    
             if (!itinerariosResponse.ok) {
                 throw new Error('Error al obtener los itinerarios');
             }
-
+    
             const itinerarios = await itinerariosResponse.json();
-            const nuevoItinerarioId = itinerarios[itinerarios.length - 1].id;
+            const nuevoItinerarioId = itinerarios[itinerarios.length - 1]?.id;
+    
+            if (!nuevoItinerarioId) {
+                throw new Error('No se encontró el ID del nuevo itinerario');
+            }
+    
             setSnackbarMessage('Itinerario creado correctamente');
             setSnackbarSeverity('success');
             setOpenSnackbar(true);
-
+    
             navigate(`/crear-eventos/${nuevoItinerarioId}`);
         } catch (error) {
-            setSnackbarMessage('Error al crear el itinerario.');
+            console.error(error);
+            setSnackbarMessage(error.message);
             setSnackbarSeverity('error');
             setOpenSnackbar(true);
         }
     };
+    // Crear el itinerario
+    // const handleCrearItinerario = async () => {
+    //     try {
+    //         const nuevoItinerario = {
+    //             grupoDeViajeId: grupoViaje,
+    //             fechaInicio: fechaInicio,
+    //             fechaFin: fechaFin,
+    //             eventos: []
+    //         };
+    //         console.log("iti", nuevoItinerario)
+    //         const response = await fetch(`${baseUrl}/Itinerario/altaItinerario`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Bearer ${token}`,
+    //             },
+    //             body: JSON.stringify(nuevoItinerario),
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error('Error al crear el itinerario');
+    //         }
+
+    //         const itinerariosResponse = await fetch(`${baseUrl}/Itinerario/Listado`, {
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`,
+    //             },
+    //         });
+
+    //         if (!itinerariosResponse.ok) {
+    //             throw new Error('Error al obtener los itinerarios');
+    //         }
+
+    //         const itinerarios = await itinerariosResponse.json();
+    //         // const nuevoItinerarioId = itinerarios[itinerarios.length - 1].id;
+    //         const itinerarioRecienCreado = itinerarios.find(it => it.grupoDeViajeId === grupoViaje);
+    //         const nuevoItinerarioId = itinerarioRecienCreado?.id;
+
+    //         setSnackbarMessage('Itinerario creado correctamente');
+    //         setSnackbarSeverity('success');
+    //         setOpenSnackbar(true);
+
+    //         navigate(`/crear-eventos/${nuevoItinerarioId}`);
+    //     } catch (error) {
+    //         setSnackbarMessage('Error al crear el itinerario.');
+    //         setSnackbarSeverity('error');
+    //         setOpenSnackbar(true);
+    //     }
+    // };
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
