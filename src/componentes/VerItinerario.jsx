@@ -181,7 +181,7 @@ const VerItinerario = () => {
                                     <Button
                                         variant="outlined"
                                         startIcon={<EditIcon />}
-                                        onClick={() => navigate(`/itinerario/${itinerario.id}/editarItinerario`)}
+                                        onClick={() => navigate(`/crear-eventos/${itinerario.id}`)}
                                         size="small"
                                         fullWidth
                                         sx={{
