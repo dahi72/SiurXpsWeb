@@ -27,9 +27,11 @@ const AgregarViajeroAGrupo = () => {
             }
         })
             .then((response) => {
-                if (!response.ok) throw new Error('Error al cargar los grupos');
-                return response.json();
-            })
+              if(!response.ok){
+                const errorData = response.json(); 
+                throw new Error(errorData.message ||  'Error al cargar los grupos');
+                }  return response.json();
+        })
             .then((data) => {
                 setGrupos(Array.isArray(data) ? data : []);
             })
@@ -69,7 +71,7 @@ const AgregarViajeroAGrupo = () => {
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
-            throw new Error(data.mensaje || "Ocurrió un error al agregar al viajero.");
+            throw new Error(data.message || "Ocurrió un error al agregar al viajero.");
           });
         }
         return response.json();

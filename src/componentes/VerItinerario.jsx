@@ -89,7 +89,10 @@ const VerItinerario = () => {
                     'Content-Type': 'application/json',
                 }
             });
-            if (!response.ok) throw new Error('Error al eliminar el itinerario');
+             if (!response.ok){
+                const errorData = await response.json(); 
+            throw new Error(errorData.message || 'Error al eliminar el itinerario');
+            }
             setItinerarios(itinerarios.filter(itinerario => itinerario.id !== id));
             setSuccess(true);
             setMessage('Itinerario eliminado exitosamente');
@@ -151,7 +154,7 @@ const VerItinerario = () => {
                                 }}
                             >
                                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                                {`Itinerario del ${grupo ? grupo.nombre : 'Grupo Desconocido'}`}
+                                {`Itinerario del grupo: ${grupo ? grupo.nombre : 'Grupo Desconocido'}`}
                                 </Typography>
                                 <Divider sx={{ mb: 2 }} />
                                 <Typography variant="body2" sx={{ mb: 2 }}>
