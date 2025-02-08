@@ -111,6 +111,7 @@ const Hoteles = () => {
       if (!response.ok) throw new Error('Error al obtener las ciudades');
 
       const data = await response.json();
+      console.log('Ciudades:', data); 
       const ciudadesOrdenadas = data.sort((a, b) => {
         if (a.nombre < b.nombre) return -1;
         if (a.nombre > b.nombre) return 1;
@@ -496,7 +497,7 @@ const Hoteles = () => {
                       value={ciudadId}
                       onChange={(e) => setCiudadId(e.target.value)}
                       label="Ciudad"
-                      disabled={!paisId}
+                      disabled={!paisId || !filtroPais}
                     >
                       {ciudades.map((ciudad) => (
                         <MenuItem key={ciudad.id} value={ciudad.id}>
