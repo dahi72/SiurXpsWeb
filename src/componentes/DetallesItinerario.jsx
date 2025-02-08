@@ -19,17 +19,14 @@ import Header from './Header';
 import { Button } from '@mui/material'; 
 import { useNavigate } from 'react-router-dom';
 
-
 const DetallesItinerario = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
 
     const [eventos, setEventos] = useState([]);
-    const [ setDetalles] = useState([]);
+    const [detalles, setDetalles] = useState([]);
     const [filter, setFilter] = useState("");
-    const [setLoading] = useState(true);
-    const [ setError] = useState(null);
 
     const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -58,7 +55,7 @@ const DetallesItinerario = () => {
         }
     };
 
-    const fetchDetallesPorTipo  = useCallback(async (evento) => {
+    const fetchDetallesPorTipo = useCallback(async (evento) => {
         const detallesEvento = {};
 
         const fetchDetalle = async (condition, url, key) => {
@@ -93,12 +90,12 @@ const DetallesItinerario = () => {
         ]);
 
         return detallesEvento;
-    }, [baseUrl, headers]); 
+    }, [baseUrl, headers]);
 
     const fetchDetalles = useCallback(async (eventos) => {
         const detallesPromises = eventos.map((evento) => fetchDetallesPorTipo(evento));
         return Promise.all(detallesPromises);
-    }, [fetchDetallesPorTipo]); 
+    }, [fetchDetallesPorTipo]);
 
     useEffect(() => {
         const fetchEventos = async () => {
@@ -108,9 +105,6 @@ const DetallesItinerario = () => {
             }
 
             try {
-                setLoading(true);
-                setError(null);
-
                 console.log("Fetching eventos for itinerario:", id);
                 const eventosData = await fetchWithErrorHandling(`${baseUrl}/Itinerario/${id}/eventos`, headers);
                 if (!Array.isArray(eventosData)) {
@@ -128,14 +122,12 @@ const DetallesItinerario = () => {
                     setDetalles(detallesArray);
                 }
             } catch (error) {
-                setError(`Error al obtener los datos: ${error.message || "Error desconocido"}`);
-            } finally {
-                setLoading(false);
+                console.error("Error fetching eventos:", error);
             }
         };
 
         fetchEventos();
-    }, [id, token, baseUrl, headers, setDetalles, setError, setLoading, fetchDetalles]); // Dependencias corregidas
+    }, [id, token, baseUrl, headers, setDetalles, fetchDetalles]);
 
     const getEventIcon = (event) => {
         if (event.vueloId) return <FlightIcon color="primary" />;
@@ -189,7 +181,21 @@ const DetallesItinerario = () => {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Typography variant="body2">Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}</Typography>
-                                    {/* Mostrar detalles del evento según el tipo */}
+                                    {detalles[index] && detalles[index].actividad && (
+                                        <Typography variant="body2">Actividad: {detalles[index].actividad.nombre}</Typography>
+                                    )}
+                                    {detalles[index] && detalles[index].traslado && (
+                                        <Typography variant="body2">Traslado: {detalles[index].traslado.nombre}</Typography>
+                                    )}
+                                    {detalles[index] && detalles[index].aeropuerto && (
+                                        <Typography variant="body2">Aeropuerto: {detalles[index].aeropuerto.nombre}</Typography>
+                                    )}
+                                    {detalles[index] && detalles[index].hotel && (
+                                        <Typography variant="body2">Hotel: {detalles[index].hotel.nombre}</Typography>
+                                    )}
+                                    {detalles[index] && detalles[index].vuelo && (
+                                        <Typography variant="body2">Vuelo: {detalles[index].vuelo.nombre}</Typography>
+                                    )}
                                 </AccordionDetails>
                             </Accordion>
                         </TimelineContent>
@@ -201,6 +207,8 @@ const DetallesItinerario = () => {
 };
 
 export default DetallesItinerario;
+
+
 
 // const DetallesItinerario = () => {
 //     const { id } = useParams();
