@@ -18,7 +18,7 @@ import {
 
 
 const ActividadOpcional = () => {
-  const { idViajero } = useParams();
+  const { viajeroId } = useParams();
   const [actividadesInscritas, setActividadesInscritas] = useState ([]);
   const [actividadesOpcionales, setActividadesOpcionales] = useState ([]);
   const [loading, setLoading] = useState(true);
@@ -26,15 +26,15 @@ const ActividadOpcional = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const token = localStorage.getItem('token');
-  // Use import.meta.env instead of process.env for Vite
   const baseUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const obtenerActividadesInscritas = async () => {
       try {
-        const response = await fetch(`${baseUrl}/Usuario/usuario/${idViajero}/opcionales`, {
+        const response = await fetch(`${baseUrl}/Usuario/usuario/${viajeroId}/opcionales`, {
+          method: 'GET',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${token}`,
           },
         });
         if (response.ok) {
@@ -51,8 +51,9 @@ const ActividadOpcional = () => {
     const obtenerActividadesOpcionales = async () => {
       try {
         const response = await fetch(`${baseUrl}/Actividad/opcionales`, {
+          method: 'GET',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${token}`,
           },
         });
         if (response.ok) {
@@ -68,21 +69,20 @@ const ActividadOpcional = () => {
       }
     };
 
-    if (idViajero) {
+    if (viajeroId) {
       obtenerActividadesInscritas();
       obtenerActividadesOpcionales();
     }
-  }, [idViajero, baseUrl]);
+  }, [viajeroId, baseUrl, token]);
 
   const handleDesinscribir = async (actividadId) => {
     try {
       const response = await fetch(`${baseUrl}/Actividad/desinscribirUsuario`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ idViajero, actividadId }),
+        body: JSON.stringify({ viajeroId, actividadId: selectedActividad }),
       });
 
       if (!response.ok) {
@@ -106,7 +106,7 @@ const ActividadOpcional = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ idViajero, actividadId: selectedActividad }),
+        body: JSON.stringify({ viajeroId, actividadId: selectedActividad }),
       });
 
       if (!response.ok) {
