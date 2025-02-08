@@ -32,6 +32,7 @@ import { Layout } from './componentes/Layout';
 import { SnackbarProvider } from './hooks/useSnackbar';
 import CrearEvento from './componentes/CrearEvento';
 import AgregarActividad from './componentes/AgregarActividad';
+import AgregarTraslado from './componentes/AgregarTraslado';
 import DetallesItinerario from './componentes/DetallesItinerario';
 import DondeEstoy2 from './componentes/DondeEstoy2';
 import EditarItinerario from './componentes/EditarItinerario';
@@ -80,6 +81,7 @@ const App = () => {
               <Route path="/crear-eventos/:itinerarioId" element={<CrearEvento />} />
               <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
               <Route path="/agregar-actividad/:itinerarioId" element={<AgregarActividad />} />
+              <Route path="/agregar-traslado/:itinerarioId" element={<AgregarTraslado />} />
               <Route path="/itinerario/:id/eventos" element={<DetallesItinerario />} />
               <Route path="/editar-actividad/:id" element={<FormularioActividad />} />
               <Route path="/editar-traslado/:id" element={<FormularioTraslado />} />
