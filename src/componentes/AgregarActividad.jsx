@@ -14,7 +14,8 @@ const AltaActividad = () => {
     duracion: "",
     opcional: false,
     paisId: "",
-    ciudadId: ""
+    ciudadId: "",
+    tips: ""
   });
   
   const [paises, setPaises] = useState([]);

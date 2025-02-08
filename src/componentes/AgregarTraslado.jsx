@@ -15,7 +15,8 @@ const AltaTraslado = () => {
     horario: "",
     tipoDeTraslado: "",
     paisId: "",
-    ciudadId: ""
+      ciudadId: "",
+    tips:""
   });
   
   const [paises, setPaises] = useState([]);
