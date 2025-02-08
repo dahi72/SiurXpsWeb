@@ -26,8 +26,8 @@ const DetallesItinerario = () => {
     const [filter, setFilter] = useState("");
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
-    const token = localStorage.getItem('token');
-
+    const token = localStorage.getItem("token");
+    console.log("Token", token);
     useEffect(() => {
         const fetchEventos = async () => {
             try {
