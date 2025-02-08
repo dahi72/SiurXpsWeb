@@ -95,7 +95,7 @@ const CrearItinerario2 = () => {
             if (!grupoSeleccionado) {
                 throw new Error('No se encontró el grupo de viaje seleccionado');
             }
-    
+            console.log("grupodeviajeSeleccionado", grupoSeleccionado);
             const nuevoItinerario = {
                 grupoDeViajeId: grupoViaje,
                 fechaInicio: grupoSeleccionado.fechaInicio,
