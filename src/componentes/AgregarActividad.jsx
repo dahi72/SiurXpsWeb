@@ -52,6 +52,11 @@ function AgregarActividad() {
         }
     };
 
+    const handleCiudadChange = (event) => {
+        setActividad({ ...actividad, ciudad: event.target.value });
+    };
+
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setActividad({
@@ -179,7 +184,7 @@ function AgregarActividad() {
                             <Select
                                 name="ciudad"
                                 value={actividad.ciudad}
-                                onChange={handleChange}
+                                onChange={handleCiudadChange}
                                 label="Ciudad"
                                 required
                                 disabled={loadingCiudades || !actividad.pais}
