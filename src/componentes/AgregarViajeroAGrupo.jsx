@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Paper, Typography, Button, TextField, Alert, Container, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Navigate, useLocation } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
 
 const AgregarViajeroAGrupo = () => {
   const { state } = useLocation();
