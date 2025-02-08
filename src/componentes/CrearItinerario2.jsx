@@ -92,8 +92,9 @@ const CrearItinerario2 = () => {
                 grupoDeViajeId: grupoViaje,
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
+                eventos: []
             };
-
+            console.log("iti", nuevoItinerario)
             const response = await fetch(`${baseUrl}/Itinerario/altaItinerario`, {
                 method: 'POST',
                 headers: {
