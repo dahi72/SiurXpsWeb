@@ -221,7 +221,7 @@ function AgregarActividad() {
                     </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} sm={6}>
+                    {/* <Grid item xs={12} sm={6}>
                         <FormControl fullWidth>
                             <InputLabel>Ciudad</InputLabel>
                             <Select
@@ -255,7 +255,7 @@ function AgregarActividad() {
                             onChange={handleChange}
                             fullWidth
                         />
-                    </Grid>
+                    </Grid> */}
 
                     <Grid item xs={12}>
                         <Button
