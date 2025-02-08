@@ -115,7 +115,8 @@ const DetallesItinerario = () => {
                 console.log("Eventos fetched successfully:", eventosData.length);
                 setEventos(eventosData);
 
-                if (eventosData.length > 0) {
+
+                if (eventosData.length > 0 && detalles.length === 0) {
                     console.log("Fetching detalles for eventos...");
                     const detallesArray = await fetchDetalles(eventosData);
                     console.log("Detalles fetched successfully");
@@ -127,7 +128,7 @@ const DetallesItinerario = () => {
         };
 
         fetchEventos();
-    }, [id, token, baseUrl, headers, setDetalles, fetchDetalles]);
+    }, [id, token, baseUrl, headers, setDetalles, fetchDetalles, detalles.length]);
 
     const getEventIcon = (event) => {
         if (event.vueloId) return <FlightIcon color="primary" />;

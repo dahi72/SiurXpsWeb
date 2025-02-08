@@ -78,6 +78,9 @@ const AltaActividad = () => {
         <Grid item xs={6}>
           <TextField fullWidth label="Duración (minutos)" name="duracion" type="number" value={formData.duracion} onChange={handleChange} required />
         </Grid>
+        <Grid item xs={12}>
+          <TextField fullWidth label="Tips" type="text"  name="tips" value={formData.tips} onChange={handleChange}  />
+        </Grid>        
         <Grid item xs={6}>
           <FormControl fullWidth>
             <InputLabel>País</InputLabel>

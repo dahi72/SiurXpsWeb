@@ -91,7 +91,10 @@ const AltaTraslado = () => {
             <MenuItem value={6}>Ferry</MenuItem>
           </Select>
         </FormControl>
-      </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField fullWidth label="Tips" type="text"  name="tips" value={formData.tips} onChange={handleChange} />
+        </Grid>            
         <Grid item xs={6}>
           <FormControl fullWidth>
             <InputLabel>País</InputLabel>
