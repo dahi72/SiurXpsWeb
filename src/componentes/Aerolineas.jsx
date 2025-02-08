@@ -56,8 +56,11 @@ const Aerolineas = () => {
                 }
             });
 
-            if (!response.ok) throw new Error('Error al obtener las aerolíneas');
-
+          
+           if (!response.ok){
+          const errorData = await response.json(); 
+          throw new Error(errorData.mensaje ||  'Error al obtener las aerolíneas');
+          }
             const data = await response.json();
             setAerolineas(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -81,9 +84,10 @@ const Aerolineas = () => {
       if (response.ok) {
         // Filtrar la aerolínea eliminada del estado
         setAerolineas(aerolineas.filter(aerolinea => aerolinea.id !== id));
-      } else {
-        console.error('Error al eliminar la aerolínea');
-      }
+      } else  if (!response.ok){
+        const errorData = await response.json(); 
+        throw new Error(errorData.mensaje ||  'No hay aerolíneas con el filtro especificado');
+        }
     } catch (error) {
       console.error('Error de red:', error);
     }
@@ -122,9 +126,10 @@ const Aerolineas = () => {
         setPaginaWeb('');
         setAerolineaEditando(null);
         setTabValue(0);
-      } else {
-        console.error('Error al guardar la aerolínea');
-      }
+      } else if (!response.ok){
+        const errorData = await response.json(); 
+        throw new Error(errorData.mensaje ||  'Error al guardar la aerolínea');
+        }
     } catch (error) {
       console.error('Error de red:', error);
     }
