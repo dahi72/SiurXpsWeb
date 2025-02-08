@@ -254,6 +254,7 @@ const MisGrupos = () => {
                                     <Button
                                         variant="outlined"
                                         startIcon={<PersonAddIcon />}
+                                        disabled={isGrupoEnViaje(grupo.fechaInicio)}
                                         onClick={() => navigate(`/agregarViajeroAGrupo/${grupo.id}`)}
                                         size="small"
                                         fullWidth

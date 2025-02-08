@@ -15,7 +15,7 @@ const Viajeros = () => {
   const [success, setSuccess] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedViajero, setSelectedViajero] = useState(null);
-   const baseUrl = process.env.REACT_APP_API_URL;
+  const baseUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
   useEffect(() => {

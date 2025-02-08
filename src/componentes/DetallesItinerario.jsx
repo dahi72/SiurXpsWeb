@@ -26,11 +26,19 @@ const DetallesItinerario = () => {
     const [filter, setFilter] = useState("");
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         const fetchEventos = async () => {
             try {
-                const response = await fetch(`${baseUrl}/Itinerario/${id}/eventos`);
+                const response = await fetch(`${baseUrl}/Itinerario/${id}/eventos`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json'
+                    }
+                });
+        
                 const data = await response.json();
                 if (Array.isArray(data)) {
                     setEventos(data);
@@ -42,50 +50,55 @@ const DetallesItinerario = () => {
                 console.error('Error al obtener eventos:', error);
             }
         };
+        
 
         const fetchDetalles = async (eventos) => {
             const detallesPromises = eventos.map(async (evento) => {
                 const detallesEvento = {};
+                const headers = {
+                    'Authorization': `Bearer ${token}`, 
+                    'Content-Type': 'application/json'
+                };
+        
                 if (evento.actividadId) {
-                    const actividadResponse = await fetch(`${baseUrl}/Actividad/${evento.actividadId}`);
+                    const actividadResponse = await fetch(`${baseUrl}/Actividad/${evento.actividadId}`, { headers });
                     detallesEvento.actividad = await actividadResponse.json();
                 }
                 if (evento.trasladoId) {
-                    const trasladoResponse = await fetch(`${baseUrl}/Traslado/api/Traslado/${evento.trasladoId}`);
+                    const trasladoResponse = await fetch(`${baseUrl}/Traslado/api/Traslado/${evento.trasladoId}`, { headers });
                     detallesEvento.traslado = await trasladoResponse.json();
                 }
                 if (evento.aeropuertoId) {
-                    const query = `?nombre=${evento.aeropuerto.nombre}`
-                    const aeropuertoResponse = await fetch(`${baseUrl}/Aeropuerto/aeropuertos` + query);
+                    const query = `?nombre=${evento.aeropuerto.nombre}`;
+                    const aeropuertoResponse = await fetch(`${baseUrl}/Aeropuerto/aeropuertos` + query, { headers });
                     detallesEvento.aeropuerto = await aeropuertoResponse.json();
                 }
                 if (evento.aerolineaId) {
-                
-                    const query = `?nombre=${evento.aerolineaId.nombre}`
-                    const aerolineaResponse = await fetch(`${baseUrl}/Aerolinea/aerolineas` + query);
+                    const query = `?nombre=${evento.aerolineaId.nombre}`;
+                    const aerolineaResponse = await fetch(`${baseUrl}/Aerolinea/aerolineas` + query, { headers });
                     detallesEvento.aerolinea = await aerolineaResponse.json();
                 }
                 if (evento.hotelId) {
                     const query = `?nombre=${evento.hotelId.nombre}&codigoIso=${evento.hotelId.codigoIso}&ciudad=${evento.hotelId.ciudad}`;
-                    const hotelResponse = await fetch(`${baseUrl}/Hotel/hoteles` + query);
+                    const hotelResponse = await fetch(`${baseUrl}/Hotel/hoteles` + query, { headers });
                     detallesEvento.hotel = await hotelResponse.json();
                 }
                 if (evento.vueloId) {
-                    const query = `?nombre=${evento.vueloId.nombre}`
-                    const vueloResponse = await fetch(`${baseUrl}/Vuelo/vuelos}` + query);
+                    const query = `?nombre=${evento.vueloId.nombre}`;
+                    const vueloResponse = await fetch(`${baseUrl}/Vuelo/vuelos` + query, { headers }); 
                     detallesEvento.vuelo = await vueloResponse.json();
                 }
                 return detallesEvento;
             });
-
+        
             const detallesArray = await Promise.all(detallesPromises);
             setDetalles(detallesArray);
         };
-
+        
         fetchEventos();
 
        
-    }, [id, baseUrl]);
+    }, [id, baseUrl, token]);
 
     const getEventIcon = (event) => {
         if (event.vueloId) return <FlightIcon color="primary" />;
@@ -103,9 +116,11 @@ const DetallesItinerario = () => {
         return "Evento General";
     };
 
-    const filteredEvents = eventos.filter((event) =>
-        getEventTitle(event).toLowerCase().includes(filter.toLowerCase())
-    );
+    const filteredEvents = (eventos ?? []).filter((event) => {
+        const title = getEventTitle(event) ?? ''; 
+        return title.toLowerCase().includes((filter ?? '').toLowerCase());
+    });
+    
 
     return (
         <Box
