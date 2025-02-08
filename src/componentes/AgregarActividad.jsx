@@ -20,6 +20,9 @@ function AgregarActividad() {
     const { itinerarioId } = useParams();
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
+    const [paisId, setPaisId] = useState(""); 
+    const [paisCodigoIso, setPaisCodigoIso] = useState("");
+
 
     useEffect(() => {
         const fetchPaises = async () => {
@@ -36,25 +39,35 @@ function AgregarActividad() {
         fetchPaises();
     }, [baseUrl]);
 
-    const handlePaisChange = async (event) => {
-        const paisSeleccionado = event.target.value;
-        setActividad({ ...actividad, pais: paisSeleccionado, ciudad: '' }); // Reiniciar ciudad seleccionada
+    const handlePaisChange = async (e) => {
+        const selectedPaisId = e.target.value; // Pais id para la actividad
+        const selectedPaisCodigoIso = e.target.selectedOptions[0].getAttribute("data-codigoIso"); // Pais codigoIso para ciudades
+        
+        // Actualizamos el estado con los valores correspondientes
+        setPaisId(selectedPaisId); 
+        setPaisCodigoIso(selectedPaisCodigoIso); 
+      
+        // Llamada para cargar las ciudades
         setLoadingCiudades(true);
-
         try {
-            const response = await fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`);
-            const data = await response.json();
-            const sortedCiudades = data.sort((a, b) => a.nombre.localeCompare(b.nombre)); // Ordenar ciudades alfabéticamente
-            setCiudades(sortedCiudades);
-            setLoadingCiudades(false);
+            const response = await fetch(`${baseUrl}/Ciudad/${paisCodigoIso}/ciudades`);
+          const data = await response.json();
+          setCiudades(data);
         } catch (error) {
-            console.error('Error al obtener las ciudades:', error);
+          console.error("Error al obtener las ciudades", error);
+        } finally {
+          setLoadingCiudades(false);
         }
-    };
+      };
+      
 
-    const handleCiudadChange = (event) => {
-        setActividad({ ...actividad, ciudad: event.target.value });
-    };
+    // const handleCiudadChange = (event) => {
+    //     setActividad({ ...actividad, ciudad: event.target.value });
+    // };
+    const handleCiudadChange = (e) => {
+        setActividad((prevState) => ({ ...prevState, ciudad: e.target.value }));
+      };
+      
 
 
     const handleChange = (e) => {
@@ -154,28 +167,58 @@ function AgregarActividad() {
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth>
-                            <InputLabel>País</InputLabel>
-                            <Select
-                                name="pais"
-                                value={actividad.pais}
-                                onChange={handlePaisChange}
-                                label="País"
-                                required
+                    <FormControl fullWidth>
+                        <InputLabel>País</InputLabel>
+                        <Select
+                        name="pais"
+                        value={paisId}
+                        onChange={handlePaisChange}
+                        label="País"
+                        required
+                        >
+                        {loadingPaises ? (
+                            <MenuItem disabled>
+                            <CircularProgress size={24} />
+                            </MenuItem>
+                        ) : (
+                            paises.map((pais) => (
+                            <MenuItem
+                                key={pais.codigoIso}
+                                value={pais.id} // Guardamos el id del país
+                                data-codigoIso={pais.codigoIso} // Usamos el atributo data para almacenar el codigoIso
                             >
-                                {loadingPaises ? (
-                                    <MenuItem disabled>
-                                        <CircularProgress size={24} />
-                                    </MenuItem>
-                                ) : (
-                                    paises.map((pais) => (
-                                        <MenuItem key={pais.codigoIso} value={pais.codigoIso}>
-                                            {pais.nombre}
-                                        </MenuItem>
-                                    ))
-                                )}
-                            </Select>
-                        </FormControl>
+                                {pais.nombre}
+                            </MenuItem>
+                            ))
+                        )}
+                        </Select>
+                    </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                        <InputLabel>Ciudad</InputLabel>
+                        <Select
+                        name="ciudad"
+                        value={actividad.ciudad}
+                        onChange={handleCiudadChange}
+                        label="Ciudad"
+                        required
+                        disabled={loadingCiudades || !paisId}
+                        >
+                        {loadingCiudades ? (
+                            <MenuItem disabled>
+                            <CircularProgress size={24} />
+                            </MenuItem>
+                        ) : (
+                            ciudades.map((ciudad) => (
+                            <MenuItem key={ciudad.codigo} value={ciudad.codigo}>
+                                {ciudad.nombre}
+                            </MenuItem>
+                            ))
+                        )}
+                        </Select>
+                    </FormControl>
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
