@@ -74,7 +74,7 @@ const VerDatosViajero = () => {
         onClick={handleBack} 
         sx={{ mb: 4, fontSize: "0.85rem" }}
         >
-          Volver a grupos
+          Volver a lista de viajeros
         </Button>
     </Container>
   );
