@@ -472,6 +472,48 @@ const Hoteles = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>País</InputLabel>
+                  <Select
+                    value={paisId}
+                    onChange={(e) => {
+                      const selectedPaisId = e.target.value;
+                      setPaisId(selectedPaisId);
+
+                      // Encontramos el país seleccionado para obtener su codigoIso
+                      const selectedPais = paises.find(pais => pais.id === selectedPaisId);
+                      if (selectedPais) {
+                        handleCiudadChange(selectedPais.codigoIso);  // Usamos codigoIso para cargar ciudades
+                      }
+                    }}
+                    label="País"
+                  >
+                    {paises.map((pais) => (
+                      <MenuItem key={pais.id} value={pais.id}>
+                        {pais.nombre}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>Ciudad</InputLabel>
+                  <Select
+                    value={ciudadId}
+                    onChange={(e) => setCiudadId(e.target.value)}
+                    label="Ciudad"
+                    disabled={!paisId}  // Solo habilitar si hay país seleccionado
+                  >
+                    {ciudades.map((ciudad) => (
+                      <MenuItem key={ciudad.id} value={ciudad.id}>
+                        {ciudad.nombre}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                </Grid>
+                {/* <Grid item xs={12} sm={6}>
                   <FormControl fullWidth variant="outlined">
                     <InputLabel>País</InputLabel>
                     <Select
@@ -497,7 +539,7 @@ const Hoteles = () => {
                       value={ciudadId}
                       onChange={(e) => setCiudadId(e.target.value)}
                       label="Ciudad"
-                      disabled={!paisId || !filtroPais}
+                      disabled={!paisId}
                     >
                       {ciudades.map((ciudad) => (
                         <MenuItem key={ciudad.id} value={ciudad.id}>
@@ -506,7 +548,7 @@ const Hoteles = () => {
                       ))}
                     </Select>
                   </FormControl>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
