@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { TextField, Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel, Button, Grid } from "@mui/material";
 import axios from "axios";
+import { Box } from "lucide-react";
 
 const baseUrl = process.env.REACT_APP_API_URL; 
 const token = localStorage.getItem("token"); 
@@ -63,7 +64,8 @@ const AltaActividad = () => {
         });
       };
       
-  return (
+    return (
+<Box sx={{ backgroundColor: "rgba(255, 255, 255, 0.8)", padding: 3, borderRadius: 2 }}>
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -105,7 +107,8 @@ const AltaActividad = () => {
           <Button type="submit" variant="contained" color="primary">Crear Actividad</Button>
         </Grid>
       </Grid>
-    </form>
+            </form>
+</Box>
   );
 };
 
