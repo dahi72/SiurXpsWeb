@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { TextField, Select, MenuItem, FormControl, InputLabel, Button, Grid } from "@mui/material";
 import axios from "axios";
-import { Box } from "lucide-react";
+
 
 const baseUrl = process.env.REACT_APP_API_URL; 
 const token = localStorage.getItem("token"); 
@@ -57,8 +57,7 @@ const AltaTraslado = () => {
   };
 
     return (
-<Box sx={{ backgroundColor: "rgba(255, 255, 255, 0.8)", padding: 3, borderRadius: 2 }}>
-    <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ backgroundColor: "white", padding: "16px", borderRadius: "8px" }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField fullWidth label="Lugar de Encuentro" name="lugarDeEncuentro" value={formData.lugarDeEncuentro} onChange={handleChange} required />
@@ -94,7 +93,6 @@ const AltaTraslado = () => {
         </Grid>
       </Grid>
             </form>
-</Box>
   );
 };
 
