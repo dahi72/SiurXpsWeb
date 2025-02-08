@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Paper, Typography, Button, TextField, Alert, Container, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { useLocation } from "react-router-dom";
-
+import { Navigate, useLocation } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const AgregarViajeroAGrupo = () => {
   const { state } = useLocation();
@@ -15,6 +15,7 @@ const AgregarViajeroAGrupo = () => {
   const [error, setError] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
 
+  
   useEffect(() => {
     if (state?.grupoId) {
         setGrupos([{ id: state.grupoId, nombre: state.grupoNombre }]);
@@ -87,10 +88,21 @@ const AgregarViajeroAGrupo = () => {
       });
   };
 
+  const handleBack = () => {
+    Navigate(-1); 
+};
 
   return (
     <>
       <Container maxWidth="sm" sx={{ mt: 4 }}>
+      <Button 
+            variant="contained" 
+            color="secondary" 
+            onClick={handleBack}
+            sx={{ margin: 2 }}
+        >
+            Volver a grupos
+        </Button>
         <Paper sx={{ p: 4 }}>
           <Typography variant="h5" gutterBottom>
             Agregar Pasajero al Grupo: {nombreGrupo || 'Selecciona un grupo'}
