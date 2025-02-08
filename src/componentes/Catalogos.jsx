@@ -1,119 +1,142 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Typography } from "@mui/material";
+import { Box,Typography, Paper, Divider, Container } from "@mui/material";
 import {
   Hotel,
   TravelExplore,
   Flight,
   AirlineSeatReclineExtra,
-  
 } from '@mui/icons-material';
 
 const Catalogos = () => {
   const navigate = useNavigate();
 
-  
   const options = [
     { 
       label: "Hoteles", 
       path: "hoteles",
-      icon: <Hotel sx={{ fontSize: 40, mb: 1 }} />
+      icon: <Hotel sx={{ fontSize: 40 }} />
     },
     { 
       label: "Aeropuertos", 
       path: "aeropuertos",
-      icon: <TravelExplore sx={{ fontSize: 40, mb: 1 }} />
+      icon: <TravelExplore sx={{ fontSize: 40 }} />
     },
     { 
       label: "Vuelos", 
       path: "vuelos",
-      icon: <Flight sx={{ 
-        fontSize: 40, 
-        mb: 1,
-        transform: 'rotate(45deg)'
-      }} />
+      icon: <Flight sx={{ fontSize: 40, transform: 'rotate(45deg)' }} />
     },
     { 
       label: "Aerolíneas", 
       path: "aerolineas",
-      icon: <AirlineSeatReclineExtra sx={{ fontSize: 40, mb: 1 }} />
+      icon: <AirlineSeatReclineExtra sx={{ fontSize: 40 }} />
     }
   ];
 
   return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          padding: '2rem',
-          minHeight: '100%'
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        mb: 4,
+        borderBottom: 1,
+        borderColor: 'divider',
+        pb: 2,
+        justifyContent: 'center'
+      }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+          Cargar Catálogos
+        </Typography>
+      </Box>
+
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 4,
+          transition: 'transform 0.3s ease',
+          '&:hover': { 
+            transform: 'scale(1.01)',
+            boxShadow: 6 
+          },
+          background: 'linear-gradient(to bottom right, #ffffff, #f8f9fa)'
         }}
       >
-      
+        <Divider sx={{ mb: 3 }} />
+
         <Box
           sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            borderRadius: '10px',
-            padding: '2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 3
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)'
+            },
+            gap: 3,
+            mt: 2
           }}
         >
-          <Typography 
-            variant="h4" 
-            component="h1" 
-            sx={{ 
-              fontWeight: 'bold',
-              color: 'primary.main',
-              textAlign: 'center',
-              mb: 3
-            }}
-          >
-            Cargar Catálogos
-          </Typography>
-
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' },
-              gap: 2,
-              width: '100%'
-            }}
-          >
-            {options.map((option) => (
-              <Button
-                key={option.path}
-                variant="contained"
-                onClick={() => navigate(`/${option.path}`)}
+          {options.map((option) => (
+            <Paper
+              key={option.path}
+              onClick={() => navigate(`/${option.path}`)}
+              elevation={2}
+              sx={{
+                p: 3,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                backgroundColor: 'background.paper',
+                borderRadius: 2,
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 4,
+                  '& .MuiSvgIcon-root': {
+                    transform: 'scale(1.1)',
+                    color: 'primary.main'
+                  },
+                  '& .MuiTypography-root': {
+                    color: 'primary.main'
+                  }
+                }
+              }}
+            >
+              <Box
                 sx={{
-                  padding: 2,
-                  backgroundColor: '#E3F2FD',
-                  color: 'primary.main',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  fontSize: '1.1rem',
-                  fontWeight: 'bold',
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
-                  '&:hover': { 
-                    backgroundColor: '#BBDEFB',
-                    transform: 'translateY(-2px)',
-                    transition: 'transform 0.2s'
+                  justifyContent: 'center',
+                  p: 2,
+                  borderRadius: '50%',
+                  backgroundColor: 'primary.light',
+                  color: 'primary.main',
+                  transition: 'all 0.3s ease',
+                  '& .MuiSvgIcon-root': {
+                    fontSize: 32,
+                    transition: 'all 0.3s ease'
                   }
                 }}
               >
                 {option.icon}
+              </Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 'medium',
+                  textAlign: 'center',
+                  transition: 'color 0.3s ease'
+                }}
+              >
                 {option.label}
-              </Button>
-            ))}
-          </Box>
+              </Typography>
+            </Paper>
+          ))}
         </Box>
-      </Box>
+      </Paper>
+    </Container>
   );
 };
 
