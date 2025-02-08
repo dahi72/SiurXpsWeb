@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, Link, Navigate } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Container, Typography, Box, Paper, Divider, Stack, Button } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -24,12 +24,13 @@ const DocumentPreview = ({ label, path }) => (
 const VerDatosViajero = () => {
   const location = useLocation();
   const viajero = location.state?.viajero;
+  const navigate = useNavigate();
   console.log(viajero);
  
   const fechaNacFormateada = viajero.fechaNac ? dayjs(viajero.fechaNac).format('DD/MM/YYYY') : 'No especificado';
 
   const handleBack = () => {
-    Navigate(-1); 
+    navigate(-1); 
   };
 
   return (
