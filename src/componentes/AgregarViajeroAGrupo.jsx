@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Paper, Typography, Button, TextField, Alert, Container, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { Navigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AgregarViajeroAGrupo = () => {
   const { state } = useLocation();
@@ -13,7 +13,7 @@ const AgregarViajeroAGrupo = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
-
+  const navigate = useNavigate();
   
   useEffect(() => {
     if (state?.grupoId) {
@@ -88,7 +88,7 @@ const AgregarViajeroAGrupo = () => {
   };
 
   const handleBack = () => {
-    Navigate(-1); 
+    navigate(-1); 
 };
 
   return (

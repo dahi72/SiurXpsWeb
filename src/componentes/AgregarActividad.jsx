@@ -21,7 +21,7 @@ function AgregarActividad() {
     const baseUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     const [paisId, setPaisId] = useState(""); 
-    const [paisCodigoIso, setPaisCodigoIso] = useState("");
+    const [setPaisCodigoIso] = useState("");
 
 
     useEffect(() => {
@@ -50,7 +50,7 @@ function AgregarActividad() {
         // Llamada para cargar las ciudades
         setLoadingCiudades(true);
         try {
-          const response = await fetch(`${baseUrl}/Ciudad/${paisCodigoIso}/ciudades`);
+          const response = await fetch(`${baseUrl}/Ciudad/${selectedPaisCodigoIso}/ciudades`);
           const data = await response.json();
           setCiudades(data);
         } catch (error) {
@@ -166,33 +166,30 @@ function AgregarActividad() {
                         />
                     </Grid>
 
-                    <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth margin="normal" required>
                         <InputLabel>País</InputLabel>
                         <Select
-                        name="pais"
-                        value={paisId}
-                        onChange={handlePaisChange}
-                        label="País"
-                        required
+                            value={paisId}  // Asegúrate de que el valor del Select esté controlado por el estado paisId
+                            onChange={handlePaisChange}  // Llama a la función handlePaisChange cuando se cambie el valor
+                            label="País"
                         >
-                        {loadingPaises ? (
+                            {loadingPaises ? (
                             <MenuItem disabled>
-                            <CircularProgress size={24} />
+                                <CircularProgress size={24} />
                             </MenuItem>
-                        ) : (
+                            ) : (
                             paises.map((pais) => (
-                            <MenuItem
+                                <MenuItem
                                 key={pais.id}
-                                value={pais.id} // Guardamos el id del país
-                                data-codigoIso={pais.codigoIso}>
-                                {pais.nombre}
-                            </MenuItem>
+                                value={pais.id} // Guardamos el ID del país
+                                data-codigoIso={pais.codigoIso}  // Añadimos el código ISO como atributo
+                                >
+                                {pais.nombre}  
+                                </MenuItem>
                             ))
-                        )}
+                            )}
                         </Select>
-                    </FormControl>
-                    </Grid>
+                        </FormControl>
 
                     <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
