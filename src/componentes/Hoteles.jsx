@@ -228,11 +228,7 @@ const Hoteles = () => {
   const handleEditar = async (hotel) => {
     hotel.preventDefault();
     if (!isFormComplete()) return mostrarMensaje('Todos los campos son requeridos', 'error');
-    
-    // setVueloEditando(vuelo);
-    // setNombre(vuelo.nombre);
-    // setHorario(vuelo.horario);
-    // setTabValue(1);
+  
     const hotelActualizado = {
       id : hotel.id, // Asegúrate de tener el ID del hotel a actualizar
       nombre,
