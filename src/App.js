@@ -25,7 +25,7 @@ import Aerolineas from './componentes/Aerolineas';
 import Traslados from './componentes/Traslados';
 import AgregarViajeroAGrupo from './componentes/AgregarViajeroAGrupo';
 import DondeEstoy from './componentes/DondeEstoy';
-import CrearItinerario from './componentes/CrearItinerario';
+//import CrearItinerario from './componentes/CrearItinerario';
 import VerItinerario from './componentes/VerItinerario';
 import RecuperarContrasena from './componentes/RecuperarContrasena'; 
 import { Layout } from './componentes/Layout';
@@ -44,6 +44,7 @@ import FormularioAerolinea from './componentes/FormularioAerolinea';
 import FormularioVuelo from './componentes/FormularioVuelo';
 import ActividadOpcional from './componentes/ActividadOpcional';
 import VerDatosViajero from './componentes/VerDatosViajeros';
+import CrearItinerario2 from './componentes/CrearItinerario2';
 
 
 
@@ -74,7 +75,7 @@ const App = () => {
               <Route path="/vuelos" element={<Vuelos />} />
               <Route path="/aerolineas" element={<Aerolineas />} />
               <Route path="/traslados" element={<Traslados />} />
-              <Route path="/crear-itinerario" element={<CrearItinerario />} />
+              <Route path="/crear-itinerario" element={<CrearItinerario2 />} />
               <Route path="/VerItinerario" element={<VerItinerario/>} />
               <Route path="/crear-eventos/:itinerarioId" element={<CrearEvento />} />
               <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
