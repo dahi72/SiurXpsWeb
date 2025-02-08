@@ -12,10 +12,9 @@ const AltaTraslado = () => {
 
   const [formData, setFormData] = useState({
     lugarDeEncuentro: "",
-    horario: "",
     tipoDeTraslado: "",
     paisId: "",
-      ciudadId: "",
+    ciudadId: "",
     tips:""
   });
   
@@ -71,9 +70,6 @@ const AltaTraslado = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField fullWidth label="Lugar de Encuentro" name="lugarDeEncuentro" value={formData.lugarDeEncuentro} onChange={handleChange} required />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField fullWidth label="Horario" name="horario" type="time" value={formData.horario} onChange={handleChange} required />
         </Grid>
         <Grid item xs={6}>
         <FormControl fullWidth>
