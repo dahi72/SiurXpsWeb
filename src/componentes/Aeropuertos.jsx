@@ -60,8 +60,11 @@ const Aeropuertos = () => {
           'Content-Type': 'application/json'
         }
       });
+      if(!response.ok){
+        const errorData = await response.json(); 
+        throw new Error(errorData.message ||  'Error al obtener los aeropuertos');
+        }
 
-      if (!response.ok) throw new Error('Error al obtener los aeropuertos');
 
       const data = await response.json();
       setAeropuertos(Array.isArray(data) ? data : []);
@@ -85,9 +88,12 @@ const Aeropuertos = () => {
             'Content-Type': 'application/json'
           }
         });
-
-        if (!response.ok) throw new Error('Error al obtener los países');
-
+        if(!response.ok){
+          const errorData = await response.json(); 
+          throw new Error(errorData.message ||  'Error al obtener los países');
+          }
+  
+       
         const data = await response.json();
         const paisesOrdenados = data.sort((a, b) => {
           if (a.nombre < b.nombre) return -1;
@@ -116,8 +122,10 @@ const Aeropuertos = () => {
             }
           });
 
-          if (!response.ok) throw new Error('Error al obtener las ciudades');
-
+          if(!response.ok){
+            const errorData = await response.json(); 
+            throw new Error(errorData.message ||  'Error al obtener las ciudades');
+            }
           const data = await response.json();
           const ciudadesOrdenadas = data.sort((a, b) => {
             if (a.nombre < b.nombre) return -1;
@@ -166,8 +174,8 @@ const Aeropuertos = () => {
       });
 
       if (response.ok) {
-        const message = await response.json();
-        console.log('Mensaje de la API:', message);
+        const mensaje = await response.json();
+        console.log('Mensaje de la API:', mensaje);
 
         await cargarAeropuertos();
 
@@ -181,7 +189,8 @@ const Aeropuertos = () => {
         setTabValue(0);
       } else {
         const errorData = await response.json();
-        console.error('Error al guardar el aeropuerto:', errorData);
+              throw new Error(errorData.message ||  'Error al dar de alta un aeropuerto');
+          
       }
     } catch (error) {
       console.error('Error de red:', error);
@@ -218,9 +227,10 @@ const Aeropuertos = () => {
 
       if (response.ok) {
         setAeropuertos(aeropuertos.filter(aeropuerto => aeropuerto.id !== id));
-      } else {
-        console.error('Error al eliminar el aeropuerto');
-      }
+      } else  if(!response.ok){
+        const errorData = await response.json(); 
+        throw new Error(errorData.message ||  'Hubo un error al eliminar el aeropuerto');
+        }
     } catch (error) {
       console.error('Error de red:', error);
     }
