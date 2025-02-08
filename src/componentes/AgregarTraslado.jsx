@@ -76,8 +76,23 @@ const AltaTraslado = () => {
           <TextField fullWidth label="Horario" name="horario" type="time" value={formData.horario} onChange={handleChange} required />
         </Grid>
         <Grid item xs={6}>
-          <TextField fullWidth label="Tipo de Traslado" name="tipoDeTraslado" type="number" value={formData.tipoDeTraslado} onChange={handleChange} required />
-        </Grid>
+        <FormControl fullWidth>
+          <InputLabel>Tipo de Traslado</InputLabel>
+          <Select
+            name="tipoDeTraslado"
+            value={formData.tipoDeTraslado}
+            onChange={handleChange}
+            required
+          >
+            <MenuItem value={1}>Transfer In</MenuItem>
+            <MenuItem value={2}>Transfer Out</MenuItem>
+            <MenuItem value={3}>Tren</MenuItem>
+            <MenuItem value={4}>Transfer InterHotel</MenuItem>
+            <MenuItem value={5}>Bus</MenuItem>
+            <MenuItem value={6}>Ferry</MenuItem>
+          </Select>
+        </FormControl>
+      </Grid>
         <Grid item xs={6}>
           <FormControl fullWidth>
             <InputLabel>País</InputLabel>
