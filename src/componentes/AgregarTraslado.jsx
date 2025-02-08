@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 import { TextField, Select, MenuItem, FormControl, InputLabel, Button, Grid } from "@mui/material";
 import axios from "axios";
+import { Box } from "lucide-react";
 
 const baseUrl = process.env.REACT_APP_API_URL; 
 const token = localStorage.getItem("token"); 
 
 const AltaTraslado = () => {
+
+
+
   const [formData, setFormData] = useState({
     lugarDeEncuentro: "",
     horario: "",
@@ -24,6 +28,8 @@ const AltaTraslado = () => {
     });
   }, []);
 
+  
+    
   useEffect(() => {
     if (formData.paisId) {
       const paisSeleccionado = paises.find(p => p.id === formData.paisId);
@@ -50,7 +56,8 @@ const AltaTraslado = () => {
       .catch(error => alert("Error al crear traslado"));
   };
 
-  return (
+    return (
+<Box sx={{ backgroundColor: "rgba(255, 255, 255, 0.8)", padding: 3, borderRadius: 2 }}>
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -86,7 +93,8 @@ const AltaTraslado = () => {
           <Button type="submit" variant="contained" color="primary">Crear Traslado</Button>
         </Grid>
       </Grid>
-    </form>
+            </form>
+</Box>
   );
 };
 

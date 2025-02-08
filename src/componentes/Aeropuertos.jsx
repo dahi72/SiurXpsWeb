@@ -333,8 +333,8 @@ const Aeropuertos = () => {
                             {aeropuerto.paginaWeb}
                           </a>
                         </TableCell>
-                        <TableCell>{aeropuerto.pais}</TableCell>
-                        <TableCell>{aeropuerto.ciudad}</TableCell>
+                        <TableCell>{aeropuerto.paisId}</TableCell>
+                        <TableCell>{aeropuerto.ciudadId}</TableCell>
                         <TableCell>{aeropuerto.direccion}</TableCell>
                         <TableCell>{aeropuerto.tips}</TableCell>
                         <TableCell>

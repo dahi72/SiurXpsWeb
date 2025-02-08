@@ -44,14 +44,25 @@ const AltaActividad = () => {
       [name]: type === "checkbox" ? checked : value
     }));
   };
-  console.log("formData", formData)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.post(`${baseUrl}/Actividad/altaActividad`, formData, { headers: { Authorization: `Bearer ${token}` } })
-      .then(response => alert("Actividad creada con éxito"))
-      .catch(error => alert("Error al crear actividad"));
-  };
-
+    console.log("formData", formData)
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+      
+        axios.post(`${baseUrl}/Actividad/altaActividad`, JSON.stringify(formData), { 
+          headers: { 
+            Authorization: `Bearer ${token}`, 
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          }
+        })
+        .then(response => alert("Actividad creada con éxito"))
+        .catch(error => {
+          console.error("Error al crear actividad:", error.response?.data || error.message);
+          alert("Error al crear actividad");
+        });
+      };
+      
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
