@@ -54,26 +54,26 @@ const AltaActividad = () => {
           headers: { 
             Authorization: `Bearer ${token}`, 
             "Content-Type": "application/json",
-            Accept: "application/json"
           }
         })
         .then(response => alert("Actividad creada con éxito"))
         .catch(error => {
           console.error("Error al crear actividad:", error.response?.data || error.message);
         });
-      };
+    };
+ 
       
     return (
 <form onSubmit={handleSubmit} style={{ backgroundColor: "white", padding: "16px", borderRadius: "8px" }}>
     <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TextField fullWidth label="Nombre" name="nombre" value={formData.nombre} onChange={handleChange} required />
+          <TextField fullWidth label="Nombre" type="text"  name="nombre" value={formData.nombre} onChange={handleChange} required />
         </Grid>
         <Grid item xs={12}>
-          <TextField fullWidth label="Descripción" name="descripcion" value={formData.descripcion} onChange={handleChange} required />
+          <TextField fullWidth label="Descripción" type="text" multiline name="descripcion" value={formData.descripcion} onChange={handleChange} required />
         </Grid>
         <Grid item xs={12}>
-          <TextField fullWidth label="Ubicación" name="ubicacion" value={formData.ubicacion} onChange={handleChange} required />
+          <TextField fullWidth label="Ubicación" name="ubicacion" type="text" multiline value={formData.ubicacion} onChange={handleChange} required />
         </Grid>
         <Grid item xs={6}>
           <TextField fullWidth label="Duración (minutos)" name="duracion" type="number" value={formData.duracion} onChange={handleChange} required />

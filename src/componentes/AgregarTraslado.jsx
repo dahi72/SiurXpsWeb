@@ -56,7 +56,6 @@ const AltaTraslado = () => {
       headers: { 
         Authorization: `Bearer ${token}`, 
         "Content-Type": "application/json",
-        Accept: "application/json"
       }
     })
     .then(response => alert("Traslado creado con éxito"))
