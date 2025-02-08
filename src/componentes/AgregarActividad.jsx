@@ -60,7 +60,6 @@ const AltaActividad = () => {
         .then(response => alert("Actividad creada con éxito"))
         .catch(error => {
           console.error("Error al crear actividad:", error.response?.data || error.message);
-          alert("Error al crear actividad");
         });
       };
       

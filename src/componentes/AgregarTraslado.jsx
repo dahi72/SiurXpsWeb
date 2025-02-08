@@ -51,10 +51,20 @@ const AltaTraslado = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`${baseUrl}/Traslado/altaTraslado`, formData, { headers: { Authorization: `Bearer ${token}` } })
-      .then(response => alert("Traslado creado con éxito"))
-      .catch(error => alert("Error al crear traslado"));
+  
+    axios.post(`${baseUrl}/Traslado/altaTraslado`, JSON.stringify(formData), { 
+      headers: { 
+        Authorization: `Bearer ${token}`, 
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      }
+    })
+    .then(response => alert("Traslado creado con éxito"))
+    .catch(error => {
+      console.error("Error al crear traslado:", error.response?.data || error.message);
+    });
   };
+  
 
     return (
         <form onSubmit={handleSubmit} style={{ backgroundColor: "white", padding: "16px", borderRadius: "8px" }}>
