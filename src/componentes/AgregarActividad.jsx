@@ -46,11 +46,11 @@ function AgregarActividad() {
         // Actualizamos el estado con los valores correspondientes
         setPaisId(selectedPaisId); 
         setPaisCodigoIso(selectedPaisCodigoIso); 
-      
+        setActividad((prevState) => ({ ...prevState, pais: paisId }));
         // Llamada para cargar las ciudades
         setLoadingCiudades(true);
         try {
-            const response = await fetch(`${baseUrl}/Ciudad/${paisCodigoIso}/ciudades`);
+          const response = await fetch(`${baseUrl}/Ciudad/${paisCodigoIso}/ciudades`);
           const data = await response.json();
           setCiudades(data);
         } catch (error) {
@@ -183,10 +183,9 @@ function AgregarActividad() {
                         ) : (
                             paises.map((pais) => (
                             <MenuItem
-                                key={pais.codigoIso}
+                                key={pais.id}
                                 value={pais.id} // Guardamos el id del país
-                                data-codigoIso={pais.codigoIso} // Usamos el atributo data para almacenar el codigoIso
-                            >
+                                data-codigoIso={pais.codigoIso}>
                                 {pais.nombre}
                             </MenuItem>
                             ))
@@ -212,7 +211,7 @@ function AgregarActividad() {
                             </MenuItem>
                         ) : (
                             ciudades.map((ciudad) => (
-                            <MenuItem key={ciudad.codigo} value={ciudad.codigo}>
+                            <MenuItem key={ciudad.id} value={ciudad.id}>
                                 {ciudad.nombre}
                             </MenuItem>
                             ))
@@ -245,7 +244,7 @@ function AgregarActividad() {
                                 )}
                             </Select>
                         </FormControl>
-                    </Grid>
+                    </Grid>*/}
 
                     <Grid item xs={12}>
                         <TextField
@@ -255,7 +254,7 @@ function AgregarActividad() {
                             onChange={handleChange}
                             fullWidth
                         />
-                    </Grid> */}
+                    </Grid> 
 
                     <Grid item xs={12}>
                         <Button
