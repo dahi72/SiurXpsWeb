@@ -89,7 +89,10 @@ const VerItinerario = () => {
                     'Content-Type': 'application/json',
                 }
             });
-            if (!response.ok) throw new Error('Error al eliminar el itinerario');
+             if (!response.ok){
+                const errorData = await response.json(); 
+            throw new Error(errorData.mensaje || 'Error al eliminar el itinerario');
+            }
             setItinerarios(itinerarios.filter(itinerario => itinerario.id !== id));
             setSuccess(true);
             setMessage('Itinerario eliminado exitosamente');
