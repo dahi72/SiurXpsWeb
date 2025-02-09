@@ -133,25 +133,27 @@ const DetallesItinerario = () => {
         fetchEventos();
     }, [fetchEventos]);
 
-    const getEventIcon = (event) => {
-        if (event.vuelo) return <FlightIcon color="primary" />;
-        if (event.aeropuerto) return <AirportShuttleIcon color="primary" />;
-        if (event.aerolinea) return <AirlineSeatReclineNormalIcon color="primary" />;
-        if (event.hotel) return <HotelIcon color="secondary" />;
-        if (event.traslado) return <DirectionsBusIcon color="action" />;
-        if (event.actividad) return <EventIcon color="success" />;
+    const getEventIcon = (detail) => {
+        if (detail.vuelo) return <FlightIcon color="primary" />;
+        if (detail.aeropuerto) return <AirportShuttleIcon color="primary" />;
+        if (detail.aerolinea) return <AirlineSeatReclineNormalIcon color="primary" />;
+        if (detail.hotel) return <HotelIcon color="secondary" />;
+        if (detail.traslado) return <DirectionsBusIcon color="action" />;
+        if (detail.actividad) return <EventIcon color="success" />;
         return <EventIcon />;
     };
+    
 
-    const getEventTitle = (event) => {
-        if (event.vuelo) return "Vuelo";
-        if (event.aerolinea) return "Aeropuerto";
-        if (event.aerolinea) return "Aerolinea";
-        if (event.hotel) return "Hotel";
-        if (event.traslado) return "Traslado";
-        if (event.actividad) return "Actividad";
+    const getEventTitle = (detail) => {
+        if (detail.vuelo) return `Vuelo: ${detail.vuelo.nombre}`;  // Muestra el nombre del vuelo
+        if (detail.aeropuerto) return `Aeropuerto: ${detail.aeropuerto.nombre}`; // Muestra el nombre del aeropuerto
+        if (detail.aerolinea) return `Aerolinea: ${detail.aerolinea.nombre}`;  // Muestra el nombre de la aerolínea
+        if (detail.hotel) return `Hotel: ${detail.hotel.nombre}`;
+        if (detail.traslado) return "Traslado";
+        if (detail.actividad) return `Actividad: ${detail.actividad.nombre}`;
         return "Evento";
     };
+    
 
     const filteredEvents = eventos.filter((event) => {
         const title = getEventTitle(event) ?? "";
@@ -173,7 +175,7 @@ const DetallesItinerario = () => {
             <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
                 {filteredEvents.map((event, index) => (
                     <React.Fragment key={event.id}>
-                        {/* Información principal del evento */}
+                        {/* Información principal del evento
                         <TimelineItem>
                             <TimelineOppositeContent>
                                 <Typography variant="body2" color="textSecondary">
@@ -196,7 +198,7 @@ const DetallesItinerario = () => {
                                     </AccordionDetails>
                                 </Accordion>
                             </TimelineContent>
-                        </TimelineItem>
+                        </TimelineItem> */}
 
                         {/* Recorriendo los detalles del evento */}
                         {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
@@ -214,21 +216,24 @@ const DetallesItinerario = () => {
                                             <TimelineConnector />
                                         </TimelineSeparator>
                                         <TimelineContent>
-                                            <Accordion>
-                                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                                    <Typography variant="h6">{getEventTitle(detail)}</Typography>
-                                                </AccordionSummary>
-                                                <AccordionDetails>
-                                                    {/* Mostrar detalles dinámicamente */}
-                                                    {Object.keys(detail).map((key) => (
-                                                        key !== 'nombre' && key !== 'descripcion' && key !== 'ubicacion' && key !== 'horario' && key !== 'lugarDeEncuantro' && key !== 'tipoDeTraslado' && key !== 'tips' &&
-                                                        <Typography variant="body2" key={key}>
-                                                            {key}: {detail[key]}
-                                                        </Typography>
-                                                    ))}
-                                                </AccordionDetails>
-                                            </Accordion>
-                                        </TimelineContent>
+                                        <Accordion>
+                                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                <Typography variant="h6">{getEventTitle(detail)}</Typography>
+                                            </AccordionSummary>
+                                            <AccordionDetails>
+                                                {Object.keys(detail).map((key) => {
+                                                    if (!key.includes('id')) {
+                                                        return (
+                                                            <Typography variant="body2" key={key}>
+                                                                {key}: {detail[key]} 
+                                                            </Typography>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })}
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    </TimelineContent>
                                     </TimelineItem>
                                 );
                             }
