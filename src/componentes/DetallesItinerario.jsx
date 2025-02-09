@@ -31,6 +31,7 @@ const DetallesItinerario = () => {
     const [detalles, setDetalles] = useState([]);
     const [filter, setFilter] = useState("");
     const cargandoDetallesRef = useRef(false); 
+    const fetchedOnce = useRef(false);
     const baseUrl = process.env.REACT_APP_API_URL;
     const createHeaders = (token) => ({
         Authorization: `Bearer ${token}`,
@@ -112,8 +113,8 @@ const DetallesItinerario = () => {
         }
     }, [fetchDetallesPorTipo, detalles.length]); // Aquí usamos fetchDetallesPorTipo como dependencia
 
-    useEffect(() => {
-        const fetchEventos = async () => {
+    
+        const fetchEventos = useCallback(async () => {
             if (!id || !baseUrl || !token) {
                 console.error("Missing required parameters:", { id, baseUrl, token: !!token });
                 return;
@@ -130,7 +131,7 @@ const DetallesItinerario = () => {
 
                     console.log("Eventos fetched successfully:", eventosData.length);
                     setEventos(eventosData);
-
+                    fetchedOnce.current = true; 
                     // Solo cargar detalles si no estamos cargando ya
                     if (eventosData.length > 0 && !cargandoDetallesRef.current) {
                         fetchDetalles(eventosData);
@@ -139,10 +140,12 @@ const DetallesItinerario = () => {
             } catch (error) {
                 console.error("Error fetching eventos:", error);
             }
-        };
+        }, [id, baseUrl, token, headers, eventos.length, fetchDetalles]); // Dependencias controladas
+   
 
+    useEffect(() => {
         fetchEventos();
-    }, [id, token, baseUrl, headers, fetchDetalles, eventos.length]);
+    }, [ fetchEventos]);
     // const fetchDetalles = useCallback(async (eventos) => {
     //     const detallesPromises = eventos.map((evento) => fetchDetallesPorTipo(evento));
     //     return Promise.all(detallesPromises);
