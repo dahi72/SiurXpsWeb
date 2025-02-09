@@ -76,10 +76,10 @@ const DondeEstoy2 = () => {
     //   useEffect(() => {
     //     fetchHoteles();
     //   }, [fetchHoteles]);
-    const id = 10;
+    
     const fetchHoteles = useCallback(async () => {
             try {
-              const response = await fetch(`${baseUrl}/Hotel/${id}`, {
+              const response = await fetch(`${baseUrl}/Hotel/14`, {
                 method: 'GET',
                 headers: {
                   'Authorization': `Bearer ${token}`,
