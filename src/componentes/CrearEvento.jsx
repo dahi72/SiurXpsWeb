@@ -197,7 +197,7 @@ function CrearEvento() {
                     >
                         {traslados.map((traslado) => (
                             <MenuItem key={traslado.id} value={traslado.id}>
-                                {traslado.nombre}
+                                {traslado.lugarDeEncuentro}
                             </MenuItem>
                         ))}
                     </Select>

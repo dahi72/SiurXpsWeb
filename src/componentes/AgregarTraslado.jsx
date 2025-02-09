@@ -8,15 +8,15 @@ const token = localStorage.getItem("token");
 
 const AltaTraslado = () => {
 
-const navigate = useNavigate();
 
-const [formData, setFormData] = useState({
-lugarDeEncuentro: "",
-tipoDeTraslado: "",
-paisId: "",
-ciudadId: "",
-tips:""
-});
+const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    lugarDeEncuentro: "",
+    tipoDeTraslado: "",
+    paisId: "",
+    ciudadId: "",
+    tips:""
+  });
   
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
@@ -59,7 +59,7 @@ tips:""
       }
     })
     .then(response => {
-        alert("Traslado creado con éxito");
+        alert("Actividad creada con éxito");
         navigate(-1); // Redirige a la página anterior
       })
     .catch(error => {
