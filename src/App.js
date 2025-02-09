@@ -46,6 +46,7 @@ import FormularioVuelo from './componentes/FormularioVuelo';
 import ActividadOpcional from './componentes/ActividadOpcional';
 import VerDatosViajero from './componentes/VerDatosViajeros';
 import CrearItinerario2 from './componentes/CrearItinerario2';
+import MapaEventos from './componentes/MapaEventos';
 
 
 
@@ -58,7 +59,8 @@ const App = () => {
       <SnackbarProvider>
       <BrowserRouter future={{ v7_relativeSplatPath: true }}>
       <Layout>
-          <Routes>
+              <Routes>
+              <Route path="/mapa" element={<MapaEventos />} />
               <Route path="/" element={<Login />} />
               <Route path="/404" element={<NoEncontrado />} />
               <Route path="*" element={<NoEncontrado />} />
