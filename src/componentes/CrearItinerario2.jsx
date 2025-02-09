@@ -13,9 +13,9 @@ const CrearItinerario2 = () => {
     const [grupos, setGrupos] = useState([]);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('info');
     const token = localStorage.getItem("token");
-    const [grupoSeleccionado, setGrupoSeleccionado] = useState(null);
+    const [ setGrupoSeleccionado] = useState(null);
     const [itinerarioExistente, setItinerarioExistente] = useState(false);
     const coordinadorId = localStorage.getItem("id");
 
@@ -46,8 +46,8 @@ const CrearItinerario2 = () => {
     }, [cargarGrupos]);
 
     const handleGrupoChange = (e) => {
-        setGrupoViaje(e.target.value); // Actualizar el estado
-        verificarItinerarioExistente(e.target.value); // Llamar a la función con el valor seleccionado
+        setGrupoViaje(e.target.value); 
+        verificarItinerarioExistente(e.target.value);
     };
     
     // Filtra el grupo seleccionado y verifica si ya tiene un itinerario
@@ -76,14 +76,21 @@ const CrearItinerario2 = () => {
                 setFechaFin('');
             } else {
                 setItinerarioExistente(false);
-                setFechaInicio(grupoSeleccionado?.fechaInicio || '');
-                setFechaFin(grupoSeleccionado?.fechaFin || '');
+                const grupo = grupos.find(g => g.id === grupoId);
+                setGrupoSeleccionado(grupo);
+                
+                if (!grupo) return;
+                
+                setFechaInicio(grupo.fechaInicio || '');
+                setFechaFin(grupo.fechaFin || '');
             }
         } catch (error) {
             console.error(error.message || 'Error al verificar el itinerario');
             setOpenSnackbar(true);
         }
     };
+
+  
 
     const handleCrearItinerario = async () => {
         try {
@@ -252,7 +259,7 @@ const CrearItinerario2 = () => {
                         select
                         label="Grupo de Viaje"
                         value={grupoViaje}
-                        o onChange={handleGrupoChange}
+                        onChange={handleGrupoChange}
                         fullWidth
                         margin="normal"
                         sx={{ marginBottom: 2 }}
