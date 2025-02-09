@@ -122,26 +122,34 @@ const handleCloseSnackbar = (_, reason) => {
   );
 
   return (
-    
-    <Box>
-      <Box>
-        {/* Snackbar con Alert para mostrar mensajes */}
-        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-          <Alert onClose={handleCloseSnackbar} severity={tipoAlerta} variant="filled">
-            {mensaje}
-          </Alert>
-        </Snackbar>
-      </Box>
-      <Typography variant="h4">Gestión de Vuelos</Typography>
-      <Tabs value={tabValue} onChange={handleTabChange}>
+    <Box sx={{ padding: { xs: '1rem', sm: '2rem' } }}>
+      {/* Snackbar con Alert para mostrar mensajes */}
+      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert onClose={handleCloseSnackbar} severity={tipoAlerta} variant="filled">
+          {mensaje}
+        </Alert>
+      </Snackbar>
+      
+      <Typography variant="h4" sx={{ textAlign: 'center', mb: 2 }}>
+        Gestión de Vuelos
+      </Typography>
+  
+      <Tabs value={tabValue} onChange={handleTabChange} sx={{ display: 'flex', justifyContent: 'center' }}>
         <Tab label="Buscar Vuelos" />
         <Tab label="Cargar Nuevo Vuelo" />
       </Tabs>
-
+  
       {tabValue === 0 && (
-        <Box sx={{ mt: 3, p: 3, backgroundColor: 'white', borderRadius: '10px' }}>
-          <TextField label="Buscar vuelo" fullWidth value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} InputProps={{ endAdornment: <SearchIcon /> }} />
-          <TableContainer component={Paper} sx={{ mt: 2 }}>
+        <Box sx={{ mt: 3, p: { xs: 2, sm: 3 }, backgroundColor: 'white', borderRadius: '10px' }}>
+          <TextField
+            label="Buscar vuelo"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{ endAdornment: <SearchIcon /> }}
+            sx={{ mb: 2 }}
+          />
+          <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -157,8 +165,8 @@ const handleCloseSnackbar = (_, reason) => {
                       <TableCell>{vuelo.nombre}</TableCell>
                       <TableCell>{vuelo.horario}</TableCell>
                       <TableCell>
-                        <Button onClick={() => handleEditar(vuelo)}>Editar</Button>
-                        <Button onClick={() => handleEliminar(vuelo.id)}>Eliminar</Button>
+                        <Button onClick={() => handleEditar(vuelo)} size="small">Editar</Button>
+                        <Button onClick={() => handleEliminar(vuelo.id)} size="small" color="error">Eliminar</Button>
                       </TableCell>
                     </TableRow>
                   ))
@@ -172,31 +180,133 @@ const handleCloseSnackbar = (_, reason) => {
           </TableContainer>
         </Box>
       )}
-
+  
       {tabValue === 1 && (
-        <Box sx={{ mt: 3, p: 3, backgroundColor: 'white', borderRadius: '10px' }}>
+        <Box sx={{ mt: 3, p: { xs: 2, sm: 3 }, backgroundColor: 'white', borderRadius: '10px' }}>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextField fullWidth label="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+                <TextField
+                  fullWidth
+                  label="Nombre"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField fullWidth label="Horario" type="time" value={horario} onChange={(e) => setHorario(e.target.value)} InputLabelProps={{ shrink: true }} />
+                <TextField
+                  fullWidth
+                  label="Horario"
+                  type="time"
+                  value={horario}
+                  onChange={(e) => setHorario(e.target.value)}
+                  InputLabelProps={{ shrink: true }}
+                />
               </Grid>
             </Grid>
             <Box sx={{ mt: 3, textAlign: 'right' }}>
-              <Button variant="contained" color="primary" type="submit" disabled={!isFormComplete()}>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                disabled={!isFormComplete()}
+                sx={{ minWidth: '150px' }}
+              >
                 {vueloEditando ? 'Actualizar' : 'Cargar'}
               </Button>
             </Box>
           </form>
-        <Button fullWidth variant="contained" color="primary" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
-          Volver a Catálogos
-        </Button>
+  
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={() => navigate('/catalogos')}
+            sx={{ mt: 2 }}
+          >
+            Volver a Catálogos
+          </Button>
         </Box>
       )}
     </Box>
   );
+  
+  // return (
+    
+  //   <Box>
+  //     <Box>
+  //       {/* Snackbar con Alert para mostrar mensajes */}
+  //       <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+  //         <Alert onClose={handleCloseSnackbar} severity={tipoAlerta} variant="filled">
+  //           {mensaje}
+  //         </Alert>
+  //       </Snackbar>
+  //     </Box>
+  //     <Typography variant="h4">Gestión de Vuelos</Typography>
+  //     <Tabs value={tabValue} onChange={handleTabChange}>
+  //       <Tab label="Buscar Vuelos" />
+  //       <Tab label="Cargar Nuevo Vuelo" />
+  //     </Tabs>
+
+  //     {tabValue === 0 && (
+  //       <Box sx={{ mt: 3, p: 3, backgroundColor: 'white', borderRadius: '10px' }}>
+  //         <TextField label="Buscar vuelo" fullWidth value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} InputProps={{ endAdornment: <SearchIcon /> }} />
+  //         <TableContainer component={Paper} sx={{ mt: 2 }}>
+  //           <Table>
+  //             <TableHead>
+  //               <TableRow>
+  //                 <TableCell>Nombre</TableCell>
+  //                 <TableCell>Horario</TableCell>
+  //                 <TableCell>Acciones</TableCell>
+  //               </TableRow>
+  //             </TableHead>
+  //             <TableBody>
+  //               {filteredVuelos.length > 0 ? (
+  //                 filteredVuelos.map((vuelo) => (
+  //                   <TableRow key={vuelo.id}>
+  //                     <TableCell>{vuelo.nombre}</TableCell>
+  //                     <TableCell>{vuelo.horario}</TableCell>
+  //                     <TableCell>
+  //                       <Button onClick={() => handleEditar(vuelo)}>Editar</Button>
+  //                       <Button onClick={() => handleEliminar(vuelo.id)}>Eliminar</Button>
+  //                     </TableCell>
+  //                   </TableRow>
+  //                 ))
+  //               ) : (
+  //                 <TableRow>
+  //                   <TableCell colSpan={3} align="center">No hay vuelos disponibles.</TableCell>
+  //                 </TableRow>
+  //               )}
+  //             </TableBody>
+  //           </Table>
+  //         </TableContainer>
+  //       </Box>
+  //     )}
+
+  //     {tabValue === 1 && (
+  //       <Box sx={{ mt: 3, p: 3, backgroundColor: 'white', borderRadius: '10px' }}>
+  //         <form onSubmit={handleSubmit}>
+  //           <Grid container spacing={2}>
+  //             <Grid item xs={12} sm={6}>
+  //               <TextField fullWidth label="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+  //             </Grid>
+  //             <Grid item xs={12} sm={6}>
+  //               <TextField fullWidth label="Horario" type="time" value={horario} onChange={(e) => setHorario(e.target.value)} InputLabelProps={{ shrink: true }} />
+  //             </Grid>
+  //           </Grid>
+  //           <Box sx={{ mt: 3, textAlign: 'right' }}>
+  //             <Button variant="contained" color="primary" type="submit" disabled={!isFormComplete()}>
+  //               {vueloEditando ? 'Actualizar' : 'Cargar'}
+  //             </Button>
+  //           </Box>
+  //         </form>
+  //       <Button fullWidth variant="contained" color="primary" onClick={() => navigate('/catalogos')} sx={{ mb: 2 }}>
+  //         Volver a Catálogos
+  //       </Button>
+  //       </Box>
+  //     )}
+  //   </Box>
+  // );
 };
 
 export default Vuelos;
