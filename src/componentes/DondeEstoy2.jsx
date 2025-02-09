@@ -83,7 +83,7 @@ const DondeEstoy2 = () => {
         hoteles.map((hotel) => ({
             id: hotel.id,
             title: `${hotel.nombre}`,
-            direccion: `${hotel.direccion}, ${hotel.ciudad}, ${hotel.pais}`,
+            direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`,
         })), [hoteles]);
     
         console.log("eventos", eventos);
