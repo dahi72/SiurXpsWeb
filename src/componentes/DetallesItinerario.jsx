@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Typography, Box, TextField, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import {
     Timeline,
@@ -30,6 +30,7 @@ const DetallesItinerario = () => {
     const [eventos, setEventos] = useState([]);
     const [detalles, setDetalles] = useState([]);
     const [filter, setFilter] = useState("");
+    const cargandoDetallesRef = useRef(false); 
     const baseUrl = process.env.REACT_APP_API_URL;
     const createHeaders = (token) => ({
         Authorization: `Bearer ${token}`,
@@ -79,16 +80,36 @@ const DetallesItinerario = () => {
             evento.hotelId && 
                 fetchDetalle(true,`${baseUrl}/Hotel/${evento.hotelId}`, "hotel"),
             evento.vueloId && 
-                fetchDetalle(true, `${baseUrl}/Vuelo/=${evento.vueloId}`, "vuelo")
+                fetchDetalle(true, `${baseUrl}/Vuelo/${evento.vueloId}`, "vuelo")
         ]);
 
         return detallesEvento;
     }, [baseUrl, headers]);
 
-    const fetchDetalles = useCallback(async (eventos) => {
-        const detallesPromises = eventos.map((evento) => fetchDetallesPorTipo(evento));
-        return Promise.all(detallesPromises);
-    }, [fetchDetallesPorTipo]);
+    // const fetchDetallesPorTipo = useCallback(async (evento) => {
+    //     // Lógica para obtener detalles de un evento, similar a lo que hacías antes
+    //     const detalleData = await fetchWithErrorHandling(
+    //         `${baseUrl}/Eventos/${evento.EventoId}/detalles`,
+    //         headers
+    //     );
+    //     return detalleData;
+    // }, [baseUrl, headers]); // Esta función solo depende de baseUrl y headers
+
+    const fetchDetalles = useCallback(async (eventosData) => {
+        if (cargandoDetallesRef.current) return; // Si ya estamos cargando, no hacemos otra petición
+        try {
+            cargandoDetallesRef.current = true; // Marcamos que estamos cargando
+            console.log("Fetching detalles...");
+            const detallesArray = await Promise.all(
+                eventosData.map((evento) => fetchDetallesPorTipo(evento))
+            );
+            setDetalles(detallesArray);
+        } catch (error) {
+            console.error("Error fetching detalles:", error);
+        } finally {
+            cargandoDetallesRef.current = false; // Marcamos que hemos terminado de cargar
+        }
+    }, [fetchDetallesPorTipo]); // Aquí usamos fetchDetallesPorTipo como dependencia
 
     useEffect(() => {
         const fetchEventos = async () => {
@@ -108,12 +129,9 @@ const DetallesItinerario = () => {
                 console.log("Eventos fetched successfully:", eventosData.length);
                 setEventos(eventosData);
 
-
-                if (eventosData.length > 0 && detalles.length === 0) {
-                    console.log("Fetching detalles for eventos...");
-                    const detallesArray = await fetchDetalles(eventosData);
-                    console.log("Detalles fetched successfully");
-                    setDetalles(detallesArray);
+                // Solo cargar detalles si no estamos cargando ya
+                if (eventosData.length > 0 && !cargandoDetallesRef.current) {
+                    fetchDetalles(eventosData);
                 }
             } catch (error) {
                 console.error("Error fetching eventos:", error);
@@ -121,7 +139,47 @@ const DetallesItinerario = () => {
         };
 
         fetchEventos();
-    }, [id, token, baseUrl, headers, setDetalles, fetchDetalles, detalles.length]);
+    }, [id, token, baseUrl, headers, fetchDetalles]);
+    // const fetchDetalles = useCallback(async (eventos) => {
+    //     const detallesPromises = eventos.map((evento) => fetchDetallesPorTipo(evento));
+    //     return Promise.all(detallesPromises);
+    // }, [fetchDetallesPorTipo]);
+    
+
+    // useEffect(() => {
+    //     const fetchEventos = async () => {
+    //         if (!id || !baseUrl || !token) {
+    //             console.error("Missing required parameters:", { id, baseUrl, token: !!token });
+    //             return;
+    //         }
+
+    //         try {
+    //             console.log("Fetching eventos for itinerario:", id);
+    //             const eventosData = await fetchWithErrorHandling(`${baseUrl}/Itinerario/${id}/eventos`, headers);
+    //             if (!Array.isArray(eventosData)) {
+    //                 console.error("Invalid response format:", eventosData);
+    //                 throw new Error("La respuesta no tiene el formato esperado");
+    //             }
+
+    //             console.log("Eventos fetched successfully:", eventosData.length);
+    //             setEventos(eventosData);
+
+
+    //             if (eventosData.length > 0 && !cargandoDetalles) {
+    //                 setCargandoDetalles(true);
+    //                 console.log("Fetching detalles for eventos...");
+    //                 const detallesArray = await fetchDetalles(eventosData);
+    //                 console.log("Detalles fetched successfully");
+    //                 setDetalles(detallesArray);
+    //                 setCargandoDetalles(false);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching eventos:", error);
+    //         }
+    //     };
+
+    //     fetchEventos();
+    // }, [id, token, baseUrl, headers, setDetalles, fetchDetalles, cargandoDetalles]);
 
     const getEventIcon = (event) => {
         if (event.vueloId) return <FlightIcon color="primary" />;
