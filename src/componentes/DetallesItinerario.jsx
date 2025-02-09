@@ -97,6 +97,7 @@ const DetallesItinerario = () => {
 
     const fetchDetalles = useCallback(async (eventosData) => {
         if (cargandoDetallesRef.current) return; // Si ya estamos cargando, no hacemos otra petición
+        if (detalles.length > 0) return; // Si los detalles ya están cargados, no volvemos a hacer la petición
         try {
             cargandoDetallesRef.current = true; // Marcamos que estamos cargando
             console.log("Fetching detalles...");
@@ -109,7 +110,7 @@ const DetallesItinerario = () => {
         } finally {
             cargandoDetallesRef.current = false; // Marcamos que hemos terminado de cargar
         }
-    }, [fetchDetallesPorTipo]); // Aquí usamos fetchDetallesPorTipo como dependencia
+    }, [fetchDetallesPorTipo, detalles.length]); // Aquí usamos fetchDetallesPorTipo como dependencia
 
     useEffect(() => {
         const fetchEventos = async () => {
@@ -119,19 +120,21 @@ const DetallesItinerario = () => {
             }
 
             try {
-                console.log("Fetching eventos for itinerario:", id);
-                const eventosData = await fetchWithErrorHandling(`${baseUrl}/Itinerario/${id}/eventos`, headers);
-                if (!Array.isArray(eventosData)) {
-                    console.error("Invalid response format:", eventosData);
-                    throw new Error("La respuesta no tiene el formato esperado");
-                }
+                if (eventos.length === 0) {
+                    console.log("Fetching eventos for itinerario:", id);
+                    const eventosData = await fetchWithErrorHandling(`${baseUrl}/Itinerario/${id}/eventos`, headers);
+                    if (!Array.isArray(eventosData)) {
+                        console.error("Invalid response format:", eventosData);
+                        throw new Error("La respuesta no tiene el formato esperado");
+                    }
 
-                console.log("Eventos fetched successfully:", eventosData.length);
-                setEventos(eventosData);
+                    console.log("Eventos fetched successfully:", eventosData.length);
+                    setEventos(eventosData);
 
-                // Solo cargar detalles si no estamos cargando ya
-                if (eventosData.length > 0 && !cargandoDetallesRef.current) {
-                    fetchDetalles(eventosData);
+                    // Solo cargar detalles si no estamos cargando ya
+                    if (eventosData.length > 0 && !cargandoDetallesRef.current) {
+                        fetchDetalles(eventosData);
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching eventos:", error);
@@ -139,7 +142,7 @@ const DetallesItinerario = () => {
         };
 
         fetchEventos();
-    }, [id, token, baseUrl, headers, fetchDetalles]);
+    }, [id, token, baseUrl, headers, fetchDetalles, eventos.length]);
     // const fetchDetalles = useCallback(async (eventos) => {
     //     const detallesPromises = eventos.map((evento) => fetchDetallesPorTipo(evento));
     //     return Promise.all(detallesPromises);
