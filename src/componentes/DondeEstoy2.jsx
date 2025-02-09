@@ -49,44 +49,81 @@ const DondeEstoy2 = () => {
     const [eventMarkers, setEventMarkers] = useState([]);
     const token = localStorage.getItem('token');
     const baseUrl = process.env.REACT_APP_API_URL;
-    const [hoteles, setHoteles] = useState([]);
+    const [hotel, setHotel] = useState([]);
     
-    const fetchHoteles = useCallback(async () => {
-        try {
-          const response = await fetch(`${baseUrl}/Hotel/hoteles`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
+    // const fetchHoteles = useCallback(async () => {
+    //     try {
+    //       const response = await fetch(`${baseUrl}/Hotel/hoteles`, {
+    //         method: 'GET',
+    //         headers: {
+    //           'Authorization': `Bearer ${token}`,
+    //           'Content-Type': 'application/json'
+    //         }
+    //       });
     
-          if (!response.ok) {
-            throw new Error(`Error ${response.status}: ${response.statusText}`);
-          }
+    //       if (!response.ok) {
+    //         throw new Error(`Error ${response.status}: ${response.statusText}`);
+    //       }
     
-          const data = await response.json();
-          setHoteles(Array.isArray(data) ? data : []);
-        } catch (error) {
-          console.error('Error al cargar los hoteles:', error);
-        }
-      }, [baseUrl, token]);
+    //       const data = await response.json();
+    //       setHoteles(Array.isArray(data) ? data : []);
+    //     } catch (error) {
+    //       console.error('Error al cargar los hoteles:', error);
+    //     }
+    //   }, [baseUrl, token]);
 
     
-      useEffect(() => {
-        fetchHoteles();
-      }, [fetchHoteles]);
+    //   useEffect(() => {
+    //     fetchHoteles();
+    //   }, [fetchHoteles]);
+    const id = 10;
+    const fetchHoteles = useCallback(async () => {
+            try {
+              const response = await fetch(`${baseUrl}/Hotel/${id}`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                }
+              });
+        
+              if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+              }
+        
+              const data = await response.json();
+              setHotel(data);
+            } catch (error) {
+              console.error('Error al cargar los hoteles:', error);
+            }
+          }, [baseUrl, token]);
     
-    console.log("hoteles", hoteles);
+        
+          useEffect(() => {
+            fetchHoteles();
+          }, [fetchHoteles]);
+
+
+
+    console.log("hotel", hotel);
     
-      const eventos = useMemo(() => 
-        hoteles.map((hotel) => ({
-            id: hotel.id,
-            title: `${hotel.nombre}`,
-            direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`,
-        })), [hoteles]);
+    const evento = useMemo(() => ({
+        id: hotel.id,
+        title: hotel.nombre,
+        direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`,
+    }), [hotel]);
     
-        console.log("eventos", eventos);
+    console.log("evento", evento);
+    
+    
+    //   const eventos = useMemo(() => 
+    //     hoteles.map((hotel) => ({
+    //         id: hotel.id,
+    //         title: `${hotel.nombre}`,
+    //         direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`,
+    //     })), [hoteles]);
+    
+        // console.log("eventos", eventos);
     
     // Memoize the eventos array
     // const eventos = useMemo(() => [
@@ -95,13 +132,50 @@ const DondeEstoy2 = () => {
     //     { id: 3, title: 'Evento 3', ubicacion: 'Actividad Ejemplo, Salto, Uruguay' },
     // ], []); // Empty dependency array means it will only be created once
 
+    // useEffect(() => {
+    //     if (!navigator.geolocation) {
+    //         setError('Tu navegador no soporta geolocalización');
+    //         setLoading(false);
+    //         return;
+    //     }
+
+    //     navigator.geolocation.getCurrentPosition(
+    //         (position) => {
+    //             setCenter([position.coords.latitude, position.coords.longitude]);
+    //             setLoading(false);
+    //         },
+    //         (error) => {
+    //             let errorMessage = 'No se pudo obtener tu ubicación';
+    //             switch (error.code) {
+    //                 case error.PERMISSION_DENIED:
+    //                     errorMessage = 'No has dado permiso para acceder a tu ubicación';
+    //                     break;
+    //                 case error.POSITION_UNAVAILABLE:
+    //                     errorMessage = 'La información de ubicación no está disponible';
+    //                     break;
+    //                 case error.TIMEOUT:
+    //                     errorMessage = 'Se agotó el tiempo para obtener la ubicación';
+    //                     break;
+    //                 default:
+    //                     errorMessage = 'Ocurrió un error desconocido';
+    //             }
+    //             setError(errorMessage);
+    //             setLoading(false);
+    //         },
+    //         {
+    //             enableHighAccuracy: true,
+    //             timeout: 5000,
+    //             maximumAge: 0
+    //         }
+    //     );
+    // }, [eventos]);
     useEffect(() => {
         if (!navigator.geolocation) {
             setError('Tu navegador no soporta geolocalización');
             setLoading(false);
             return;
         }
-
+    
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 setCenter([position.coords.latitude, position.coords.longitude]);
@@ -131,8 +205,8 @@ const DondeEstoy2 = () => {
                 maximumAge: 0
             }
         );
-    }, [eventos]);
-
+    }, [evento]); // Dependencia del evento único
+    
     // Función para geocodificar direcciones
     const geocodeLocation = async (address) => {
         const apiKey = 'ffe0407498914865a2e38a5418e8a482'; // Usa tu clave de API aquí
@@ -151,16 +225,31 @@ const DondeEstoy2 = () => {
     };
 
     useEffect(() => {
-        const fetchEventMarkers = async () => {
-            const markers = await Promise.all(eventos.map(async (evento) => {
-                const location = await geocodeLocation(evento.ubicacion);
-                return location ? { lat: location.lat, lng: location.lng, title: evento.title } : null;
-            }));
-            setEventMarkers(markers.filter(marker => marker !== null)); // Filtrar marcadores válidos
+        const fetchEventMarker = async () => {
+            if (!evento) return; // Evitar errores si `evento` aún no está definido
+    
+            const location = await geocodeLocation(evento.ubicacion);
+            if (location) {
+                setEventMarkers([{ lat: location.lat, lng: location.lng, title: evento.title }]);
+            } else {
+                setEventMarkers([]); // Limpiar si no se encuentra la ubicación
+            }
         };
+    
+        fetchEventMarker();
+    }, [evento]); // Se ejecuta cuando `evento` cambia
+    
+    // useEffect(() => {
+    //     const fetchEventMarkers = async () => {
+    //         const markers = await Promise.all(eventos.map(async (evento) => {
+    //             const location = await geocodeLocation(evento.ubicacion);
+    //             return location ? { lat: location.lat, lng: location.lng, title: evento.title } : null;
+    //         }));
+    //         setEventMarkers(markers.filter(marker => marker !== null)); // Filtrar marcadores válidos
+    //     };
 
-        fetchEventMarkers();
-    }, [eventos]);
+    //     fetchEventMarkers();
+    // }, [eventos]);
 
     const handleSnackbarClose = () => {
         setOpenSnackbar(false);
