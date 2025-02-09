@@ -77,6 +77,8 @@ const DondeEstoy2 = () => {
         fetchHoteles();
       }, [fetchHoteles]);
     
+    console.log("hoteles", hoteles);
+    
       const eventos = useMemo(() => 
         hoteles.map((hotel) => ({
             id: hotel.id,
@@ -84,7 +86,7 @@ const DondeEstoy2 = () => {
             direccion: `${hotel.direccion}, ${hotel.ciudad}, ${hotel.pais}`,
         })), [hoteles]);
     
-    
+        console.log("eventos", eventos);
     
     // Memoize the eventos array
     // const eventos = useMemo(() => [
