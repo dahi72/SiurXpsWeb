@@ -8,6 +8,13 @@ const iconoEvento = new L.Icon({
 });
 
 const MapaEventos = ({ eventosConCoordenadas }) => {  // 🔹 Recibe los eventos como prop
+    console.log("Eventos recibidos en MapaEventos:", eventosConCoordenadas);
+
+    if (!eventosConCoordenadas || eventosConCoordenadas.length === 0) {
+        console.log("No hay eventos con coordenadas.");
+        return <p>No hay eventos disponibles para mostrar en el mapa.</p>;
+    }
+
     return (
         <MapContainer center={[-34.9011, -56.1645]} zoom={5} style={{ height: "500px", width: "100%" }}>
             <TileLayer
