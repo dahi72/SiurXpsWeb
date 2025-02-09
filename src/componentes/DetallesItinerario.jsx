@@ -189,22 +189,22 @@ const DetallesItinerario = () => {
     // }, [id, token, baseUrl, headers, setDetalles, fetchDetalles, cargandoDetalles]);
 
     const getEventIcon = (event) => {
-        if (event.vueloId) return <FlightIcon color="primary" />;
-        if (event.aeropuertoId) return <AirportShuttleIcon color="primary" />;
-        if (event.aerolineaId) return <AirlineSeatReclineNormalIcon color="primary" />;
-        if (event.hotelId) return <HotelIcon color="secondary" />;
-        if (event.trasladoId) return <DirectionsBusIcon color="action" />;
-        if (event.actividadId) return <EventIcon color="success" />;
+        if (event.vuelo) return <FlightIcon color="primary" />;
+        if (event.aeropuerto) return <AirportShuttleIcon color="primary" />;
+        if (event.aerolinea) return <AirlineSeatReclineNormalIcon color="primary" />;
+        if (event.hotel) return <HotelIcon color="secondary" />;
+        if (event.traslado) return <DirectionsBusIcon color="action" />;
+        if (event.actividad) return <EventIcon color="success" />;
         return <EventIcon />;
     };
 
     const getEventTitle = (event) => {
-        if (event.vueloId) return "Vuelo";
-        if (event.aerolineaId) return "Aeropuerto";
-        if (event.aerolineaId) return "Aerolinea";
-        if (event.hotelId) return "Hotel";
-        if (event.trasladoId) return "Traslado";
-        if (event.actividadId) return "Actividad";
+        if (event.vuelo) return "Vuelo";
+        if (event.aerolinea) return "Aeropuerto";
+        if (event.aerolinea) return "Aerolinea";
+        if (event.hotel) return "Hotel";
+        if (event.traslado) return "Traslado";
+        if (event.actividad) return "Actividad";
         return "Evento";
     };
 
@@ -260,13 +260,19 @@ const DetallesItinerario = () => {
                         <Typography variant="body2" color="textSecondary">
                         Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
                         </Typography>
-                    </TimelineOppositeContent>
+                        </TimelineOppositeContent>
+                            
                     <TimelineSeparator>
-                        <TimelineDot>{getEventIcon(detalles[index].actividad)}</TimelineDot>
+                        <TimelineDot>{getEventIcon(detalles[index])}</TimelineDot>
                         <TimelineConnector />
                     </TimelineSeparator>
+                            
                     <TimelineContent>
-                        <Typography variant="h6">{getEventTitle(detalles[index].actividad)}</Typography>
+                    <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography variant="h6">{getEventTitle(detalles[index])}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
                         <Typography variant="body2">Actividad: {detalles[index].actividad.nombre}</Typography>
                         {detalles[index].actividad.descripcion && (
                         <Typography variant="body2">Descripción: {detalles[index].actividad.descripcion}</Typography>
@@ -276,7 +282,9 @@ const DetallesItinerario = () => {
                         )}
                         {detalles[index].actividad.tipo && (
                         <Typography variant="body2">Ubicación: {detalles[index].actividad.ubicacion}</Typography>
-                        )}
+                                        )}
+                    </AccordionDetails>
+                    </Accordion>
                     </TimelineContent>
                     </TimelineItem>
                 )}
@@ -290,11 +298,15 @@ const DetallesItinerario = () => {
                         </Typography>
                     </TimelineOppositeContent>
                     <TimelineSeparator>
-                        <TimelineDot>{getEventIcon(detalles[index].traslado)}</TimelineDot>
+                        <TimelineDot>{getEventIcon(detalles[index])}</TimelineDot>
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent>
-                        <Typography variant="h6">{getEventTitle(detalles[index].traslado)}</Typography>
+                    <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography variant="h6">{getEventTitle(detalles[index])}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
                         {detalles[index].traslado.lugarDeEncuantro && (
                         <Typography variant="body2">Lugar de encuentro: {detalles[index].traslado.lugarDeEncuantro}</Typography>
                         )}
@@ -303,7 +315,9 @@ const DetallesItinerario = () => {
                         )}
                         {detalles[index].traslado.tips && (
                         <Typography variant="body2">Tips: {detalles[index].traslado.tips}</Typography>
-                        )}
+                                        )}
+                    </AccordionDetails>
+                    </Accordion>
                     </TimelineContent>
                     </TimelineItem>
                 )}
@@ -317,18 +331,24 @@ const DetallesItinerario = () => {
                         </Typography>
                     </TimelineOppositeContent>
                     <TimelineSeparator>
-                        <TimelineDot>{getEventIcon(detalles[index].aeropuerto)}</TimelineDot>
+                        <TimelineDot>{getEventIcon(detalles[index])}</TimelineDot>
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent>
-                        <Typography variant="h6">{getEventTitle(detalles[index].aeropuerto)}</Typography>
+                    <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>           
+                                <Typography variant="h6">{getEventTitle(detalles[index])}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
                         <Typography variant="body2">Aeropuerto: {detalles[index].aeropuerto.nombre}</Typography>
                         {detalles[index].aeropuerto.direccion && (
                         <Typography variant="body2">Dirección: {detalles[index].aeropuerto.direccion}</Typography>
                         )}
                         {detalles[index].aeropuerto.paginaWeb && (
                         <Typography variant="body2">Página web: {detalles[index].aeropuerto.paginaWeb}</Typography>
-                        )}
+                                )}
+                    </AccordionDetails>
+                    </Accordion>
                     </TimelineContent>
                     </TimelineItem>
                 )}
@@ -342,11 +362,15 @@ const DetallesItinerario = () => {
                         </Typography>
                     </TimelineOppositeContent>
                     <TimelineSeparator>
-                        <TimelineDot>{getEventIcon(detalles[index].hotel)}</TimelineDot>
+                        <TimelineDot>{getEventIcon(detalles[index])}</TimelineDot>
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent>
-                        <Typography variant="h6">{getEventTitle(detalles[index].hotel)}</Typography>
+                    <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>           
+                         <Typography variant="h6">{getEventTitle(detalles[index])}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>               
                         <Typography variant="body2">Hotel: {detalles[index].hotel.nombre}</Typography>
                         {detalles[index].hotel.direccion && (
                         <Typography variant="body2">Dirección: {detalles[index].hotel.direccion}</Typography>
@@ -360,6 +384,8 @@ const DetallesItinerario = () => {
                         {detalles[index].hotel.paginaWeb && (
                         <Typography variant="body2">Página web: {detalles[index].hotel.paginaWeb}</Typography>
                         )}
+                    </AccordionDetails>
+                    </Accordion>
                     </TimelineContent>
                     </TimelineItem>
                 )}
@@ -373,15 +399,21 @@ const DetallesItinerario = () => {
                         </Typography>
                     </TimelineOppositeContent>
                     <TimelineSeparator>
-                        <TimelineDot>{getEventIcon(detalles[index].vuelo)}</TimelineDot>
+                        <TimelineDot>{getEventIcon(detalles[index])}</TimelineDot>
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent>
-                        <Typography variant="h6">{getEventTitle(detalles[index].vuelo)}</Typography>
+                    <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>                
+                        <Typography variant="h6">{getEventTitle(detalles[index])}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>        
                         <Typography variant="body2">Vuelo: {detalles[index].vuelo.nombre}</Typography>
                         {detalles[index].vuelo.horario && (
                         <Typography variant="body2">Horario: {detalles[index].vuelo.horario}</Typography>
                         )}
+                    </AccordionDetails>
+                    </Accordion>
                     </TimelineContent>
                     </TimelineItem>
                 )}
