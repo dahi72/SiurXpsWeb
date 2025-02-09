@@ -175,37 +175,16 @@ const DetallesItinerario = () => {
             <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
                 {filteredEvents.map((event, index) => (
                     <React.Fragment key={event.id}>
-                        {/* Información principal del evento
-                        <TimelineItem>
-                            <TimelineOppositeContent>
-                                <Typography variant="body2" color="textSecondary">
-                                    {new Date(event.fechaYHora).toLocaleString()}
-                                </Typography>
-                            </TimelineOppositeContent>
-
-                            <TimelineSeparator>
-                                <TimelineDot>{getEventIcon(event)}</TimelineDot>
-                                <TimelineConnector />
-                            </TimelineSeparator>
-
-                            <TimelineContent>
-                                <Accordion>
-                                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography variant="h6">{getEventTitle(event)}</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <Typography variant="body2">Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}</Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                            </TimelineContent>
-                        </TimelineItem> */}
-
-                        {/* Recorriendo los detalles del evento */}
+                      
                         {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
                             const detail = detalles[index][detailType];
+                            console.log("DetailIndex:", detailIndex);
+                            console.log("DetailType:", detailType);
                             if (detail) {
+                                console.log('Detail:', detail); // Verifica el detalle
                                 return (
                                     <TimelineItem key={detailIndex}>
+                                          
                                         <TimelineOppositeContent>
                                             <Typography variant="body2" color="textSecondary">
                                                 Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}

@@ -38,7 +38,6 @@ const Hoteles = () => {
     setOpenSnackbar(true);
   };
 
-  // Cerrar el Snackbar
   const handleCloseSnackbar = (_, reason) => {
     if (reason === 'clickaway') return;
     setOpenSnackbar(false);
@@ -160,7 +159,6 @@ const Hoteles = () => {
         body: JSON.stringify(nuevoHotel),
       });
       
-      //const data = await response.json();
 
       if (!response.ok) {
         mostrarMensaje('Error al agregar el hotel', 'error');
@@ -231,7 +229,7 @@ const Hoteles = () => {
     if (!isFormComplete()) return mostrarMensaje('Todos los campos son requeridos', 'error');
   
     const hotelActualizado = {
-      id : hotel.id, // Asegúrate de tener el ID del hotel a actualizar
+      id : hotel.id, 
       nombre,
       checkIn : formatHorario(checkIn.slice(0, 5)),
       checkOut : formatHorario(checkOut.slice(0, 5)),
@@ -264,7 +262,7 @@ const Hoteles = () => {
       setCiudadId('');
       setTips('');
     
-      await fetchHoteles(); // Recargar la lista de hoteles
+      await fetchHoteles(); 
       setTabValue(0);
     
       alert('Hotel actualizado exitosamente');
@@ -285,7 +283,6 @@ const Hoteles = () => {
       }}
     >
       <Box>
-        {/* Snackbar con Alert para mostrar mensajes */}
         <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
           <Alert onClose={handleCloseSnackbar} severity={tipoAlerta} variant="filled">
             {mensaje}
@@ -480,10 +477,9 @@ const Hoteles = () => {
                       const selectedPaisId = e.target.value;
                       setPaisId(selectedPaisId);
 
-                      // Encontramos el país seleccionado para obtener su codigoIso
                       const selectedPais = paises.find(pais => pais.id === selectedPaisId);
                       if (selectedPais) {
-                        handleCiudadChange(selectedPais.codigoIso);  // Usamos codigoIso para cargar ciudades
+                        handleCiudadChange(selectedPais.codigoIso);  
                       }
                     }}
                     label="País"
@@ -503,7 +499,7 @@ const Hoteles = () => {
                     value={ciudadId}
                     onChange={(e) => setCiudadId(e.target.value)}
                     label="Ciudad"
-                    disabled={!paisId}  // Solo habilitar si hay país seleccionado
+                    disabled={!paisId}  
                   >
                     {ciudades.map((ciudad) => (
                       <MenuItem key={ciudad.id} value={ciudad.id}>
@@ -513,42 +509,6 @@ const Hoteles = () => {
                   </Select>
                 </FormControl>
                 </Grid>
-                {/* <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth variant="outlined">
-                    <InputLabel>País</InputLabel>
-                    <Select
-                      value={paisId}
-                      onChange={(e) => {
-                        setPaisId(e.target.value);
-                        handleCiudadChange(e.target.value);
-                      }}
-                      label="País"
-                    >
-                      {paises.map((pais) => (
-                        <MenuItem key={pais.id} value={pais.id}>
-                          {pais.nombre}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth variant="outlined">
-                    <InputLabel>Ciudad</InputLabel>
-                    <Select
-                      value={ciudadId}
-                      onChange={(e) => setCiudadId(e.target.value)}
-                      label="Ciudad"
-                      disabled={!paisId}
-                    >
-                      {ciudades.map((ciudad) => (
-                        <MenuItem key={ciudad.id} value={ciudad.id}>
-                          {ciudad.nombre}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid> */}
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
@@ -579,7 +539,7 @@ const Hoteles = () => {
       </Box>
       <Box>
         <Button 
-          variant="outlined" 
+          variant="contained" 
           onClick={() => navigate('/catalogos')} 
           sx={{ 
             mb: 2, 

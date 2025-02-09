@@ -205,8 +205,7 @@ const Aeropuertos = () => {
     setCiudadId(aeropuerto.ciudadId.toString());
     setDireccion(aeropuerto.direccion);
     setTips(aeropuerto.tips);
-    
-    // Cargar las ciudades del país seleccionado
+  
     const pais = paises.find(p => p.id === aeropuerto.paisId);
     if (pais) {
       setPaisCodigoIso(pais.codigoIso);
@@ -249,19 +248,7 @@ const Aeropuertos = () => {
         padding: { xs: '1rem', sm: '2rem' } 
       }}
     >
-      <Box>
-        <Button 
-          variant="outlined" 
-          onClick={() => navigate('/catalogos')} 
-          sx={{ 
-            mb: 2, 
-            backgroundColor: 'rgb(227, 242, 253)', 
-            color: '#1976d2'
-          }}
-        >
-          Volver a Catálogos
-        </Button>
-      </Box>
+     
       <Box
         sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -449,218 +436,22 @@ const Aeropuertos = () => {
           </Box>
         )}
       </Box>
+      <Box>
+        <Button 
+          variant="contained" 
+          onClick={() => navigate('/catalogos')} 
+          sx={{ 
+            mb: 2, 
+            backgroundColor: 'rgb(227, 242, 253)', 
+            color: '#1976d2'
+          }}
+        >
+          Volver a Catálogos
+        </Button>
+      </Box>
     </Box>
   );
   
-  // return (
-  //   <Box
-  //     sx={{
-  //       display: 'flex',
-  //       flexDirection: 'column',
-  //       backgroundSize: 'cover',
-  //       backgroundPosition: 'center',
-  //       padding: '2rem'
-  //     }}
-  //   >
-  //     <Box>
-  //       <Button 
-  //         variant="outlined" 
-  //         onClick={() => navigate('/catalogos')} 
-  //         sx={{ 
-  //           mb: 2, 
-  //           backgroundColor: 'rgb(227, 242, 253)', 
-  //           color: '#1976d2'
-  //         }}
-  //       >
-  //         Volver a Catálogos
-  //       </Button>
-  //     </Box>
-  //     <Box
-  //       sx={{
-  //         backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  //         borderRadius: '10px',
-  //         flexGrow: 1,
-  //         padding: '2rem',
-  //         textAlign: 'center'
-  //       }}
-  //     >
-  //       <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', color: 'primary.main' }}>
-  //         Gestión de Aeropuertos
-  //       </Typography>
-
-  //       <Tabs 
-  //         value={tabValue} 
-  //         onChange={handleTabChange} 
-  //         sx={{ 
-  //           mb: 3,
-  //           '& .MuiTab-root': {
-  //             fontWeight: 'bold',
-  //             color: 'rgba(25, 118, 210, 0.7)',
-  //             '&.Mui-selected': {
-  //               color: 'primary.main',
-  //             }
-  //           }
-  //         }}
-  //       >
-  //         <Tab label="Buscar Aeropuertos" />
-  //         <Tab label="Cargar Nuevo Aeropuerto" />
-  //       </Tabs>
-
-  //       {tabValue === 0 && (
-  //         <Box sx={{ mt: 3 }}>
-  //           <Grid container spacing={2} sx={{ mb: 3 }}>
-  //             <Grid item xs={12} md={8}>
-  //               <TextField 
-  //                 fullWidth 
-  //                 label="Buscar aeropuerto" 
-  //                 variant="outlined"
-  //                 InputProps={{
-  //                   endAdornment: <SearchIcon color="action" />
-  //                 }}
-  //                 value={searchTerm}
-  //                 onChange={(e) => setSearchTerm(e.target.value)}
-  //               />
-  //             </Grid>
-  //           </Grid>
-  //           <TableContainer component={Paper} sx={{ mb: 3 }}>
-  //             <Table>
-  //               <TableHead>
-  //                 <TableRow>
-  //                   <TableCell>Nombre</TableCell>
-  //                   <TableCell>Página Web</TableCell>
-  //                   <TableCell>País</TableCell>
-  //                   <TableCell>Ciudad</TableCell>
-  //                   <TableCell>Dirección</TableCell>
-  //                   <TableCell>Tips</TableCell>
-  //                   <TableCell>Acciones</TableCell>
-  //                 </TableRow>
-  //               </TableHead>
-  //               <TableBody>
-  //                 {filteredAeropuertos.length > 0 ? (
-  //                   filteredAeropuertos.map((aeropuerto) => (
-  //                     <TableRow key={aeropuerto.id}>
-  //                       <TableCell>{aeropuerto.nombre}</TableCell>
-  //                       <TableCell>
-  //                         <a href={aeropuerto.paginaWeb} target="_blank" rel="noopener noreferrer">
-  //                           {aeropuerto.paginaWeb}
-  //                         </a>
-  //                       </TableCell>
-  //                       <TableCell>{aeropuerto.paisId}</TableCell>
-  //                       <TableCell>{aeropuerto.ciudadId}</TableCell>
-  //                       <TableCell>{aeropuerto.direccion}</TableCell>
-  //                       <TableCell>{aeropuerto.tips}</TableCell>
-  //                       <TableCell>
-  //                         <Button size="small" color="primary" onClick={() => handleEditar(aeropuerto)}>Editar</Button>
-  //                         <Button size="small" color="error" onClick={() => handleEliminar(aeropuerto.id)}>Eliminar</Button>
-  //                       </TableCell>
-  //                     </TableRow>
-  //                   ))
-  //                 ) : (
-  //                   <TableRow>
-  //                     <TableCell colSpan={7} style={{ textAlign: 'center' }}>
-  //                       No hay aeropuertos disponibles.
-  //                     </TableCell>
-  //                   </TableRow>
-  //                 )}
-  //               </TableBody>
-  //             </Table>
-  //           </TableContainer>
-  //         </Box>
-  //       )}
-
-  //       {tabValue === 1 && (
-  //         <Box>
-  //           <form onSubmit={handleSubmit}>
-  //             <Grid container spacing={2}>
-  //               <Grid item xs={12} sm={6}>
-  //                 <TextField 
-  //                   fullWidth 
-  //                   label="Nombre" 
-  //                   variant="outlined" 
-  //                   value={nombre} 
-  //                   onChange={(e) => setNombre(e.target.value)} 
-  //                 />
-  //               </Grid>
-  //               <Grid item xs={12} sm={6}>
-  //                 <TextField 
-  //                   fullWidth 
-  //                   label="Página Web" 
-  //                   type="url" 
-  //                   variant="outlined" 
-  //                   value={paginaWeb} 
-  //                   onChange={(e) => setPaginaWeb(e.target.value)} 
-  //                 />
-  //               </Grid>
-  //               <Grid item xs={12} sm={6}>
-  //                 <FormControl fullWidth>
-  //                   <InputLabel>País</InputLabel>
-  //                   <Select
-  //                    value={paisId || ''}
-  //                     onChange={(e) => {
-  //                       const selectedPais = paises.find(pais => pais.id === parseInt(e.target.value));
-  //                       setPaisId(Number(e.target.value));
-  //                       if (selectedPais) {
-  //                         setPaisCodigoIso(selectedPais.codigoIso);
-  //                         setCiudadId('');
-  //                       }
-  //                     }}
-  //                   >
-  //                     <MenuItem value="">Seleccione un país</MenuItem>
-  //                     {paises.map((pais) => (
-  //                       <MenuItem key={pais.id} value={pais.id}>{pais.nombre}</MenuItem>
-  //                     ))}
-  //                   </Select>
-  //                 </FormControl>
-  //               </Grid>
-  //               <Grid item xs={12} sm={6}>
-  //                 <FormControl fullWidth disabled={!paisId}>
-  //                   <InputLabel>Ciudad</InputLabel>
-  //                   <Select
-  //                     value={ciudadId}
-  //                     onChange={(e) => setCiudadId(e.target.value)}
-  //                   >
-  //                     <MenuItem value="">Seleccione una ciudad</MenuItem>
-  //                     {ciudades.map((ciudad) => (
-  //                       <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>
-  //                     ))}
-  //                   </Select>
-  //                 </FormControl>
-  //               </Grid>
-  //               <Grid item xs={12}>
-  //                 <TextField 
-  //                   fullWidth 
-  //                   label="Dirección" 
-  //                   variant="outlined" 
-  //                   value={direccion} 
-  //                   onChange={(e) => setDireccion(e.target.value)} 
-  //                 />
-  //               </Grid>
-  //               <Grid item xs={12}>
-  //                 <TextField 
-  //                   fullWidth 
-  //                   label="Tips" 
-  //                   variant="outlined" 
-  //                   value={tips} 
-  //                   onChange={(e) => setTips(e.target.value)} 
-  //                 />
-  //               </Grid>
-  //             </Grid>
-  //             <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-  //               <Button 
-  //                 variant="contained" 
-  //                 color="primary" 
-  //                 type="submit" 
-  //                 disabled={!isFormComplete()}
-  //               >
-  //                 {aeropuertoEditando ? 'Actualizar' : 'Cargar'}
-  //               </Button>
-  //             </Box>
-  //           </form>
-  //         </Box>
-  //       )}
-  //     </Box>
-  //   </Box>
-  // );
 };
 
 export default Aeropuertos;

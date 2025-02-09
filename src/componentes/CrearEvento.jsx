@@ -167,7 +167,6 @@ function CrearEvento() {
                 <Button variant="outlined" onClick={handleAgregarActividad} sx={{ marginBottom: 3, color: 'primary' }}>
                     Agregar Actividad
                 </Button>
-                {/* </FormControl> */}
                
                 <FormControl fullWidth sx={{ marginBottom: 3, gap: 3 }}>
                 <InputLabel>Actividad</InputLabel>
