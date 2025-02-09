@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Box, Button, Typography, CircularProgress, Paper, Snackbar, Alert, Backdrop } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -47,13 +47,51 @@ const DondeEstoy2 = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [showEventMarkers, setShowEventMarkers] = useState(false);
     const [eventMarkers, setEventMarkers] = useState([]);
+    const token = localStorage.getItem('token');
+    const baseUrl = process.env.REACT_APP_API_URL;
+    const [hoteles, setHoteles] = useState([]);
+    
+    const fetchHoteles = useCallback(async () => {
+        try {
+          const response = await fetch(`${baseUrl}/Hotel/hoteles`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+    
+          if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+          }
+    
+          const data = await response.json();
+          setHoteles(Array.isArray(data) ? data : []);
+        } catch (error) {
+          console.error('Error al cargar los hoteles:', error);
+        }
+      }, [baseUrl, token]);
 
+    
+      useEffect(() => {
+        fetchHoteles();
+      }, [fetchHoteles]);
+    
+      const eventos = useMemo(() => 
+        hoteles.map((hotel) => ({
+            id: hotel.id,
+            title: `${hotel.nombre}`,
+            direccion: `${hotel.direccion}, ${hotel.ciudad}, ${hotel.pais}`,
+        })), [hoteles]);
+    
+    
+    
     // Memoize the eventos array
-    const eventos = useMemo(() => [
-        { id: 1, title: 'Evento 1', ubicacion: 'Hotel Ejemplo, Montevideo, Uruguay' },
-        { id: 2, title: 'Evento 2', ubicacion: 'Aeropuerto Ejemplo, Punta del Este, Uruguay' },
-        { id: 3, title: 'Evento 3', ubicacion: 'Actividad Ejemplo, Salto, Uruguay' },
-    ], []); // Empty dependency array means it will only be created once
+    // const eventos = useMemo(() => [
+    //     { id: 1, title: 'Evento 1', ubicacion: 'Hotel Ejemplo, Montevideo, Uruguay' },
+    //     { id: 2, title: 'Evento 2', ubicacion: 'Aeropuerto Ejemplo, Punta del Este, Uruguay' },
+    //     { id: 3, title: 'Evento 3', ubicacion: 'Actividad Ejemplo, Salto, Uruguay' },
+    // ], []); // Empty dependency array means it will only be created once
 
     useEffect(() => {
         if (!navigator.geolocation) {

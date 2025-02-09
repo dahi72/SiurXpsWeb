@@ -119,10 +119,6 @@ const Dashboard = () => {
                     ))}
                 </Box>
             </Paper>
-        <div>
-        <h1>Dashboard</h1>
-            <button onClick={() => navigate("/mapa")}>Ver Mapa</button>
-        </div>
         </Container>
     );
 };
