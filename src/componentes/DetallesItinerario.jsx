@@ -133,26 +133,65 @@ const DetallesItinerario = () => {
         fetchEventos();
     }, [fetchEventos]);
 
-    const getEventIcon = (detail) => {
-        if (detail.vuelo) return <FlightIcon color="primary" />;
-        if (detail.aeropuerto) return <AirportShuttleIcon color="primary" />;
-        if (detail.aerolinea) return <AirlineSeatReclineNormalIcon color="primary" />;
-        if (detail.hotel) return <HotelIcon color="secondary" />;
-        if (detail.traslado) return <DirectionsBusIcon color="action" />;
-        if (detail.actividad) return <EventIcon color="success" />;
-        return <EventIcon />;
+    const getEventIcon = (detailType) => {
+        switch (detailType) {
+            case 'vuelo':
+                return <FlightIcon color="primary" />;
+            case 'aeropuerto':
+                return <AirportShuttleIcon color="primary" />;
+            case 'aerolinea':
+                return <AirlineSeatReclineNormalIcon color="primary" />;
+            case 'hotel':
+                return <HotelIcon color="secondary" />;
+            case 'traslado':
+                return <DirectionsBusIcon color="action" />;
+            case 'actividad':
+                return <EventIcon color="success" />;
+            default:
+                return <EventIcon />;
+        }
+    };
+
+    const getEventTitle = (detailType, detail) => {
+        switch (detailType) {
+            case 'vuelo':
+                return `Vuelo: ${detail.vuelo.nombre}`;  // Muestra el nombre del vuelo
+            case 'aeropuerto':
+                return `Aeropuerto: ${detail.aeropuerto.nombre}`; // Muestra el nombre del aeropuerto
+            case 'aerolinea':
+                return `Aerolinea: ${detail.aerolinea.nombre}`;  // Muestra el nombre de la aerolínea
+            case 'hotel':
+                return `Hotel: ${detail.hotel.nombre}`;
+            case 'traslado':
+                return "Traslado";
+            case 'actividad':
+                return `Actividad: ${detail.actividad.nombre}`;
+            default:
+                return "Evento";
+        }
     };
     
 
-    const getEventTitle = (detail) => {
-        if (detail.vuelo) return `Vuelo: ${detail.vuelo.nombre}`;  // Muestra el nombre del vuelo
-        if (detail.aeropuerto) return `Aeropuerto: ${detail.aeropuerto.nombre}`; // Muestra el nombre del aeropuerto
-        if (detail.aerolinea) return `Aerolinea: ${detail.aerolinea.nombre}`;  // Muestra el nombre de la aerolínea
-        if (detail.hotel) return `Hotel: ${detail.hotel.nombre}`;
-        if (detail.traslado) return "Traslado";
-        if (detail.actividad) return `Actividad: ${detail.actividad.nombre}`;
-        return "Evento";
-    };
+    // const getEventIcon = (detail) => {
+    //     if (detail.vuelo) return <FlightIcon color="primary" />;
+    //     if (detail.aeropuerto) return <AirportShuttleIcon color="primary" />;
+    //     if (detail.aerolinea) return <AirlineSeatReclineNormalIcon color="primary" />;
+    //     if (detail.hotel) return <HotelIcon color="secondary" />;
+    //     if (detail.traslado) return <DirectionsBusIcon color="action" />;
+    //     if (detail.actividad) return <EventIcon color="success" />;
+    //     return <EventIcon />;
+    // };
+    
+
+    // const getEventTitle = (detail) => {
+    //     if (detail.vuelo) return `Vuelo: ${detail.vuelo.nombre}`;  // Muestra el nombre del vuelo
+    //     if (detail.aeropuerto) return `Aeropuerto: ${detail.aeropuerto.nombre}`; // Muestra el nombre del aeropuerto
+    //     if (detail.aerolinea) return `Aerolinea: ${detail.aerolinea.nombre}`;  // Muestra el nombre de la aerolínea
+    //     if (detail.hotel) return `Hotel: ${detail.hotel.nombre}`;
+    //     if (detail.traslado) return "Traslado";
+    //     if (detail.actividad) return `Actividad: ${detail.actividad.nombre}`;
+    //     return "Evento";
+    // };
     
 
     const filteredEvents = eventos.filter((event) => {
@@ -191,13 +230,13 @@ const DetallesItinerario = () => {
                                             </Typography>
                                         </TimelineOppositeContent>
                                         <TimelineSeparator>
-                                            <TimelineDot>{getEventIcon(detail)}</TimelineDot>
+                                            <TimelineDot>{getEventIcon(detailType)}</TimelineDot>
                                             <TimelineConnector />
                                         </TimelineSeparator>
                                         <TimelineContent>
                                         <Accordion>
                                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                                <Typography variant="h6">{getEventTitle(detail)}</Typography>
+                                                <Typography variant="h6">{getEventTitle(detailType)}</Typography>
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 {Object.keys(detail).map((key) => {
