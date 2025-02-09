@@ -62,15 +62,13 @@ function CrearEvento() {
     
         const cargarDatos = async () => {
             try {
-                const [trasladosRes, vuelosRes, aeropuertosRes, aerolineasRes, hotelesRes] = await Promise.all([
-                    fetch(`${baseUrl}/Traslado/listado`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+                const [ vuelosRes, aeropuertosRes, aerolineasRes, hotelesRes] = await Promise.all([
                     fetch(`${baseUrl}/Vuelo/vuelos`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
                     fetch(`${baseUrl}/Aeropuerto/aeropuertos`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
                     fetch(`${baseUrl}/Aerolinea/aerolineas`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
                     fetch(`${baseUrl}/Hotel/hoteles`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
                 ]);
     
-                setTraslados(Array.isArray(trasladosRes) ? trasladosRes : []);
                 setVuelos(Array.isArray(vuelosRes) ? vuelosRes : []);
                 setAeropuertos(Array.isArray(aeropuertosRes) ? aeropuertosRes : []);
                 setAerolineas(Array.isArray(aerolineasRes) ? aerolineasRes : []);
