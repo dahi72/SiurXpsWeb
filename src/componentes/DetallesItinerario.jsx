@@ -172,28 +172,6 @@ const DetallesItinerario = () => {
     };
     
 
-    // const getEventIcon = (detail) => {
-    //     if (detail.vuelo) return <FlightIcon color="primary" />;
-    //     if (detail.aeropuerto) return <AirportShuttleIcon color="primary" />;
-    //     if (detail.aerolinea) return <AirlineSeatReclineNormalIcon color="primary" />;
-    //     if (detail.hotel) return <HotelIcon color="secondary" />;
-    //     if (detail.traslado) return <DirectionsBusIcon color="action" />;
-    //     if (detail.actividad) return <EventIcon color="success" />;
-    //     return <EventIcon />;
-    // };
-    
-
-    // const getEventTitle = (detail) => {
-    //     if (detail.vuelo) return `Vuelo: ${detail.vuelo.nombre}`;  // Muestra el nombre del vuelo
-    //     if (detail.aeropuerto) return `Aeropuerto: ${detail.aeropuerto.nombre}`; // Muestra el nombre del aeropuerto
-    //     if (detail.aerolinea) return `Aerolinea: ${detail.aerolinea.nombre}`;  // Muestra el nombre de la aerolínea
-    //     if (detail.hotel) return `Hotel: ${detail.hotel.nombre}`;
-    //     if (detail.traslado) return "Traslado";
-    //     if (detail.actividad) return `Actividad: ${detail.actividad.nombre}`;
-    //     return "Evento";
-    // };
-    
-
     const filteredEvents = eventos.filter((event) => {
         const title = getEventTitle(event) ?? "";
         return title.toLowerCase().includes(filter.toLowerCase());
@@ -202,7 +180,7 @@ const DetallesItinerario = () => {
     return (
         <Box sx={{ backgroundColor: "rgba(255, 255, 255, 0.8)", borderRadius: "8px", padding: "20px", boxShadow: 3, position: "relative", zIndex: 1, minHeight: "100vh", marginTop: "20px" }}>
             <Header />
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h4" sx={{ fontSize: { xs: "1.5rem", sm: "2rem" }, fontWeight: "bold" }} gutterBottom>
                 Eventos del Itinerario
             </Typography>
             <Button variant="contained" color="primary" onClick={() => navigate("/VerItinerario")} sx={{ mb: 2 }}>
@@ -214,7 +192,9 @@ const DetallesItinerario = () => {
             <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
                 {filteredEvents.map((event, index) => (
                     <React.Fragment key={event.id}>
-                      
+                       <Typography variant="h5" sx={{ marginTop: "20px", fontWeight: "bold" }}>
+                                 "Evento ${event.id}"
+                        </Typography>
                         {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
                             const detail = detalles[index][detailType];
                             console.log("DetailIndex:", detailIndex);
