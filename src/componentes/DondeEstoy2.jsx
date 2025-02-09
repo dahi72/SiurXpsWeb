@@ -100,7 +100,7 @@ useEffect(() => {
                 }
                 });
             setItinerarios(response.data);
-
+            console.log("itinerarios", response.data);
             // Obtener el listado de países
             const paisesResponse = await axios.get(`${baseUrl}/Pais/listado`);
             const paises = paisesResponse.data;
@@ -147,7 +147,7 @@ useEffect(() => {
                             const eventoConDetalles = detalles.reduce((acc, detalle) => {
                                 return { ...acc, ...detalle };
                             }, evento);
-
+                            console.log("detallePromise", detallesPromises);
                             // 4. Obtener el país usando el paisId y el códigoIso para obtener las ciudades
                             const obtenerPaisYCiudad = async (paisId, ciudadId) => {
                                 // Buscar el país en el listado de países

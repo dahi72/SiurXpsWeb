@@ -99,7 +99,6 @@ const DetallesItinerario = () => {
         }
     }, [fetchDetallesPorTipo, detalles.length]);
 
-    console.log("detalles", detalles);
     
     const fetchEventos = useCallback(async () => {
         if (!id || !baseUrl || !token) {
@@ -109,17 +108,17 @@ const DetallesItinerario = () => {
 
         try {
             if (eventos.length === 0) {
-                console.log("Fetching eventos for itinerario:", id);
+              
                 const eventosData = await fetchWithErrorHandling(`${baseUrl}/Itinerario/${id}/eventos`, headers);
                 if (!Array.isArray(eventosData)) {
                     console.error("Invalid response format:", eventosData);
                     throw new Error("La respuesta no tiene el formato esperado");
                 }
 
-                console.log("Eventos fetched successfully:", eventosData.length);
+             
                 setEventos(eventosData);
                 fetchedOnce.current = true;
-                // Solo cargar detalles si no estamos cargando ya
+        
                 if (eventosData.length > 0 && !cargandoDetallesRef.current) {
                     fetchDetalles(eventosData);
                 }
@@ -173,7 +172,7 @@ const DetallesItinerario = () => {
     
 
     const filteredEvents = eventos.filter((event) => {
-        console.log( "unEvento", event)
+        
         const title = getEventTitle(event) ?? "";
         return title.toLowerCase().includes(filter.toLowerCase());
     });
@@ -198,8 +197,7 @@ const DetallesItinerario = () => {
                         </Typography>
                         {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
                             const detail = detalles[index][detailType];
-                            console.log("DetailIndex:", detailIndex);
-                            console.log("DetailType:", detailType);
+                           
                             if (detail) {
                                 
                                 return (
