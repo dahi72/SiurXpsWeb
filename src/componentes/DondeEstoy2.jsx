@@ -359,6 +359,7 @@ return (
             {/* Botón para mostrar/ocultar eventos */}
             <Button
                 onClick={() => {
+                    eventMarkers();
                     setShowEventMarkers(!showEventMarkers);
                     setSnackbarMessage(showEventMarkers ? 'Eventos ocultos' : 'Eventos mostrados');
                     setSnackbarSeverity(showEventMarkers ? 'info' : 'success');
