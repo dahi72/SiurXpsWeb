@@ -2,7 +2,10 @@
 import { useEffect, useState } from 'react';
 import { Container, Typography, Paper, Select, MenuItem, 
          FormControl, InputLabel, Button, Snackbar, Alert, 
-         CircularProgress, Box } from '@mui/material';
+  CircularProgress, Box
+} from '@mui/material';
+import { useNavigate } from "react-router-dom";
+
 
 const ActividadOpcional = () => {
   const [actividadesOpcionales, setActividadesOpcionales] = useState([]);
@@ -12,7 +15,7 @@ const ActividadOpcional = () => {
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
   const baseUrl = process.env.REACT_APP_API_URL;
-
+  const navigate = useNavigate();
   useEffect(() => {
     const obtenerActividades = async () => {
       try {
@@ -105,6 +108,10 @@ const ActividadOpcional = () => {
             </Paper>
           </>
         )}
+
+        <Button variant="outlined" color="primary" onClick={() => navigate(-1)}>
+            Atrás
+        </Button>
 
         <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
           <Alert onClose={() => setSuccess(false)} severity="success" sx={{ width: '100%' }}>
