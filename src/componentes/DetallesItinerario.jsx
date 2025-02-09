@@ -112,7 +112,8 @@ const DetallesItinerario = () => {
             cargandoDetallesRef.current = false; // Marcamos que hemos terminado de cargar
         }
     }, [fetchDetallesPorTipo, detalles.length]); // Aquí usamos fetchDetallesPorTipo como dependencia
-
+ 
+    console.log("detalles", detalles);
     
         const fetchEventos = useCallback(async () => {
             if (!id || !baseUrl || !token) {
@@ -204,7 +205,7 @@ const DetallesItinerario = () => {
         if (event.hotelId) return "Hotel";
         if (event.trasladoId) return "Traslado";
         if (event.actividadId) return "Actividad";
-        return "Evento General";
+        return "Evento";
     };
 
     const filteredEvents = eventos.filter((event) => {
@@ -225,17 +226,184 @@ const DetallesItinerario = () => {
                 <TextField label="Filtrar eventos" variant="outlined" fullWidth value={filter} onChange={(e) => setFilter(e.target.value)} />
             </Box>
             <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
+            {filteredEvents.map((event, index) => (
+                <React.Fragment key={event.id}>
+                {/* Información principal del evento */}
+                <TimelineItem>
+                    <TimelineOppositeContent>
+                    <Typography variant="body2" color="textSecondary">
+                        {new Date(event.fechaYHora).toLocaleString()}
+                    </Typography>
+                    </TimelineOppositeContent>
+
+                    <TimelineSeparator>
+                    <TimelineDot>{getEventIcon(event)}</TimelineDot>
+                    <TimelineConnector />
+                    </TimelineSeparator>
+
+                    <TimelineContent>
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">{getEventTitle(event)}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                        <Typography variant="body2">Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}</Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                    </TimelineContent>
+                </TimelineItem>
+
+                {/* Detalles de la actividad */}
+                {detalles[index] && detalles[index].actividad && (
+                    <TimelineItem>
+                    <TimelineOppositeContent>
+                        <Typography variant="body2" color="textSecondary">
+                        Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+                        </Typography>
+                    </TimelineOppositeContent>
+                    <TimelineSeparator>
+                        <TimelineDot>{getEventIcon(detalles[index].actividad)}</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent>
+                        <Typography variant="h6">{getEventTitle(detalles[index].actividad)}</Typography>
+                        <Typography variant="body2">Actividad: {detalles[index].actividad.nombre}</Typography>
+                        {detalles[index].actividad.descripcion && (
+                        <Typography variant="body2">Descripción: {detalles[index].actividad.descripcion}</Typography>
+                        )}
+                        {detalles[index].actividad.duracion && (
+                        <Typography variant="body2">Duración: {detalles[index].actividad.duracion} horas</Typography>
+                        )}
+                        {detalles[index].actividad.tipo && (
+                        <Typography variant="body2">Ubicación: {detalles[index].actividad.ubicacion}</Typography>
+                        )}
+                    </TimelineContent>
+                    </TimelineItem>
+                )}
+
+                {/* Detalles del traslado */}
+                {detalles[index] && detalles[index].traslado && (
+                    <TimelineItem>
+                    <TimelineOppositeContent>
+                        <Typography variant="body2" color="textSecondary">
+                        Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+                        </Typography>
+                    </TimelineOppositeContent>
+                    <TimelineSeparator>
+                        <TimelineDot>{getEventIcon(detalles[index].traslado)}</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent>
+                        <Typography variant="h6">{getEventTitle(detalles[index].traslado)}</Typography>
+                        {detalles[index].traslado.lugarDeEncuantro && (
+                        <Typography variant="body2">Lugar de encuentro: {detalles[index].traslado.lugarDeEncuantro}</Typography>
+                        )}
+                        {detalles[index].traslado.tipoDeTraslado && (
+                        <Typography variant="body2">Tipo de traslado: {detalles[index].traslado.tipoDeTraslado}</Typography>
+                        )}
+                        {detalles[index].traslado.tips && (
+                        <Typography variant="body2">Tips: {detalles[index].traslado.tips}</Typography>
+                        )}
+                    </TimelineContent>
+                    </TimelineItem>
+                )}
+
+                {/* Detalles del aeropuerto */}
+                {detalles[index] && detalles[index].aeropuerto && (
+                    <TimelineItem>
+                    <TimelineOppositeContent>
+                        <Typography variant="body2" color="textSecondary">
+                        Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+                        </Typography>
+                    </TimelineOppositeContent>
+                    <TimelineSeparator>
+                        <TimelineDot>{getEventIcon(detalles[index].aeropuerto)}</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent>
+                        <Typography variant="h6">{getEventTitle(detalles[index].aeropuerto)}</Typography>
+                        <Typography variant="body2">Aeropuerto: {detalles[index].aeropuerto.nombre}</Typography>
+                        {detalles[index].aeropuerto.direccion && (
+                        <Typography variant="body2">Dirección: {detalles[index].aeropuerto.direccion}</Typography>
+                        )}
+                        {detalles[index].aeropuerto.paginaWeb && (
+                        <Typography variant="body2">Página web: {detalles[index].aeropuerto.paginaWeb}</Typography>
+                        )}
+                    </TimelineContent>
+                    </TimelineItem>
+                )}
+
+                {/* Detalles del hotel */}
+                {detalles[index] && detalles[index].hotel && (
+                    <TimelineItem>
+                    <TimelineOppositeContent>
+                        <Typography variant="body2" color="textSecondary">
+                        Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+                        </Typography>
+                    </TimelineOppositeContent>
+                    <TimelineSeparator>
+                        <TimelineDot>{getEventIcon(detalles[index].hotel)}</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent>
+                        <Typography variant="h6">{getEventTitle(detalles[index].hotel)}</Typography>
+                        <Typography variant="body2">Hotel: {detalles[index].hotel.nombre}</Typography>
+                        {detalles[index].hotel.direccion && (
+                        <Typography variant="body2">Dirección: {detalles[index].hotel.direccion}</Typography>
+                        )}
+                        {detalles[index].hotel.checkIn && (
+                        <Typography variant="body2">Check-In: {detalles[index].hotel.checkIn}</Typography>
+                        )}
+                        {detalles[index].hotel.checkOut && (
+                        <Typography variant="body2">Check-Out: {detalles[index].hotel.checkOut}</Typography>
+                        )}
+                        {detalles[index].hotel.paginaWeb && (
+                        <Typography variant="body2">Página web: {detalles[index].hotel.paginaWeb}</Typography>
+                        )}
+                    </TimelineContent>
+                    </TimelineItem>
+                )}
+
+                {/* Detalles del vuelo */}
+                {detalles[index] && detalles[index].vuelo && (
+                    <TimelineItem>
+                    <TimelineOppositeContent>
+                        <Typography variant="body2" color="textSecondary">
+                        Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+                        </Typography>
+                    </TimelineOppositeContent>
+                    <TimelineSeparator>
+                        <TimelineDot>{getEventIcon(detalles[index].vuelo)}</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent>
+                        <Typography variant="h6">{getEventTitle(detalles[index].vuelo)}</Typography>
+                        <Typography variant="body2">Vuelo: {detalles[index].vuelo.nombre}</Typography>
+                        {detalles[index].vuelo.horario && (
+                        <Typography variant="body2">Horario: {detalles[index].vuelo.horario}</Typography>
+                        )}
+                    </TimelineContent>
+                    </TimelineItem>
+                )}
+                </React.Fragment>
+            ))}
+            </Timeline>
+
+            {/* <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
                 {filteredEvents.map((event, index) => (
                     <TimelineItem key={event.id}>
+
                         <TimelineOppositeContent>
                             <Typography variant="body2" color="textSecondary">
                                 {new Date(event.fechaYHora).toLocaleString()}
                             </Typography>
                         </TimelineOppositeContent>
+
                         <TimelineSeparator>
                             <TimelineDot>{getEventIcon(event)}</TimelineDot>
                             <TimelineConnector />
                         </TimelineSeparator>
+
                         <TimelineContent>
                             <Accordion>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -314,7 +482,7 @@ const DetallesItinerario = () => {
                         </TimelineContent>
                     </TimelineItem>
                 ))}
-            </Timeline>
+            </Timeline> */}
         </Box>
     );
 };
