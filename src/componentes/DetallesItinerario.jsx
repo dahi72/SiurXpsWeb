@@ -195,7 +195,7 @@ const DetallesItinerario = () => {
                        <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" , fontWeight: "bold" }}>
                                  "Evento número {event.id} del itinerario número {id}"
                         </Typography>
-                        {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
+                        {detalles[index] && Object.keys(detalles[index])?.map((detailType, detailIndex) => {
                             const detail = detalles[index][detailType];
                            
                             if (detail) {
@@ -215,14 +215,26 @@ const DetallesItinerario = () => {
                                         <TimelineContent>
                                         <Accordion>
                                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                                <Typography variant="h6">{getEventTitle(detailType)}</Typography>
+                                                <Typography  variant="h6" 
+                                                    sx={{ 
+                                                    fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" } 
+                                                    }}
+                                                    >{getEventTitle(detailType)}
+                                                </Typography>
                                             </AccordionSummary>
-                                            <AccordionDetails>
+                                            <AccordionDetails sx={{ 
+                                                maxWidth: "100%", 
+                                                overflowX: "auto", 
+                                                padding: { xs: "8px", sm: "16px", md: "24px" } 
+                                                }}>
                                                 {Object.keys(detail).map((key) => {
                                                     if (!key.includes('id')) {
                                                         return (
-                                                            <Typography variant="body2" key={key}>
-                                                                {key}: {detail[key]} 
+                                                            <Typography variant="body2" 
+                                                                key={key} 
+                                                                sx={{ fontSize: { xs: "0.75rem", sm: "0.9rem", md: "1rem" } }}
+                                                                >
+                                                                    {key}: {detail[key]} 
                                                             </Typography>
                                                         );
                                                     }
