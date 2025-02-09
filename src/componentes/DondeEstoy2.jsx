@@ -55,7 +55,7 @@ const DondeEstoy2 = () => {
     const [eventos, setEventos] = useState([]);
     const token = localStorage.getItem('token');
     const [lasCoordenadas] = useState([]);
-
+    const [marker, setMarker] = useState([]);
 
     const coordenadas = (direccion) => {
         const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(direccion)}&format=json`;
@@ -295,8 +295,11 @@ const mostrarMapa = (direcciones) => {
   
     // Recorrer el array de ubicaciones y agregar un marcador por cada una
     direcciones.forEach(ubicacion => {
-      const marker = L.marker([ubicacion.lat, ubicacion.lon]).addTo(map)
-        .bindPopup(`ID: ${ubicacion.id}`); // Muestra el ID al hacer clic en el marcador
+        if (showEventMarkers) { // Mostrar marcador solo si showEventMarkers es true
+             setMarker(L.marker([ubicacion.lat, ubicacion.lon]).addTo(map)
+              .bindPopup(`ID: ${ubicacion.id}`));
+            bounds.push([ubicacion.lat, ubicacion.lon]);
+          }
   
       // Agregar el marcador al array
       markers.push(marker);
@@ -413,6 +416,7 @@ return (
             {/* Botón para mostrar/ocultar eventos */}
             <Button
                 onClick={() => {
+                    console.log("lasCoor", lasCoordenadas);
                     mostrarMapa(lasCoordenadas);
                     setShowEventMarkers(!showEventMarkers);
                     setSnackbarMessage(showEventMarkers ? 'Eventos ocultos' : 'Eventos mostrados');
