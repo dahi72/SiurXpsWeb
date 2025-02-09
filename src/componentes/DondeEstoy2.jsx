@@ -49,12 +49,33 @@ const DondeEstoy2 = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [showEventMarkers, setShowEventMarkers] = useState(false);
-    const [eventMarkers, setEventMarkers] = useState([]);
+    const [eventMarkers] = useState([]);
     const baseUrl = process.env.REACT_APP_API_URL;
     const [ setItinerarios] = useState([]);
     const [eventos, setEventos] = useState([]);
     const token = localStorage.getItem('token');
+    const [lasCoordenadas] = useState([]);
 
+
+    const coordenadas = (direccion) => {
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(direccion)}&format=json`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    // Extraemos las coordenadas (latitud y longitud)
+                    const lat = data[0].lat;
+                    const lon = data[0].lon;
+                    console.log(`Latitud: ${lat}, Longitud: ${lon}`);
+                } else {
+                    console.error("No se encontraron resultados para esa dirección.");
+                }
+            })
+            .catch(error => {
+                console.error("Error al obtener coordenadas:", error);
+            });
+    }
 // Función para geocodificar direcciones
 // const geocodeLocation = async (address) => {
 //     const apiKey = 'ffe0407498914865a2e38a5418e8a482'; // Usa tu clave de API aquí
@@ -72,40 +93,40 @@ const DondeEstoy2 = () => {
 //     return null;
 // };
 
-const geocodeLocation = async (address) => {
-    try {
-        const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
-            params: {
-                q: address,
-                format: 'json',
-                limit: 1
-            }
-        });
+// const geocodeLocation = async (address) => {
+//     try {
+//         const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
+//             params: {
+//                 q: address,
+//                 format: 'json',
+//                 limit: 1
+//             }
+//         });
 
-        if (response.data.length > 0) {
-            return {
-                lat: response.data[0].lat,
-                lng: response.data[0].lon
-            };
-        }
-    } catch (error) {
-        console.error('Error geocodificando la dirección:', error);
-    }
-    return null;
-};
+//         if (response.data.length > 0) {
+//             return {
+//                 lat: response.data[0].lat,
+//                 lng: response.data[0].lon
+//             };
+//         }
+//     } catch (error) {
+//         console.error('Error geocodificando la dirección:', error);
+//     }
+//     return null;
+// };
  
     
-useEffect(() => {
-    const fetchEventMarkers = async () => {
-        const markers = await Promise.all(eventos.map(async (evento) => {
-            const location = await geocodeLocation(evento);
-            return location ? { lat: location.lat, lng: location.lng, title: evento.title } : null;
-        }));
-        setEventMarkers(markers.filter(marker => marker !== null)); 
-    };
+// useEffect(() => {
+//     const fetchEventMarkers = async () => {
+//         const markers = await Promise.all(eventos.map(async (evento) => {
+//             const location = await geocodeLocation(evento);
+//             return location ? { lat: location.lat, lng: location.lng, title: evento.id } : null;
+//         }));
+//         setEventMarkers(markers.filter(marker => marker !== null)); 
+//     };
 
-    fetchEventMarkers();
-}, [eventos]);
+//     fetchEventMarkers();
+// }, [eventos]);
     
 
 
@@ -224,12 +245,20 @@ useEffect(() => {
 
                             const direccionFinal = `${direccionHotel} ${direccionActividad} ${direccionTraslado} ${direccionAeropuerto}`.trim();
                             console.log("eventoConDetalle", eventoConDetalles);
+                            
+                            for (let direccion of direccionFinal) {
+                                const coords = coordenadas(direccion);
+                                if (coords) {
+                                  lasCoordenadas.push(coords); // Agregar las coordenadas al array
+                                }
+                              }
+            
                             // Geocodificar la dirección final
-                            const location = await geocodeLocation(direccionFinal);
-                            console.log("direccionFinal", direccionFinal);
-                            return location
-                                ? { ...eventoConDetalles, lat: location.lat, lng: location.lng, direccion: direccionFinal }
-                                : { ...eventoConDetalles, lat: null, lng: null, direccion: direccionFinal };
+                            // const location = await geocodeLocation(direccionFinal);
+                            // console.log("direccionFinal", direccionFinal);
+                            // return location
+                            //     ? { ...eventoConDetalles, lat: location.lat, lng: location.lng, direccion: direccionFinal }
+                            //     : { ...eventoConDetalles, lat: null, lng: null, direccion: direccionFinal };
                         })
                     );
 
@@ -250,9 +279,34 @@ useEffect(() => {
     };
 
     fetchItinerarios();
-}, [baseUrl, usuarioId, setItinerarios, token]);
+}, [baseUrl, usuarioId, setItinerarios, token, lasCoordenadas]);
 
-
+const mostrarMapa = (direcciones) => {
+    // Crear el mapa con una vista inicial (se centrará más tarde con fitBounds)
+    const map = L.map('map').setView([0, 0], 2);  // Vista inicial en el centro del mundo con un zoom bajo
+  
+    // Agregar una capa de mapa (usamos OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+  
+    // Crear un array vacío para almacenar los puntos de los marcadores
+    const markers = [];
+  
+    // Recorrer el array de ubicaciones y agregar un marcador por cada una
+    direcciones.forEach(ubicacion => {
+      const marker = L.marker([ubicacion.lat, ubicacion.lon]).addTo(map)
+        .bindPopup(`ID: ${ubicacion.id}`); // Muestra el ID al hacer clic en el marcador
+  
+      // Agregar el marcador al array
+      markers.push(marker);
+    });
+  
+    // Ajustar el mapa para mostrar todos los marcadores
+    const bounds = markers.map(marker => marker.getLatLng()); // Obtener las coordenadas de todos los marcadores
+    map.fitBounds(bounds); // Ajustar el mapa a esos límites
+  };
+  
 
 useEffect(() => {
     if (!navigator.geolocation) {
@@ -359,7 +413,7 @@ return (
             {/* Botón para mostrar/ocultar eventos */}
             <Button
                 onClick={() => {
-                    eventMarkers();
+                    mostrarMapa(lasCoordenadas);
                     setShowEventMarkers(!showEventMarkers);
                     setSnackbarMessage(showEventMarkers ? 'Eventos ocultos' : 'Eventos mostrados');
                     setSnackbarSeverity(showEventMarkers ? 'info' : 'success');
