@@ -56,26 +56,49 @@ const DondeEstoy2 = () => {
     const token = localStorage.getItem('token');
 
 // Función para geocodificar direcciones
+// const geocodeLocation = async (address) => {
+//     const apiKey = 'ffe0407498914865a2e38a5418e8a482'; // Usa tu clave de API aquí
+//     try {
+//         const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${apiKey}`);
+//         if (response.data.results.length > 0) {
+//             return {
+//                 lat: response.data.results[0].geometry.lat,
+//                 lng: response.data.results[0].geometry.lng,
+//             };
+//         }
+//     } catch (error) {
+//         console.error('Error geocodificando la dirección:', error.response ? error.response.data : error.message);
+//     }
+//     return null;
+// };
+
 const geocodeLocation = async (address) => {
-    const apiKey = 'ffe0407498914865a2e38a5418e8a482'; // Usa tu clave de API aquí
     try {
-        const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${apiKey}`);
-        if (response.data.results.length > 0) {
+        const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
+            params: {
+                q: address,
+                format: 'json',
+                limit: 1
+            }
+        });
+
+        if (response.data.length > 0) {
             return {
-                lat: response.data.results[0].geometry.lat,
-                lng: response.data.results[0].geometry.lng,
+                lat: response.data[0].lat,
+                lng: response.data[0].lon
             };
         }
     } catch (error) {
-        console.error('Error geocodificando la dirección:', error.response ? error.response.data : error.message);
+        console.error('Error geocodificando la dirección:', error);
     }
     return null;
 };
-
+ 
+    
 useEffect(() => {
     const fetchEventMarkers = async () => {
         const markers = await Promise.all(eventos.map(async (evento) => {
-            const location = await geocodeLocation(evento.ubicacion);
+            const location = await geocodeLocation(evento);
             return location ? { lat: location.lat, lng: location.lng, title: evento.title } : null;
         }));
         setEventMarkers(markers.filter(marker => marker !== null)); 
@@ -147,6 +170,7 @@ useEffect(() => {
                             const eventoConDetalles = detalles.reduce((acc, detalle) => {
                                 return { ...acc, ...detalle };
                             }, evento);
+                            console.log("eventoConDetalle", eventoConDetalles);
                             console.log("detallePromise", detallesPromises);
                             // 4. Obtener el país usando el paisId y el códigoIso para obtener las ciudades
                             const obtenerPaisYCiudad = async (paisId, ciudadId) => {
