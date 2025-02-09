@@ -83,10 +83,10 @@ const DetallesItinerario = () => {
     }, [baseUrl, headers]);
 
     const fetchDetalles = useCallback(async (eventosData) => {
-        if (cargandoDetallesRef.current) return; // Si ya estamos cargando, no hacemos otra petición
-        if (detalles.length > 0) return; // Si los detalles ya están cargados, no volvemos a hacer la petición
+        if (cargandoDetallesRef.current) return; 
+        if (detalles.length > 0) return; 
         try {
-            cargandoDetallesRef.current = true; // Marcamos que estamos cargando
+            cargandoDetallesRef.current = true;
             console.log("Fetching detalles...");
             const detallesArray = await Promise.all(
                 eventosData.map((evento) => fetchDetallesPorTipo(evento))
@@ -95,7 +95,7 @@ const DetallesItinerario = () => {
         } catch (error) {
             console.error("Error fetching detalles:", error);
         } finally {
-            cargandoDetallesRef.current = false; // Marcamos que hemos terminado de cargar
+            cargandoDetallesRef.current = false; 
         }
     }, [fetchDetallesPorTipo, detalles.length]);
 
@@ -173,6 +173,7 @@ const DetallesItinerario = () => {
     
 
     const filteredEvents = eventos.filter((event) => {
+        console.log( "unEvento", event)
         const title = getEventTitle(event) ?? "";
         return title.toLowerCase().includes(filter.toLowerCase());
     });
@@ -192,15 +193,15 @@ const DetallesItinerario = () => {
             <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
                 {filteredEvents.map((event, index) => (
                     <React.Fragment key={event.id}>
-                       <Typography variant="h5" sx={{ marginTop: "20px", fontWeight: "bold" }}>
-                                 "Evento ${event.id}"
+                       <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" , fontWeight: "bold" }}>
+                                 "Evento número {event.id} del itinerario número {id}"
                         </Typography>
                         {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
                             const detail = detalles[index][detailType];
                             console.log("DetailIndex:", detailIndex);
                             console.log("DetailType:", detailType);
                             if (detail) {
-                                console.log('Detail:', detail); // Verifica el detalle
+                                
                                 return (
                                     <TimelineItem key={detailIndex}>
                                           

@@ -53,14 +53,52 @@ const DondeEstoy2 = () => {
     const baseUrl = process.env.REACT_APP_API_URL;
     const [ setItinerarios] = useState([]);
     const [eventos, setEventos] = useState([]);
+    const token = localStorage.getItem('token');
+
+// Función para geocodificar direcciones
+const geocodeLocation = async (address) => {
+    const apiKey = 'ffe0407498914865a2e38a5418e8a482'; // Usa tu clave de API aquí
+    try {
+        const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${apiKey}`);
+        if (response.data.results.length > 0) {
+            return {
+                lat: response.data.results[0].geometry.lat,
+                lng: response.data.results[0].geometry.lng,
+            };
+        }
+    } catch (error) {
+        console.error('Error geocodificando la dirección:', error.response ? error.response.data : error.message);
+    }
+    return null;
+};
+
+useEffect(() => {
+    const fetchEventMarkers = async () => {
+        const markers = await Promise.all(eventos.map(async (evento) => {
+            const location = await geocodeLocation(evento.ubicacion);
+            return location ? { lat: location.lat, lng: location.lng, title: evento.title } : null;
+        }));
+        setEventMarkers(markers.filter(marker => marker !== null)); 
+    };
+
+    fetchEventMarkers();
+}, [eventos]);
+    
+
 
 useEffect(() => {
     const fetchItinerarios = async () => {
+
+        
         if (!usuarioId) return; // Evita hacer la petición si no hay usuario
 
         try {
             // 1. Obtener los itinerarios del coordinador
-            const response = await axios.get(`${baseUrl}/ItinerariosDeCoordinador/${usuarioId}`);
+            const response = await axios.get(`${baseUrl}/ItinerariosDeCoordinador/${usuarioId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Incluir el token en el header
+                }
+                });
             setItinerarios(response.data);
 
             // Obtener el listado de países
@@ -117,7 +155,7 @@ useEffect(() => {
 
                                 if (pais) {
                                     // Obtener las ciudades de ese país
-                                    const ciudadesResponse = await axios.get(`${baseUrl}/Ciudad/${pais.codigoIso}?ciudades`);
+                                    const ciudadesResponse = await axios.get(`${baseUrl}/Ciudad/${pais.codigoIso}/ciudades`);
                                     const ciudad = ciudadesResponse.data.find(c => c.id === ciudadId);
 
                                     return { pais, ciudad };
@@ -148,8 +186,8 @@ useEffect(() => {
                                 ? `${eventoConDetalles.hotel.direccion}, ${ubicacionHotel.ciudad ? `${ubicacionHotel.ciudad.nombre}, ${ubicacionHotel.pais.nombre}` : ''}`
                                 : `${ubicacionHotel.ciudad ? `${ubicacionHotel.ciudad.nombre}, ${ubicacionHotel.pais.nombre}` : ''}`;
 
-                            const direccionActividad = eventoConDetalles.actividad?.direccion
-                                ? `${eventoConDetalles.actividad.direccion}, ${ubicacionActividad.ciudad ? `${ubicacionActividad.ciudad.nombre}, ${ubicacionActividad.pais.nombre}` : ''}`
+                            const direccionActividad = eventoConDetalles.actividad?.ubicacion
+                                ? `${eventoConDetalles.actividad.ubicacion}, ${ubicacionActividad.ciudad ? `${ubicacionActividad.ciudad.nombre}, ${ubicacionActividad.pais.nombre}` : ''}`
                                 : `${ubicacionActividad.ciudad ? `${ubicacionActividad.ciudad.nombre}, ${ubicacionActividad.pais.nombre}` : ''}`;
 
                             const direccionTraslado = eventoConDetalles.traslado?.lugarDeEncuentro
@@ -161,10 +199,10 @@ useEffect(() => {
                                 : `${ubicacionAeropuerto.ciudad ? `${ubicacionAeropuerto.ciudad.nombre}, ${ubicacionAeropuerto.pais.nombre}` : ''}`;
 
                             const direccionFinal = `${direccionHotel} ${direccionActividad} ${direccionTraslado} ${direccionAeropuerto}`.trim();
-
+                            console.log("eventoConDetalle", eventoConDetalles);
                             // Geocodificar la dirección final
                             const location = await geocodeLocation(direccionFinal);
-
+                            console.log("direccionFinal", direccionFinal);
                             return location
                                 ? { ...eventoConDetalles, lat: location.lat, lng: location.lng, direccion: direccionFinal }
                                 : { ...eventoConDetalles, lat: null, lng: null, direccion: direccionFinal };
@@ -188,7 +226,7 @@ useEffect(() => {
     };
 
     fetchItinerarios();
-}, [baseUrl, usuarioId, setItinerarios]);
+}, [baseUrl, usuarioId, setItinerarios, token]);
 
 
 
@@ -230,34 +268,7 @@ useEffect(() => {
     );
 }, [eventos]);
 
-// Función para geocodificar direcciones
-const geocodeLocation = async (address) => {
-    const apiKey = 'ffe0407498914865a2e38a5418e8a482'; // Usa tu clave de API aquí
-    try {
-        const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${apiKey}`);
-        if (response.data.results.length > 0) {
-            return {
-                lat: response.data.results[0].geometry.lat,
-                lng: response.data.results[0].geometry.lng,
-            };
-        }
-    } catch (error) {
-        console.error('Error geocodificando la dirección:', error.response ? error.response.data : error.message);
-    }
-    return null;
-};
 
-useEffect(() => {
-    const fetchEventMarkers = async () => {
-        const markers = await Promise.all(eventos.map(async (evento) => {
-            const location = await geocodeLocation(evento.ubicacion);
-            return location ? { lat: location.lat, lng: location.lng, title: evento.title } : null;
-        }));
-        setEventMarkers(markers.filter(marker => marker !== null)); 
-    };
-
-    fetchEventMarkers();
-}, [eventos]);
 
 const handleSnackbarClose = () => {
     setOpenSnackbar(false);

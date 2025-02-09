@@ -29,7 +29,7 @@ const ActividadOpcional = () => {
 
         if (!opcionalesRes.ok) {
             const errorData = await opcionalesRes.json(); 
-            throw new Error(errorData.message || 'Error al obtener las actividades');
+            throw new Error(errorData.message);
         }
 
         setActividadesOpcionales(await opcionalesRes.json());
@@ -56,7 +56,7 @@ const ActividadOpcional = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ actividadId: selectedActividad }),
+       // body: JSON.stringify({ actividadId: selectedActividad }),
       });
 
       if (!response.ok) {
