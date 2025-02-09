@@ -152,20 +152,20 @@ const DetallesItinerario = () => {
         }
     };
 
-    const getEventTitle = (detailType, detail) => {
+    const getEventTitle = (detailType) => {
         switch (detailType) {
             case 'vuelo':
-                return `Vuelo: ${detail.vuelo.nombre}`;  // Muestra el nombre del vuelo
+                return "Vuelo";
             case 'aeropuerto':
-                return `Aeropuerto: ${detail.aeropuerto.nombre}`; // Muestra el nombre del aeropuerto
+                return "Aeropuerto";
             case 'aerolinea':
-                return `Aerolinea: ${detail.aerolinea.nombre}`;  // Muestra el nombre de la aerolínea
+                return "Aerolinea"
             case 'hotel':
-                return `Hotel: ${detail.hotel.nombre}`;
+                return "Hotel";
             case 'traslado':
                 return "Traslado";
             case 'actividad':
-                return `Actividad: ${detail.actividad.nombre}`;
+                return "Actividad";
             default:
                 return "Evento";
         }
