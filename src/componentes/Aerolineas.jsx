@@ -142,19 +142,26 @@ const Aerolineas = () => {
         backgroundPosition: 'center',
         padding: '2rem',
       }}
+    ><Box
+    sx={{
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      borderRadius: '10px',
+      flexGrow: 1,
+      padding: { xs: '1rem', sm: '2rem' },  // Padding ajustado para pantallas pequeñas
+      textAlign: 'center',
+    }}
+  >
+    <Typography
+      variant="h4"
+      sx={{
+        mb: 2,
+        fontWeight: 'bold',
+        color: 'primary.main',
+        fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },  // Tamaño de fuente adaptable
+      }}
     >
-      <Box
-        sx={{
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          borderRadius: '10px',
-          flexGrow: 1,
-          padding: '2rem',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', color: 'primary.main' }}>
-          Gestión de Aerolíneas
-        </Typography>
+      Gestión de Aerolíneas
+    </Typography>
 
         <Tabs 
           value={tabValue} 
