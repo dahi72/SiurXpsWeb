@@ -205,6 +205,8 @@ const DetallesItinerario = () => {
                         </Typography>
                         {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
                             const detail = detalles[index][detailType];
+                            console.log("detail", detail);
+                            console.log("detailType", detailType);
                             if (detail) {
                                 return (
                                     <TimelineItem key={detailIndex}>
