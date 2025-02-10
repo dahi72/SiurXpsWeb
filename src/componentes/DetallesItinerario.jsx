@@ -102,32 +102,41 @@ const DetallesItinerario = () => {
     
     const fetchEventos = useCallback(async () => {
         if (!id || !baseUrl || !token) {
-            console.error("Missing required parameters:", { id, baseUrl, token: !!token });
+            console.error("Missing required parameters:", { id, baseUrl, token });
             return;
         }
-
+    
         try {
+            // Verificar si ya se han cargado eventos
             if (eventos.length === 0) {
-              
                 const eventosData = await fetchWithErrorHandling(`${baseUrl}/Itinerario/${id}/eventos`, headers);
+                
+                // Verificar si la respuesta fue exitosa
+                if (eventosData.status !== 200) {
+                    console.error('Error al obtener eventos:', eventosData.data.message);
+                    return;
+                }
+    
+                // Validar que la respuesta sea un array
                 if (!Array.isArray(eventosData)) {
-                    console.error("Invalid response format:", eventosData);
+                    console.error("Respuesta inválida:", eventosData);
                     throw new Error("La respuesta no tiene el formato esperado");
                 }
-
-             
+    
+                // Establecer eventos y realizar acciones posteriores
                 setEventos(eventosData);
                 fetchedOnce.current = true;
-        
+    
+                // Si hay eventos, intentar obtener detalles
                 if (eventosData.length > 0 && !cargandoDetallesRef.current) {
                     fetchDetalles(eventosData);
                 }
             }
         } catch (error) {
-            console.error("Error fetching eventos:", error);
+            console.error("Error al obtener eventos:", error);
         }
     }, [id, baseUrl, token, headers, eventos.length, fetchDetalles]);
-   
+    
     useEffect(() => {
         fetchEventos();
     }, [fetchEventos]);
