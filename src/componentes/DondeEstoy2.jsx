@@ -49,54 +49,68 @@ const DondeEstoy2 = () => {
     const [eventMarkers, setEventMarkers] = useState([]);
     const token = localStorage.getItem('token');
     const baseUrl = process.env.REACT_APP_API_URL;
-    const [hotel, setHotel] = useState([]);
-    
-    // const fetchHoteles = useCallback(async () => {
-    //     try {
-    //       const response = await fetch(`${baseUrl}/Hotel/hoteles`, {
-    //         method: 'GET',
-    //         headers: {
-    //           'Authorization': `Bearer ${token}`,
-    //           'Content-Type': 'application/json'
-    //         }
-    //       });
-    
-    //       if (!response.ok) {
-    //         throw new Error(`Error ${response.status}: ${response.statusText}`);
-    //       }
-    
-    //       const data = await response.json();
-    //       setHoteles(Array.isArray(data) ? data : []);
-    //     } catch (error) {
-    //       console.error('Error al cargar los hoteles:', error);
-    //     }
-    //   }, [baseUrl, token]);
-
-    
-    //   useEffect(() => {
-    //     fetchHoteles();
-    //   }, [fetchHoteles]);
+    const [hoteles, setHoteles] = useState([]);
+    const [hotel] = useState([]);
     
     const fetchHoteles = useCallback(async () => {
-            try {
-              const response = await fetch(`${baseUrl}/Hotel/14`, {
-                method: 'GET',
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-                }
-              });
-        
-              if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-              }
-        
-              const data = await response.json();
-              setHotel(data);
-            } catch (error) {
-              console.error('Error al cargar los hoteles:', error);
+        try {
+          const response = await fetch(`${baseUrl}/Hotel/hoteles`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
             }
-          }, [baseUrl, token]);
+          });
+    
+          if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+          }
+    
+          const data = await response.json();
+            setHoteles(Array.isArray(data) ? data : []);
+           
+        } catch (error) {
+          console.error('Error al cargar los hoteles:', error);
+        }
+      }, [baseUrl, token]);
+
+    
+      useEffect(() => {
+        fetchHoteles();
+      }, [fetchHoteles]);
+
+    
+      const evento=  useMemo(() => {
+        return hoteles
+            .filter(hotel => hotel.id === 14)
+            .map(hotel => ({
+                id: hotel.id,
+                title: hotel.nombre,
+                direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`
+            }));
+    }, [hoteles]);
+    
+    // const id = 14; 
+    // const fetchHoteles = useCallback(async () => {
+    //         try {
+    //           const response = await fetch(`${baseUrl}/Hotel/${id}`, {
+    //             method: 'GET',
+    //             headers: {
+    //               'Authorization': `Bearer ${token}`,
+    //               'Content-Type': 'application/json'
+    //             }
+    //           });
+        
+    //           if (!response.ok) {
+    //             throw new Error(`Error ${response.status}: ${response.statusText}`);
+    //           }
+        
+    //           const data = await response.json();
+    //           setHotel(data);
+    //         } catch (error) {
+    //           console.error('Error al cargar los hoteles:', error);
+    //         }
+    //       }, [baseUrl, token]);
     
         
           useEffect(() => {
@@ -104,16 +118,16 @@ const DondeEstoy2 = () => {
           }, [fetchHoteles]);
 
 
-
+    console.log("evento", evento);
     console.log("hotel", hotel);
     
-    const evento = useMemo(() => ({
-        id: hotel.id,
-        title: hotel.nombre,
-        direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`,
-    }), [hotel]);
+    // const evento = useMemo(() => ({
+    //     id: hotel.id,
+    //     title: hotel.nombre,
+    //     direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`,
+    // }), [hotel]);
     
-    console.log("evento", evento);
+    // console.log("evento", evento);
     
     
     //   const eventos = useMemo(() => 
