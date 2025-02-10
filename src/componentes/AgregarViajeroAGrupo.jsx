@@ -14,7 +14,8 @@ const AgregarViajeroAGrupo = () => {
   const [error, setError] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
-  
+  const [errorPasaporte, setErrorPasaporte] = useState(null);
+const [isValidPasaporte, setIsValidPasaporte] = useState(false);
   useEffect(() => {
     if (state?.grupoId) {
         setGrupos([{ id: state.grupoId, nombre: state.grupoNombre }]);
@@ -52,7 +53,20 @@ const AgregarViajeroAGrupo = () => {
       }
     }
   }, [grupoSeleccionado, grupos]);
-
+  const handlePasaporteChange = (e) => {
+    const value = e.target.value;
+    const regex = /^[A-Za-z]\d{6}$/; 
+  
+    if (!regex.test(value)) {
+      setErrorPasaporte("⚠ El pasaporte debe comenzar con una letra y contener 6 números.");
+      setIsValidPasaporte(false);
+    } else {
+      setErrorPasaporte(null);
+      setIsValidPasaporte(true);
+    }
+  
+    setViajero({ ...viajero, pasaporte: value });
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!grupoSeleccionado) {
@@ -81,11 +95,11 @@ const AgregarViajeroAGrupo = () => {
         setError(null);
         setViajero({ primerNombre: "", primerApellido: "", pasaporte: "", email: "", telefono: "" });
       })
-      .catch((err) => {
-        setError(err.message);
-        setSuccess(false);
+      .catch((error) => {
+        setError(error.message);
+        console.error("Error:", error);
       });
-  };
+    };
 
   const handleBack = () => {
     navigate(-1); 
@@ -147,13 +161,14 @@ const AgregarViajeroAGrupo = () => {
               margin="normal"
             />
             <TextField
-              fullWidth
-              label="Número de Pasaporte"
-              value={viajero.pasaporte}
-              onChange={(e) => setViajero({ ...viajero, pasaporte: e.target.value })}
-              required
-              margin="normal"
-            />
+  fullWidth
+  label="Número de Pasaporte"
+  value={viajero.pasaporte}
+  onChange={handlePasaporteChange}
+  required
+  margin="normal"
+  helperText={errorPasaporte} // Muestra una advertencia en lugar de error
+/>
              <TextField
               fullWidth
               label="Correo Electrónico"
@@ -170,9 +185,9 @@ const AgregarViajeroAGrupo = () => {
               onChange={(e) => setViajero({ ...viajero, telefono: e.target.value })}
               required
               margin="normal"
-              type="tel" // Asegúrate de que sea un campo de tipo tel
+              type="tel" 
             />
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }} disabled={!isValidPasaporte}>
               Agregar Pasajero
             </Button>
           </form>
