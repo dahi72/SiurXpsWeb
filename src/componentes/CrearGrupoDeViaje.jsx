@@ -34,7 +34,7 @@ const CrearGrupoDeViaje = () => {
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const navigate = useNavigate();
-
+  const token = localStorage.getItem('token');
   const baseUrl = process.env.REACT_APP_API_URL;
 
  
@@ -97,16 +97,45 @@ const CrearGrupoDeViaje = () => {
       coordinadorId: localStorage.getItem("id")
     };
 
+    //   fetch(`${baseUrl}/GrupoDeViaje/altaGrupo`, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+    //     },
+    //     body: JSON.stringify(grupoDeViaje),
+    //   })
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //       if (data.codigo === 200) {
+    //         setSuccess(true);
+    //         setError(null);
+    //         setTimeout(() => {
+    //           navigate("/dashboard");
+    //         }, 2000);
+    //       } else {
+    //         setError(data.message);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       setError(error.message);
+    //     });
+    // };
     fetch(`${baseUrl}/GrupoDeViaje/altaGrupo`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`, 
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(grupoDeViaje),
     })
       .then((response) => response.json())
       .then((data) => {
+        if (!data || (Array.isArray(data.grupos) && data.grupos.length === 0)) {
+          setError("No tiene grupos para mostrar");
+          return;
+        }
+  
         if (data.codigo === 200) {
           setSuccess(true);
           setError(null);
@@ -114,13 +143,13 @@ const CrearGrupoDeViaje = () => {
             navigate("/dashboard");
           }, 2000);
         } else {
-          setError(data.message);
+          setError(data.message || "Error desconocido");
         }
       })
       .catch((error) => {
-        setError(error.message);
+        setError(error.message || "Ocurrió un error al procesar la solicitud");
       });
-  };
+  }
 
   return (
       <Container maxWidth="md" sx={{ mt: 2, p: 2 }}>
