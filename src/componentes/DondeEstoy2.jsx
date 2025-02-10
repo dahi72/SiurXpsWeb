@@ -6,6 +6,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
  
 // Fix Leaflet default icon issue
 L.Icon.Default.imagePath = '/';
@@ -53,14 +54,19 @@ const DondeEstoy2 = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [showEventMarkers, setShowEventMarkers] = useState(false);
   const [eventMarkers, setEventMarkers] = useState([]);
-  const [hoteles, setHoteles] = useState([]);
- 
+  const [listaEventos, setListaEventos] = useState([]);
+    const { idItinerario } = useParams();
+    const [aeropuertos, setAeropuertos] = useState([]);
+    const [hoteles, setHoteles] = useState([]);
+    const [actividades, setActividades] = useState([]);
+    const [traslados, setTraslados] = useState([]);
+
   const token = localStorage.getItem('token');
   const baseUrl =  process.env.REACT_APP_API_URL;
  
-  const fetchHoteles = useCallback(async () => {
-    try {
-      const response = await fetch(`${baseUrl}/Hotel/hoteles`, {
+  const fetchItinerario = useCallback(async () => {
+    try { 
+      const response = await fetch(`${baseUrl}/Itinerario/${idItinerario}/eventos`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -73,25 +79,119 @@ const DondeEstoy2 = () => {
       }
  
       const data = await response.json();
-      setHoteles(Array.isArray(data) ? data : []);
+      setListaEventos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error al cargar los hoteles:', error);
     }
-  }, [baseUrl, token]);
+  }, [baseUrl, token, idItinerario]);
  
   useEffect(() => {
-    fetchHoteles();
-  }, [fetchHoteles]);
- 
-  const evento = useMemo(() => {
-    return hoteles
-      .filter(hotel => hotel.id === 14)
-      .map(hotel => ({
-        id: hotel.id,
-        title: hotel.nombre,
-        direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`
-      }))[0];
-  }, [hoteles]);
+    fetchItinerario();
+  }, [fetchItinerario]);
+  useEffect(() => {
+  const cargarDatos = async () => {
+    try {
+        const [ trasladosRes, aeropuertosRes, actividadesRes, hotelesRes] = await Promise.all([
+            fetch(`${baseUrl}/Traslado/listado`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+            fetch(`${baseUrl}/Aeropuerto/aeropuertos`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+            fetch(`${baseUrl}/Actividad/listado`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+            fetch(`${baseUrl}/Hotel/hoteles`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+        ]);
+
+        setTraslados(Array.isArray(trasladosRes) ? trasladosRes : []);
+        setAeropuertos(Array.isArray(aeropuertosRes) ? aeropuertosRes : []);
+        setActividades(Array.isArray(actividadesRes) ? actividadesRes : []);
+        setHoteles(Array.isArray(hotelesRes) ? hotelesRes : []);
+    } catch (error) {
+        console.error('Error al cargar los datos:', error);
+    }
+};
+
+cargarDatos();
+  }, [baseUrl, token]);
+    
+    console.log("traslados", traslados);   
+    console.log("aeropuertos", aeropuertos); 
+    console.log("actividades", actividades); 
+    console.log("hoteles", hoteles); 
+    
+const eventos = useMemo(() => {
+    return listaEventos.flatMap((evento) => {
+      const ubicaciones = [];
+  
+      // Aeropuerto
+      if (evento.aeropuertoId) {
+        const aeropuertoFiltrado = aeropuertos.find(aero => aero.id === evento.aeropuertoId);
+        if (aeropuertoFiltrado) {
+          ubicaciones.push({
+            id: aeropuertoFiltrado.id,
+            title: aeropuertoFiltrado.nombre,
+            ubicacion: `${aeropuertoFiltrado.direccion}, ${aeropuertoFiltrado.ciudad.nombre}, ${aeropuertoFiltrado.pais.nombre}`,
+          });
+        }
+      }
+  
+      // Hotel
+      if (evento.hotelId) {
+        const hotelFiltrado = hoteles.find(hotel => hotel.id === evento.hotelId);
+        if (hotelFiltrado) {
+          ubicaciones.push({
+            id: hotelFiltrado.id,
+            title: hotelFiltrado.nombre,
+            ubicacion: `${hotelFiltrado.direccion}, ${hotelFiltrado.ciudad.nombre}, ${hotelFiltrado.pais.nombre}`,
+          });
+        }
+      }
+  
+      // Actividad
+      if (evento.actividadId) {
+        const actividadFiltrada = actividades.find(act => act.id === evento.actividadId);
+        if (actividadFiltrada) {
+          ubicaciones.push({
+            id: actividadFiltrada.id,
+            title: actividadFiltrada.nombre,
+            ubicacion: `${actividadFiltrada.ubicacion}, ${actividadFiltrada.ciudad.nombre}, ${actividadFiltrada.pais.nombre}`,
+          });
+        }
+      }
+  
+      // Traslado
+      if (evento.trasladoId) {
+        const trasladoFiltrado = traslados.find(traslado => traslado.id === evento.trasladoId);
+        if (trasladoFiltrado) {
+          ubicaciones.push({
+            id: trasladoFiltrado.id,
+            title: trasladoFiltrado.nombre,
+            ubicacion: `${trasladoFiltrado.lugarDeEncuentro}, ${trasladoFiltrado.ciudad.nombre}, ${trasladoFiltrado.pais.nombre}`,
+          });
+        }
+      }
+  
+      return ubicaciones; // Cada evento puede tener varias ubicaciones
+    });
+  }, [listaEventos, aeropuertos, hoteles, actividades, traslados]);
+  
+    
+  console.log("eventos", eventos); 
+    
+//   const evento = useMemo(() => {
+//     return hoteles
+//       .filter(hotel => hotel.id === 14)
+//       .map(hotel => ({
+//         id: hotel.id,
+//         title: hotel.nombre,
+//         direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`
+//       }))[0];
+    //   }, [hoteles]);
+    
+    // const eventos = useMemo(() => {
+    //     return hoteles.map(hotel => ({
+    //         id: hotel.id,
+    //         title: hotel.nombre,
+    //         direccion: `${hotel.direccion}, ${hotel.ciudad.nombre}, ${hotel.pais.nombre}`
+    //     }));
+    // }, [hoteles]);
+    
  
   const geocodeLocation = async (address) => {
     const apiKey = 'ffe0407498914865a2e38a5418e8a482';
@@ -108,21 +208,53 @@ const DondeEstoy2 = () => {
     }
     return null;
   };
- 
+    
   useEffect(() => {
-    const fetchEventMarker = async () => {
-      if (!evento?.direccion) return;
- 
-      const location = await geocodeLocation(evento.direccion);
-      if (location) {
-        setEventMarkers([{ lat: location.lat, lng: location.lng, title: evento.title }]);
-      } else {
-        setEventMarkers([]);
-      }
+    const fetchEventMarkers = async () => {
+      if (!eventos || eventos.length === 0) return;
+  
+      // Mapear cada evento y geocodificar su dirección
+      const markers = await Promise.all(
+        eventos.map(async (evento) => {
+          // Determinar cuál atributo usar para la dirección
+          const direccion = 
+            evento.ubicacion || 
+            evento.lugarDeEncuentro || 
+            evento.direccion;
+  
+          if (!direccion) return null; // Ignorar si no tiene dirección
+  
+          const location = await geocodeLocation(direccion);
+          if (location) {
+            return { lat: location.lat, lng: location.lng, title: evento.title };
+          }
+          return null; // Devolver null si no se puede obtener la ubicación
+        })
+      );
+  
+      // Filtrar los nulls (eventos sin ubicación) y establecer los marcadores
+      setEventMarkers(markers.filter(marker => marker !== null));
     };
+  
+    fetchEventMarkers();
+  }, [eventos]); // Ejecutar cuando el array `eventos` cambie
+  
+  
+    
+//   useEffect(() => {
+//     const fetchEventMarker = async () => {
+//       if (!evento?.direccion) return;
  
-    fetchEventMarker();
-  }, [evento]);
+//       const location = await geocodeLocation(evento.direccion);
+//       if (location) {
+//         setEventMarkers([{ lat: location.lat, lng: location.lng, title: evento.title }]);
+//       } else {
+//         setEventMarkers([]);
+//       }
+//     };
+ 
+//     fetchEventMarker();
+//   }, [evento]);
  
   useEffect(() => {
     if (!navigator.geolocation) {
