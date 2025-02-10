@@ -322,8 +322,8 @@ const Aeropuertos = () => {
                             {aeropuerto.paginaWeb}
                           </a>
                         </TableCell>
-                        <TableCell>{aeropuerto.paisId}</TableCell>
-                        <TableCell>{aeropuerto.ciudadId}</TableCell>
+                        <TableCell>{aeropuerto.pais.nombre}</TableCell>
+                        <TableCell>{aeropuerto.ciudad.nombre}</TableCell>
                         <TableCell>{aeropuerto.direccion}</TableCell>
                         <TableCell>{aeropuerto.tips}</TableCell>
                         <TableCell>
