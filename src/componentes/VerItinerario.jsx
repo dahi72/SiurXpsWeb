@@ -210,7 +210,7 @@ const VerItinerario = () => {
                                     <Button
                                         variant="outlined"
                                         startIcon={<GroupIcon />}
-                                        onClick={() => navigate(`/usuariosActividadOpcional/${itinerario.id}`)}
+                                        onClick={() => navigate(`/actividad-opcional/${itinerario.id}`)}
                                         size="small"
                                         fullWidth
                                         sx={{

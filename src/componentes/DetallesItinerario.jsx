@@ -83,8 +83,8 @@ const DetallesItinerario = () => {
     }, [baseUrl, headers]);
 
     const fetchDetalles = useCallback(async (eventosData) => {
-        if (cargandoDetallesRef.current) return; 
-        if (detalles.length > 0) return; 
+        if (cargandoDetallesRef.current) return;
+        if (detalles.length > 0) return;
         try {
             cargandoDetallesRef.current = true;
             console.log("Fetching detalles...");
@@ -95,7 +95,7 @@ const DetallesItinerario = () => {
         } catch (error) {
             console.error("Error fetching detalles:", error);
         } finally {
-            cargandoDetallesRef.current = false; 
+            cargandoDetallesRef.current = false;
         }
     }, [fetchDetallesPorTipo, detalles.length]);
 
@@ -176,7 +176,6 @@ const DetallesItinerario = () => {
         const title = getEventTitle(event) ?? "";
         return title.toLowerCase().includes(filter.toLowerCase());
     });
-
     return (
         <Box sx={{ backgroundColor: "rgba(255, 255, 255, 0.8)", borderRadius: "8px", padding: "20px", boxShadow: 3, position: "relative", zIndex: 1, minHeight: "100vh", marginTop: "20px" }}>
             <Header />
@@ -192,67 +191,142 @@ const DetallesItinerario = () => {
             <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
                 {filteredEvents.map((event, index) => (
                     <React.Fragment key={event.id}>
-                       <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" , fontWeight: "bold" }}>
-                                 "Evento número {event.id} del itinerario número {id}"
+                        <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center", fontWeight: "bold" }}>
+                            {`Evento número ${event.id} del itinerario número ${id}`}
                         </Typography>
-                        {detalles[index] && Object.keys(detalles[index])?.map((detailType, detailIndex) => {
-                            const detail = detalles[index][detailType];
-                           
-                            if (detail) {
-                                
-                                return (
-                                    <TimelineItem key={detailIndex}>
-                                          
-                                        <TimelineOppositeContent>
-                                            <Typography variant="body2" color="textSecondary">
-                                                Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
-                                            </Typography>
-                                        </TimelineOppositeContent>
-                                        <TimelineSeparator>
-                                            <TimelineDot>{getEventIcon(detailType)}</TimelineDot>
-                                            <TimelineConnector />
-                                        </TimelineSeparator>
-                                        <TimelineContent>
-                                        <Accordion>
-                                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                                <Typography  variant="h6" 
-                                                    sx={{ 
-                                                    fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" } 
-                                                    }}
-                                                    >{getEventTitle(detailType)}
+                        {detalles[index] && typeof detalles[index] === 'object' &&
+                            Object.keys(detalles[index]).map((detailType, detailIndex) => {
+                                const detail = detalles[index][detailType];
+                               
+                                if (detail) {
+                                    return (
+                                        <TimelineItem key={detailIndex}>
+                                            <TimelineOppositeContent>
+                                                <Typography variant="body2" color="textSecondary">
+                                                    Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
                                                 </Typography>
-                                            </AccordionSummary>
-                                            <AccordionDetails sx={{ 
-                                                maxWidth: "100%", 
-                                                overflowX: "auto", 
-                                                padding: { xs: "8px", sm: "16px", md: "24px" } 
-                                                }}>
-                                                {Object.keys(detail).map((key) => {
-                                                    if (!key.includes('id')) {
-                                                        return (
-                                                            <Typography variant="body2" 
-                                                                key={key} 
-                                                                sx={{ fontSize: { xs: "0.75rem", sm: "0.9rem", md: "1rem" } }}
-                                                                >
-                                                                    {key}: {detail[key]} 
-                                                            </Typography>
-                                                        );
-                                                    }
-                                                    return null;
-                                                })}
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    </TimelineContent>
-                                    </TimelineItem>
-                                );
-                            }
-                            return null;
-                        })}
+                                            </TimelineOppositeContent>
+                                            <TimelineSeparator>
+                                                <TimelineDot>{getEventIcon(detailType)}</TimelineDot>
+                                                <TimelineConnector />
+                                            </TimelineSeparator>
+                                            <TimelineContent>
+                                                <Accordion>
+                                                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                        <Typography variant="h6"
+                                                            sx={{ fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" } }}>
+                                                            {getEventTitle(detailType)}
+                                                        </Typography>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails sx={{
+                                                        maxWidth: "100%",
+                                                        overflowX: "auto",
+                                                        padding: { xs: "8px", sm: "16px", md: "24px" }
+                                                    }}>
+                                                        {Object.keys(detail).map((key) => {
+                                                            if (!key.includes('id')) {
+                                                                return (
+                                                                    <Typography variant="body2"
+                                                                        key={key}
+                                                                        sx={{ fontSize: { xs: "0.75rem", sm: "0.9rem", md: "1rem" } }}>
+                                                                        {key}: {detail[key]}
+                                                                    </Typography>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                            </TimelineContent>
+                                        </TimelineItem>
+                                    );
+                                }
+                                return null;
+                            })
+                        }
                     </React.Fragment>
                 ))}
             </Timeline>
         </Box>
     );
-};
-
+}
 export default DetallesItinerario;
+
+
+//     return (
+//         <Box sx={{ backgroundColor: "rgba(255, 255, 255, 0.8)", borderRadius: "8px", padding: "20px", boxShadow: 3, position: "relative", zIndex: 1, minHeight: "100vh", marginTop: "20px" }}>
+//             <Header />
+//             <Typography variant="h4" sx={{ fontSize: { xs: "1.5rem", sm: "2rem" }, fontWeight: "bold" }} gutterBottom>
+//                 Eventos del Itinerario
+//             </Typography>
+//             <Button variant="contained" color="primary" onClick={() => navigate("/VerItinerario")} sx={{ mb: 2 }}>
+//                 Ver Itinerario
+//             </Button>
+//             <Box sx={{ mb: 2 }}>
+//                 <TextField label="Filtrar eventos" variant="outlined" fullWidth value={filter} onChange={(e) => setFilter(e.target.value)} />
+//             </Box>
+//             <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
+//                 {filteredEvents.map((event, index) => (
+//                     <React.Fragment key={event.id}>
+//                        <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" , fontWeight: "bold" }}>
+//                                  "Evento número {event.id} del itinerario número {id}"
+//                         </Typography>
+//                         {detalles[index] && Object.keys(detalles[index])?.map((detailType, detailIndex) => {
+//                             const detail = detalles[index][detailType];
+                           
+//                             if (detail) {
+                                
+//                                 return (
+//                                     <TimelineItem key={detailIndex}>
+                                          
+//                                         <TimelineOppositeContent>
+//                                             <Typography variant="body2" color="textSecondary">
+//                                                 Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+//                                             </Typography>
+//                                         </TimelineOppositeContent>
+//                                         <TimelineSeparator>
+//                                             <TimelineDot>{getEventIcon(detailType)}</TimelineDot>
+//                                             <TimelineConnector />
+//                                         </TimelineSeparator>
+//                                         <TimelineContent>
+//                                         <Accordion>
+//                                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+//                                                 <Typography  variant="h6" 
+//                                                     sx={{ 
+//                                                     fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" } 
+//                                                     }}
+//                                                     >{getEventTitle(detailType)}
+//                                                 </Typography>
+//                                             </AccordionSummary>
+//                                             <AccordionDetails sx={{ 
+//                                                 maxWidth: "100%", 
+//                                                 overflowX: "auto", 
+//                                                 padding: { xs: "8px", sm: "16px", md: "24px" } 
+//                                                 }}>
+//                                                 {Object.keys(detail).map((key) => {
+//                                                     if (!key.includes('id')) {
+//                                                         return (
+//                                                             <Typography variant="body2" 
+//                                                                 key={key} 
+//                                                                 sx={{ fontSize: { xs: "0.75rem", sm: "0.9rem", md: "1rem" } }}
+//                                                                 >
+//                                                                     {key}: {detail[key]} 
+//                                                             </Typography>
+//                                                         );
+//                                                     }
+//                                                     return null;
+//                                                 })}
+//                                             </AccordionDetails>
+//                                         </Accordion>
+//                                     </TimelineContent>
+//                                     </TimelineItem>
+//                                 );
+//                             }
+//                             return null;
+//                         })}
+//                     </React.Fragment>
+//                 ))}
+//             </Timeline>
+//         </Box>
+//     );
+// };
