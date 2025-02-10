@@ -42,7 +42,7 @@ export const opcionesViajero = [
     },
     { 
         label: 'Ver Itinerario',
-        action: '/itinerario-visual',
+        action: '/VerItinerario',
         icon: <LocationCity sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     }
 ];

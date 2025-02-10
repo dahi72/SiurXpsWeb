@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { format } from 'date-fns';
-
+import GroupIcon from '@mui/icons-material/Group';
 const VerItinerario = () => {
     const [itinerarios, setItinerarios] = useState([]);
     const [gruposDeViaje, setGruposDeViaje] = useState([]);
@@ -206,6 +206,18 @@ const VerItinerario = () => {
                                         }}
                                     >
                                         Eliminar
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={<GroupIcon />}
+                                        onClick={() => navigate(`/usuariosActividadOpcional/${itinerario.id}`)}
+                                        size="small"
+                                        fullWidth
+                                        sx={{
+                                            '&:hover': { backgroundColor: 'secondary.light', color: 'white' }
+                                        }}
+                                    >
+                                        Actividades Opcionales
                                     </Button>
                                 </Box>
                             </Paper>

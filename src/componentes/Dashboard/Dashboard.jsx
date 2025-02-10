@@ -32,8 +32,9 @@ const Dashboard = () => {
 
             <Paper 
                 elevation={3} 
+               
                 sx={{ 
-                    p: 4,
+                    p: { xs: 2, sm: 4 },
                     transition: 'transform 0.3s ease',
                     '&:hover': { 
                         transform: 'scale(1.01)',
@@ -65,7 +66,7 @@ const Dashboard = () => {
                             onClick={() => handleClick(opcion.action)}
                             elevation={2}
                             sx={{
-                                p: 3,
+                                p: { xs: 2, sm: 4 },
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',

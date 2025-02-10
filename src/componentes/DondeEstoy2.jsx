@@ -110,7 +110,7 @@ const DondeEstoy2 = () => {
                 const data = await response.json();
                 setListaEventos(Array.isArray(data) ? data : []);
             } catch (error) {
-                console.error('Error al cargar los hoteles:', error);
+                console.error('Error al cargar los itinerarios:', error);
             }
         }, [baseUrl, token, selectedItinerario]);
  
