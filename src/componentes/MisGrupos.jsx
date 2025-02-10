@@ -279,7 +279,6 @@ const MisGrupos = () => {
                                     >
                                         Eliminar
                                     </Button> 
-
                                     <Button
                                         variant="outlined"
                                         onClick={() => handleConfirmarGrupo(grupo.id)}

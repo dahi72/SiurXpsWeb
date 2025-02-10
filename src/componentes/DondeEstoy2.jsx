@@ -6,7 +6,6 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
  
 // Fix Leaflet default icon issue
 L.Icon.Default.imagePath = '/';
@@ -55,40 +54,46 @@ const DondeEstoy2 = () => {
   const [showEventMarkers, setShowEventMarkers] = useState(false);
   const [eventMarkers, setEventMarkers] = useState([]);
   const [listaEventos, setListaEventos] = useState([]);
-    const { idItinerario } = useParams();
     const [aeropuertos, setAeropuertos] = useState([]);
     const [hoteles, setHoteles] = useState([]);
     const [actividades, setActividades] = useState([]);
     const [traslados, setTraslados] = useState([]);
   const token = localStorage.getItem('token');
   const baseUrl =  process.env.REACT_APP_API_URL;
- 
+  const idUsuario = localStorage.getItem('id');
+  const rol = localStorage.getItem('rol');
   const [itinerarios, setItinerarios] = useState([]);
   const [selectedItinerario, setSelectedItinerario] = useState("");
 
-  useEffect(() => {
-      const cargarItinerarios = async () => {
-          try {
-              const response = await fetch(`${baseUrl}/Itinerario/listado`, {
-                  method: 'GET',
-                  headers: {
-                      'Authorization': `Bearer ${token}`,
-                      'Content-Type': 'application/json'
-                  }
-              });
-              if (!response.ok) {
-                  throw new Error(`${response.status}: ${response.statusText}`);
-              }
-     
-              const data = await response.json();
-              setItinerarios(Array.isArray(data) ? data : []);
-          } catch (error) {
-              console.error('Error al cargar los hoteles:', error);
-          }
-      };
-      cargarItinerarios();
-      }, [baseUrl, token, idItinerario]);
-      
+
+
+
+  const cargarItinerarios = useCallback(async () => {
+    if (!rol) return;
+    let url = "";
+    if (rol === "coordinador") {
+      url = `${baseUrl}/Itinerario/ItinerariosDeCoordinador/${idUsuario}`;
+    } else if (rol === "viajero") {
+      url = `${baseUrl}/Itinerario/ItinerariosDeViajero/${idUsuario}`;
+    } else {
+      return;
+    }
+
+    try {
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Error al obtener los itinerarios");
+      const data = await response.json();
+      setItinerarios(data);
+    } catch (error) {
+      console.error("Error al cargar los itinerarios:", error);
+    }
+  }, [baseUrl, token, idUsuario, rol]);
+
+      useEffect(() => {
+        cargarItinerarios();
+      }, [cargarItinerarios]);
      
     console.log("itinerarios", itinerarios);
     
@@ -323,7 +328,7 @@ const DondeEstoy2 = () => {
             {error}
           </Typography>
         ) : (
-                      <Paper sx={{ height: '70vh', width: '100%', borderRadius: '10px', overflow: 'hidden', boxShadow: 3 }}>
+            <Paper sx={{ height: '70vh', width: '100%', borderRadius: '10px', overflow: 'hidden', boxShadow: 3 }}>
             <Box>
             <FormControl fullWidth>
             <InputLabel id="itinerario-label">Seleccionar Itinerario</InputLabel>

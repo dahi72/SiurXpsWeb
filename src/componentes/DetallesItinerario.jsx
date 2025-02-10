@@ -201,7 +201,7 @@ const DetallesItinerario = () => {
                 {filteredEvents.map((event, index) => (
                     <React.Fragment key={event.id}>
                         <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" , fontWeight: "bold" }}>
-                            "Evento número {event.id} del itinerario número {id}"
+                            "Evento"
                         </Typography>
                         {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
                             const detail = detalles[index][detailType];
