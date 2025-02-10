@@ -393,8 +393,8 @@ const Hoteles = () => {
                         <TableCell>{hotel.checkOut}</TableCell>
                         <TableCell>{hotel.paginaWeb}</TableCell>
                         <TableCell>{hotel.direccion}</TableCell>
-                        <TableCell>{hotel.paisNombre}</TableCell>
-                        <TableCell>{hotel.ciudadNombre}</TableCell>
+                        <TableCell>{hotel.pais.nombre}</TableCell>
+                        <TableCell>{hotel.ciudad.nombre}</TableCell>
                         <TableCell>{hotel.tips}</TableCell>
                         <TableCell>
                         <Button onClick={() => handleEditar(hotel)}>Editar</Button>
