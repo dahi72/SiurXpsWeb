@@ -144,17 +144,17 @@ const DetallesItinerario = () => {
 
     const getEventIcon = (detailType) => {
         switch (detailType) {
-            case 'vuelo':
+            case 'vueloId':
                 return <FlightIcon color="primary" />;
-            case 'aeropuerto':
+            case 'aeropuertoId':
                 return <AirportShuttleIcon color="primary" />;
-            case 'aerolinea':
+            case 'aerolineaId':
                 return <AirlineSeatReclineNormalIcon color="primary" />;
-            case 'hotel':
+            case 'hotelId':
                 return <HotelIcon color="secondary" />;
-            case 'traslado':
+            case 'trasladoId':
                 return <DirectionsBusIcon color="action" />;
-            case 'actividad':
+            case 'actividadId':
                 return <EventIcon color="success" />;
             default:
                 return <EventIcon />;
@@ -163,17 +163,17 @@ const DetallesItinerario = () => {
 
     const getEventTitle = (detailType) => {
         switch (detailType) {
-            case 'vuelo':
+            case 'vueloId':
                 return "Vuelo";
-            case 'aeropuerto':
+            case 'aeropuertoId':
                 return "Aeropuerto";
-            case 'aerolinea':
+            case 'aerolineaId':
                 return "Aerolinea"
-            case 'hotel':
+            case 'hotelId':
                 return "Hotel";
-            case 'traslado':
+            case 'trasladoId':
                 return "Traslado";
-            case 'actividad':
+            case 'actividadId':
                 return "Actividad";
             default:
                 return "Evento";
