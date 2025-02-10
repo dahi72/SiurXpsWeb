@@ -50,7 +50,7 @@ const DondeEstoy2 = () => {
     const token = localStorage.getItem('token');
     const baseUrl = process.env.REACT_APP_API_URL;
     const [hoteles, setHoteles] = useState([]);
-    const [hotel] = useState([]);
+    const [hotel] = useState('');
     
     const fetchHoteles = useCallback(async () => {
         try {
@@ -80,7 +80,7 @@ const DondeEstoy2 = () => {
       }, [fetchHoteles]);
 
     
-      const evento=  useMemo(() => {
+      const evento =  useMemo(() => {
         return hoteles
             .filter(hotel => hotel.id === 14)
             .map(hotel => ({
@@ -242,7 +242,7 @@ const DondeEstoy2 = () => {
         const fetchEventMarker = async () => {
             if (!evento) return; // Evitar errores si `evento` aún no está definido
     
-            const location = await geocodeLocation(evento.ubicacion);
+            const location = await geocodeLocation(evento.direccion);
             if (location) {
                 setEventMarkers([{ lat: location.lat, lng: location.lng, title: evento.title }]);
             } else {
