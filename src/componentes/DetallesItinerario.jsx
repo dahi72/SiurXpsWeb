@@ -93,6 +93,7 @@ const DetallesItinerario = () => {
     
         return detallesEvento;
     }, [baseUrl, headers]);
+    console.log("detalles:", detalles);
 
     const fetchDetalles = useCallback(async (eventosData) => {
         if (cargandoDetallesRef.current) return; 
