@@ -123,24 +123,67 @@ const navigate = useNavigate();
   
     console.log("formData", formData)
     
-    const handleSubmit = (e) => {
-        e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
       
-        axios.post(`${baseUrl}/Actividad/altaActividad`, JSON.stringify(formData), { 
-          headers: { 
-            Authorization: `Bearer ${token}`, 
-            "Content-Type": "application/json",
-          }
-        })
-        .then(response => {
-            alert("Actividad creada con éxito");
-            navigate(-1); 
-          })
+    fetch(`${baseUrl}/Actividad/altaActividad`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            throw new Error(errorData.mensaje || "Error desconocido");
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        alert("Actividad creada con éxito");
+        navigate(-1);
+      })
+      .catch((error) => {
+        console.error("Error al crear actividad:", error.mensaje);
+      });
+  }        
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    //     axios.post(`${baseUrl}/Actividad/altaActividad`, JSON.stringify(formData), { 
+    //       headers: { 
+    //         Authorization: `Bearer ${token}`, 
+    //         "Content-Type": "application/json",
+    //       }
+    //     })
+    //     .then(response => {
+    //         alert("Actividad creada con éxito");
+    //         navigate(-1); 
+    //       })
    
-        .catch(error => {
-          console.error("Error al crear actividad:", error.response?.data || error.mensaje);
-        });
-    };
+    //     .catch(error => {
+    //       console.error("Error al crear actividad:", error.response?.data || error.mensaje);
+    //     });
+    // };
  
       
     return (
