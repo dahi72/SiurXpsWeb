@@ -138,7 +138,7 @@ const navigate = useNavigate();
           })
    
         .catch(error => {
-          console.error("Error al crear actividad:", error.response?.data || error.message);
+          console.error("Error al crear actividad:", error.response?.data || error.mensaje);
         });
     };
  
