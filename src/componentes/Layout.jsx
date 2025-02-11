@@ -52,7 +52,7 @@ export const Layout = ({ children }) => {
         {!isDashboard && isAuthenticated && location.pathname !== '/' && 
           <Button 
               variant="outlined" 
-              onClick={() => navigate('/dashboard')} 
+              onClick={() => navigate(-1)} 
               sx={{ color: "white", borderColor: "white" }} 
           >
             {"< Volver"}
