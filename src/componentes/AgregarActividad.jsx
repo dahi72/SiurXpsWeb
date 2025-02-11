@@ -35,7 +35,11 @@ const navigate = useNavigate();
     if (formData.paisId ) {
       const paisSeleccionado = paises.find(p => p.id === formData.paisId);
       if (paisSeleccionado) {
-        formData.pais = paisSeleccionado;
+        setFormData(prev => ({
+          ...prev,
+          paisId: paisSeleccionado.id, // Asegurarse de mantener paisId
+          pais: paisSeleccionado // Guardar el nombre del país
+        }));
         axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
           setCiudades(response.data);
         });
@@ -43,13 +47,29 @@ const navigate = useNavigate();
     }
   }, [formData.paisId, paises, formData]);
 
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     [name]: type === "checkbox" ? checked : value
+  //   }));
+  // };
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+  
     setFormData(prev => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }));
-  };
+        ...prev,
+        [name]: type === "checkbox" ? checked : value
+      }));
+  
+      // Si se está cambiando la ciudad, también asignar su nombre
+      if (name === "ciudadId") {
+        const ciudadSeleccionada = ciudades.find(ciudad => ciudad.id === Number(value));
+        FormData.ciudad = ciudadSeleccionada ? ciudadSeleccionada.nombre : "";
+      }
+    };
+  
+  
     console.log("formData", formData)
     
     const handleSubmit = (e) => {
@@ -103,9 +123,9 @@ const navigate = useNavigate();
         <Grid item xs={6}>
           <FormControl fullWidth>
             <InputLabel>Ciudad</InputLabel>
-            <Select name="ciudadId" value={formData.ciudad.id && formData.ciudad} onChange={handleChange} required>
+            <Select name="ciudadId" value={formData.ciudadId} onChange={handleChange} required>
               {ciudades.map(ciudad => (
-                <MenuItem key={ciudad.id} value={ciudad}>{ciudad.nombre}</MenuItem>
+                <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>
               ))}
             </Select>
           </FormControl>
