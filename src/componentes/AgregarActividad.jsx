@@ -16,9 +16,7 @@ const navigate = useNavigate();
     opcional: false,
     paisId: "",
     ciudadId: "",
-    tips: "",
-    pais: null,
-    ciudad: null
+    tips: ""
   });
   
   const [paises, setPaises] = useState([]);
@@ -53,73 +51,73 @@ const navigate = useNavigate();
   //   }
   // }, [formData.paisId, paises]);  // Solo dependemos de paisId y paises para evitar loop
   
-  useEffect(() => {
-    if (!formData.paisId) return; // Evitar ejecución innecesaria
-    
-    const paisSeleccionado = paises.find(p => p.id === Number(formData.paisId));
-    if (paisSeleccionado) {
-      // Solo actualizamos si el país seleccionado cambió
-      if (!formData.pais || formData.pais !== paisSeleccionado) {
-        setFormData(prev => ({
-          ...prev,
-          paisId: paisSeleccionado.id,   // Aseguramos que se mantenga el ID
-          pais: paisSeleccionado  
-        }));
-      }
-  
-      // Obtener ciudades del país seleccionado
-      axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { 
-        headers: { Authorization: `Bearer ${token}` } 
-      }).then(response => {
-        setCiudades(response.data);
-      });
-    }
-  }, [formData.paisId, paises, formData.pais]);
-  
-  
-  
-
   // useEffect(() => {
-  //   if (formData.paisId ) {
-  //     const paisSeleccionado = paises.find(p => p.id === formData.paisId);
-  //     if (paisSeleccionado) {
+  //   if (!formData.paisId) return; // Evitar ejecución innecesaria
+    
+  //   const paisSeleccionado = paises.find(p => p.id === Number(formData.paisId));
+  //   if (paisSeleccionado) {
+  //     // Solo actualizamos si el país seleccionado cambió
+  //     if (!formData.pais || formData.pais !== paisSeleccionado) {
   //       setFormData(prev => ({
   //         ...prev,
-  //         paisId: paisSeleccionado.id, // Asegurarse de mantener paisId
-  //         pais: paisSeleccionado // Guardar el nombre del país
+  //         paisId: paisSeleccionado.id,   // Aseguramos que se mantenga el ID
+  //         pais: paisSeleccionado  
   //       }));
-  //       axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
-  //         setCiudades(response.data);
-  //       });
   //     }
+  
+  //     // Obtener ciudades del país seleccionado
+  //     axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { 
+  //       headers: { Authorization: `Bearer ${token}` } 
+  //     }).then(response => {
+  //       setCiudades(response.data);
+  //     });
   //   }
-  // }, [formData.paisId, paises, formData]);
+  // }, [formData.paisId, paises, formData.pais]);
+  
+  
+  
 
-  // const handleChange = (e) => {
-  //   const { name, value, type, checked } = e.target;
-  //   setFormData(prev => ({
-  //     ...prev,
-  //     [name]: type === "checkbox" ? checked : value
-  //   }));
-  // };
+  useEffect(() => {
+    if (formData.paisId ) {
+      const paisSeleccionado = paises.find(p => p.id === formData.paisId);
+      if (paisSeleccionado) {
+        setFormData(prev => ({
+          ...prev,
+          paisId: paisSeleccionado.id, // Asegurarse de mantener paisId
+          pais: paisSeleccionado // Guardar el nombre del país
+        }));
+        axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
+          setCiudades(response.data);
+        });
+      }
+    }
+  }, [formData.paisId, paises, formData]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
-    setFormData(prev => {
-      let newData = {
-        ...prev,
-        [name]: type === "checkbox" ? checked : value
-      };
-
-      // Si se cambia la ciudad, guardamos también su nombre
-      if (name === "ciudadId") {
-        const ciudadSeleccionada = ciudades.find(ciudad => ciudad.id === Number(value));
-        newData.ciudad = ciudadSeleccionada ? ciudadSeleccionada.nombre : "";
-      }
-
-      return newData;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }));
   };
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
+    
+  //   setFormData(prev => {
+  //     let newData = {
+  //       ...prev,
+  //       [name]: type === "checkbox" ? checked : value
+  //     };
+
+  //     // Si se cambia la ciudad, guardamos también su nombre
+  //     if (name === "ciudadId") {
+  //       const ciudadSeleccionada = ciudades.find(ciudad => ciudad.id === Number(value));
+  //       newData.ciudad = ciudadSeleccionada ? ciudadSeleccionada.nombre : "";
+  //     }
+
+  //     return newData;
+  //   });
+  // };
   
     console.log("formData", formData)
     
@@ -137,7 +135,7 @@ const navigate = useNavigate();
       .then((response) => {
         if (!response.ok) {
           return response.json().then((errorData) => {
-            throw new Error(errorData.mensaje || "Error desconocido");
+            console.error("Error al crear actividad:", errorData.message);
           });
         }
         return response.json();
@@ -146,9 +144,7 @@ const navigate = useNavigate();
         alert("Actividad creada con éxito");
         navigate(-1);
       })
-      .catch((error) => {
-        console.error("Error al crear actividad:", error.mensaje);
-      });
+      
   }        
       
       
