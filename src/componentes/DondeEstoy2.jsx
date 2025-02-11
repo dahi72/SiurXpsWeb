@@ -6,6 +6,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
  
 // Fix Leaflet default icon issue
 L.Icon.Default.imagePath = '/';
@@ -54,51 +55,44 @@ const DondeEstoy2 = () => {
   const [showEventMarkers, setShowEventMarkers] = useState(false);
   const [eventMarkers, setEventMarkers] = useState([]);
   const [listaEventos, setListaEventos] = useState([]);
+    const { idItinerario } = useParams();
     const [aeropuertos, setAeropuertos] = useState([]);
     const [hoteles, setHoteles] = useState([]);
     const [actividades, setActividades] = useState([]);
     const [traslados, setTraslados] = useState([]);
   const token = localStorage.getItem('token');
   const baseUrl =  process.env.REACT_APP_API_URL;
- // const idUsuario = localStorage.getItem('id');
-  //const rol = localStorage.getItem('rol');
-  const [itinerarios] = useState([]);
+ 
+  const [itinerarios, setItinerarios] = useState([]);
   const [selectedItinerario, setSelectedItinerario] = useState("");
 
-
-
-
-  // const cargarItinerarios = useCallback(async () => {
-  //   // if (!rol) return;
-    // let url = "";
-    // if (rol === "coordinador") {
-    //   url = `${baseUrl}/Itinerario/ItinerariosDeCoordinador/${idUsuario}`;
-    // } else if (rol === "viajero") {
-    //   url = `${baseUrl}/Itinerario/ItinerariosDeViajero/${idUsuario}`;
-    // } else {
-    //   return;
-    // }
-
-  //   try {
-  //     const response = await fetch(url, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     if (!response.ok) throw new Error("Error al obtener los itinerarios");
-  //     const data = await response.json();
-  //     setItinerarios(data);
-  //   } catch (error) {
-  //     console.error("Error al cargar los itinerarios:", error);
-  //   }
-  // }, [baseUrl, token, idUsuario, rol]);
-
-  //     useEffect(() => {
-  //       cargarItinerarios();
-  //     }, [cargarItinerarios]);
+  useEffect(() => {
+      const cargarItinerarios = async () => {
+          try {
+              const response = await fetch(`${baseUrl}/Itinerario/listado`, {
+                  method: 'GET',
+                  headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json'
+                  }
+              });
+              if (!response.ok) {
+                  throw new Error(`${response.status}: ${response.statusText}`);
+              }
+     
+              const data = await response.json();
+              setItinerarios(Array.isArray(data) ? data : []);
+          } catch (error) {
+              console.error('Error al cargar los hoteles:', error);
+          }
+      };
+      cargarItinerarios();
+      }, [baseUrl, token, idItinerario]);
+      
      
     console.log("itinerarios", itinerarios);
     
-  console.log("itinerariosSeleccionado", selectedItinerario);
-  
+    console.log("itinerariosSeleccionado", selectedItinerario);
         const fetchItinerario = useCallback(async () => {
             try {
                 const response = await fetch(`${baseUrl}/Itinerario/${selectedItinerario}/eventos`, {
@@ -158,9 +152,6 @@ const DondeEstoy2 = () => {
                             id: aeropuertoFiltrado.id,
                             title: aeropuertoFiltrado.nombre,
                             ubicacion: `${aeropuertoFiltrado.direccion}, ${aeropuertoFiltrado.ciudad.nombre}, ${aeropuertoFiltrado.pais.nombre}`,
-                            fecha: evento.fechaYHora || "Fecha no disponible",
-                            paginaWeb: `${aeropuertoFiltrado.paginaWeb}` || "No disponible",
-                            duracion:  `${aeropuertoFiltrado.duracion}` || "No disponible"
                         });
                     }
                 }
@@ -173,9 +164,6 @@ const DondeEstoy2 = () => {
                             id: hotelFiltrado.id,
                             title: hotelFiltrado.nombre,
                             ubicacion: `${hotelFiltrado.direccion}, ${hotelFiltrado.ciudad.nombre}, ${hotelFiltrado.pais.nombre}`,
-                            fecha: evento.fechaYHora || "Fecha no disponible",
-                            paginaWeb: `${hotelFiltrado.paginaWeb}` || "No disponible",
-                            duracion:  `${hotelFiltrado.duracion}` || "No disponible"
                         });
                     }
                 }
@@ -188,9 +176,6 @@ const DondeEstoy2 = () => {
                             id: actividadFiltrada.id,
                             title: actividadFiltrada.nombre,
                             ubicacion: `${actividadFiltrada.ubicacion}, ${actividadFiltrada.ciudad.nombre}, ${actividadFiltrada.pais.nombre}`,
-                            fecha: evento.fechaYHora || "Fecha no disponible",
-                            paginaWeb: `${actividadFiltrada.paginaWeb}` || "No disponible",
-                            duracion:  `${actividadFiltrada.duracion}` || "No disponible"
                         });
                     }
                 }
@@ -203,14 +188,11 @@ const DondeEstoy2 = () => {
                             id: trasladoFiltrado.id,
                             title: trasladoFiltrado.nombre,
                             ubicacion: `${trasladoFiltrado.lugarDeEncuentro}, ${trasladoFiltrado.ciudad.nombre}, ${trasladoFiltrado.pais.nombre}`,
-                            fecha: evento.fechaYHora || "Fecha no disponible",
-                            paginaWeb: `${trasladoFiltrado.paginaWeb}` || "No disponible",
-                            duracion:  `${trasladoFiltrado.horario}` || "No disponible"
                         });
                     }
                 }
   
-                return ubicaciones; 
+                return ubicaciones; // Cada evento puede tener varias ubicaciones
             });
         }, [listaEventos, aeropuertos, hoteles, actividades, traslados]);
     
@@ -238,30 +220,31 @@ const DondeEstoy2 = () => {
     const fetchEventMarkers = async () => {
       if (!eventos || eventos.length === 0) return;
   
-    
+      // Mapear cada evento y geocodificar su dirección
       const markers = await Promise.all(
         eventos.map(async (evento) => {
-       
+          // Determinar cuál atributo usar para la dirección
           const direccion = 
             evento.ubicacion || 
             evento.lugarDeEncuentro || 
             evento.direccion;
   
-          if (!direccion) return null; 
+          if (!direccion) return null; // Ignorar si no tiene dirección
   
           const location = await geocodeLocation(direccion);
           if (location) {
             return { lat: location.lat, lng: location.lng, title: evento.title };
           }
-          return null; 
+          return null; // Devolver null si no se puede obtener la ubicación
         })
       );
   
+      // Filtrar los nulls (eventos sin ubicación) y establecer los marcadores
       setEventMarkers(markers.filter(marker => marker !== null));
     };
   
     fetchEventMarkers();
-  }, [eventos]); 
+  }, [eventos]); // Ejecutar cuando el array `eventos` cambie
 
  
   useEffect(() => {
@@ -347,14 +330,7 @@ const DondeEstoy2 = () => {
             <Select
                 labelId="itinerario-label"
                 value={selectedItinerario}
-                    onChange={(e) => setSelectedItinerario(e.target.value)}
-                    sx={{
-                      marginBottom: 2, 
-                      borderRadius: 1, 
-                      backgroundColor: '#fff',
-                      boxShadow: 1, 
-                      '& .MuiSelect-icon': { color: 'primary.main' } 
-                    }}>
+                onChange={(e) => setSelectedItinerario(e.target.value)}>
                     {itinerarios.map((itinerario) => (
                 <MenuItem key={itinerario.id} value={itinerario.id}> {itinerario.grupoDeViajeId} </MenuItem>
             ))}
@@ -377,12 +353,7 @@ const DondeEstoy2 = () => {
  
               {showEventMarkers && eventMarkers.map((event, index) => (
                 <Marker key={index} position={[event.lat, event.lng]}>
-                  <Popup>
-                  <strong>{event.title}</strong> <br />
-                          {event.fecha} <br />
-                          {event.paginaWeb}<br />
-                          {event.duracion}
-                  </Popup>
+                  <Popup>{event.title}</Popup>
                 </Marker>
               ))}
             </MapContainer>
