@@ -46,6 +46,7 @@ import FormularioVuelo from './componentes/FormularioVuelo';
 import ActividadOpcional from './componentes/ActividadOpcional';
 import VerDatosViajero from './componentes/VerDatosViajeros';
 import CrearItinerario2 from './componentes/CrearItinerario2';
+import ListadoUsuariosDeActividadOpcional from './componentes/ListadoUsuariosDeActividadOpcional';
 
 
 
