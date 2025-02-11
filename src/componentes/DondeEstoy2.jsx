@@ -157,6 +157,9 @@ const DondeEstoy2 = () => {
                             id: aeropuertoFiltrado.id,
                             title: aeropuertoFiltrado.nombre,
                             ubicacion: `${aeropuertoFiltrado.direccion}, ${aeropuertoFiltrado.ciudad.nombre}, ${aeropuertoFiltrado.pais.nombre}`,
+                            fecha: evento.fechaYHora || "Fecha no disponible",
+                            paginaWeb: `${aeropuertoFiltrado.paginaWeb}` || "No disponible",
+                            duracion:  `${aeropuertoFiltrado.duracion}` || "No disponible"
                         });
                     }
                 }
@@ -169,6 +172,9 @@ const DondeEstoy2 = () => {
                             id: hotelFiltrado.id,
                             title: hotelFiltrado.nombre,
                             ubicacion: `${hotelFiltrado.direccion}, ${hotelFiltrado.ciudad.nombre}, ${hotelFiltrado.pais.nombre}`,
+                            fecha: evento.fechaYHora || "Fecha no disponible",
+                            paginaWeb: `${hotelFiltrado.paginaWeb}` || "No disponible",
+                            duracion:  `${hotelFiltrado.duracion}` || "No disponible"
                         });
                     }
                 }
@@ -181,6 +187,9 @@ const DondeEstoy2 = () => {
                             id: actividadFiltrada.id,
                             title: actividadFiltrada.nombre,
                             ubicacion: `${actividadFiltrada.ubicacion}, ${actividadFiltrada.ciudad.nombre}, ${actividadFiltrada.pais.nombre}`,
+                            fecha: evento.fechaYHora || "Fecha no disponible",
+                            paginaWeb: `${actividadFiltrada.paginaWeb}` || "No disponible",
+                            duracion:  `${actividadFiltrada.duracion}` || "No disponible"
                         });
                     }
                 }
@@ -193,11 +202,14 @@ const DondeEstoy2 = () => {
                             id: trasladoFiltrado.id,
                             title: trasladoFiltrado.nombre,
                             ubicacion: `${trasladoFiltrado.lugarDeEncuentro}, ${trasladoFiltrado.ciudad.nombre}, ${trasladoFiltrado.pais.nombre}`,
+                            fecha: evento.fechaYHora || "Fecha no disponible",
+                            paginaWeb: `${trasladoFiltrado.paginaWeb}` || "No disponible",
+                            duracion:  `${trasladoFiltrado.horario}` || "No disponible"
                         });
                     }
                 }
   
-                return ubicaciones; // Cada evento puede tener varias ubicaciones
+                return ubicaciones; 
             });
         }, [listaEventos, aeropuertos, hoteles, actividades, traslados]);
     
@@ -225,31 +237,30 @@ const DondeEstoy2 = () => {
     const fetchEventMarkers = async () => {
       if (!eventos || eventos.length === 0) return;
   
-      // Mapear cada evento y geocodificar su dirección
+    
       const markers = await Promise.all(
         eventos.map(async (evento) => {
-          // Determinar cuál atributo usar para la dirección
+       
           const direccion = 
             evento.ubicacion || 
             evento.lugarDeEncuentro || 
             evento.direccion;
   
-          if (!direccion) return null; // Ignorar si no tiene dirección
+          if (!direccion) return null; 
   
           const location = await geocodeLocation(direccion);
           if (location) {
             return { lat: location.lat, lng: location.lng, title: evento.title };
           }
-          return null; // Devolver null si no se puede obtener la ubicación
+          return null; 
         })
       );
   
-      // Filtrar los nulls (eventos sin ubicación) y establecer los marcadores
       setEventMarkers(markers.filter(marker => marker !== null));
     };
   
     fetchEventMarkers();
-  }, [eventos]); // Ejecutar cuando el array `eventos` cambie
+  }, [eventos]); 
 
  
   useEffect(() => {
@@ -358,7 +369,12 @@ const DondeEstoy2 = () => {
  
               {showEventMarkers && eventMarkers.map((event, index) => (
                 <Marker key={index} position={[event.lat, event.lng]}>
-                  <Popup>{event.title}</Popup>
+                  <Popup>
+                  <strong>{event.title}</strong> <br />
+                          {event.fecha} <br />
+                          {event.paginaWeb}<br />
+                          {event.duracion}
+                  </Popup>
                 </Marker>
               ))}
             </MapContainer>
