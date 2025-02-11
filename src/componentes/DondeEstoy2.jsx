@@ -60,44 +60,45 @@ const DondeEstoy2 = () => {
     const [traslados, setTraslados] = useState([]);
   const token = localStorage.getItem('token');
   const baseUrl =  process.env.REACT_APP_API_URL;
-  const idUsuario = localStorage.getItem('id');
-  const rol = localStorage.getItem('rol');
-  const [itinerarios, setItinerarios] = useState([]);
+ // const idUsuario = localStorage.getItem('id');
+  //const rol = localStorage.getItem('rol');
+  const [itinerarios] = useState([]);
   const [selectedItinerario, setSelectedItinerario] = useState("");
 
 
 
 
-  const cargarItinerarios = useCallback(async () => {
-    if (!rol) return;
-    let url = "";
-    if (rol === "coordinador") {
-      url = `${baseUrl}/Itinerario/ItinerariosDeCoordinador/${idUsuario}`;
-    } else if (rol === "viajero") {
-      url = `${baseUrl}/Itinerario/ItinerariosDeViajero/${idUsuario}`;
-    } else {
-      return;
-    }
+  // const cargarItinerarios = useCallback(async () => {
+  //   // if (!rol) return;
+    // let url = "";
+    // if (rol === "coordinador") {
+    //   url = `${baseUrl}/Itinerario/ItinerariosDeCoordinador/${idUsuario}`;
+    // } else if (rol === "viajero") {
+    //   url = `${baseUrl}/Itinerario/ItinerariosDeViajero/${idUsuario}`;
+    // } else {
+    //   return;
+    // }
 
-    try {
-      const response = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error("Error al obtener los itinerarios");
-      const data = await response.json();
-      setItinerarios(data);
-    } catch (error) {
-      console.error("Error al cargar los itinerarios:", error);
-    }
-  }, [baseUrl, token, idUsuario, rol]);
+  //   try {
+  //     const response = await fetch(url, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     if (!response.ok) throw new Error("Error al obtener los itinerarios");
+  //     const data = await response.json();
+  //     setItinerarios(data);
+  //   } catch (error) {
+  //     console.error("Error al cargar los itinerarios:", error);
+  //   }
+  // }, [baseUrl, token, idUsuario, rol]);
 
-      useEffect(() => {
-        cargarItinerarios();
-      }, [cargarItinerarios]);
+  //     useEffect(() => {
+  //       cargarItinerarios();
+  //     }, [cargarItinerarios]);
      
     console.log("itinerarios", itinerarios);
     
-    console.log("itinerariosSeleccionado", selectedItinerario);
+  console.log("itinerariosSeleccionado", selectedItinerario);
+  
         const fetchItinerario = useCallback(async () => {
             try {
                 const response = await fetch(`${baseUrl}/Itinerario/${selectedItinerario}/eventos`, {
@@ -346,7 +347,14 @@ const DondeEstoy2 = () => {
             <Select
                 labelId="itinerario-label"
                 value={selectedItinerario}
-                onChange={(e) => setSelectedItinerario(e.target.value)}>
+                    onChange={(e) => setSelectedItinerario(e.target.value)}
+                    sx={{
+                      marginBottom: 2, 
+                      borderRadius: 1, 
+                      backgroundColor: '#fff',
+                      boxShadow: 1, 
+                      '& .MuiSelect-icon': { color: 'primary.main' } 
+                    }}>
                     {itinerarios.map((itinerario) => (
                 <MenuItem key={itinerario.id} value={itinerario.id}> {itinerario.grupoDeViajeId} </MenuItem>
             ))}
