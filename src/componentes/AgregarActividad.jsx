@@ -56,19 +56,22 @@ const navigate = useNavigate();
   // };
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-  
-    setFormData(prev => ({
+    
+    setFormData(prev => {
+      let newData = {
         ...prev,
         [name]: type === "checkbox" ? checked : value
-      }));
-  
-      // Si se está cambiando la ciudad, también asignar su nombre
+      };
+
+      // Si se cambia la ciudad, guardamos también su nombre
       if (name === "ciudadId") {
         const ciudadSeleccionada = ciudades.find(ciudad => ciudad.id === Number(value));
-        FormData.ciudad = ciudadSeleccionada ? ciudadSeleccionada.nombre : "";
+        newData.ciudad = ciudadSeleccionada ? ciudadSeleccionada.nombre : "";
       }
-    };
-  
+
+      return newData;
+    });
+  };
   
     console.log("formData", formData)
     
