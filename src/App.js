@@ -1,15 +1,13 @@
 import React from 'react';
 import './App.css';
 import './estilos.css';
-import { useEffect,useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import NoEncontrado from './componentes/NoEncontrado';
 import Login from './componentes/Login'; 
 import Registro from './componentes/Registro'; 
 import CambiarContrasena from './componentes/CambioContrasena';
 import Logout from './componentes/Logout';
 import Dashboard from './componentes/Dashboard/Dashboard';
-import { Routes, Route} from 'react-router-dom'; 
+import { BrowserRouter, Routes, Route} from 'react-router-dom'; 
 import VerMisDatos from './componentes/VerMisDatos';
 import MisDatos from './componentes/MisDatos';
 import { UsuarioProvider } from './hooks/UsuarioContext';
@@ -51,33 +49,13 @@ import CrearItinerario2 from './componentes/CrearItinerario2';
 import ListadoUsuariosDeActividadOpcional from './componentes/ListadoUsuariosDeActividadOpcional';
 
 const App = () => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
-  const isTokenExpired = useCallback(() => {
-    if (!token) return true;  
-    const tokenPayload = JSON.parse(atob(token.split('.')[1])); 
-    const expirationDate = new Date(tokenPayload.exp * 1000); 
-    return expirationDate < new Date();  
-  }, [token]); 
-
-  useEffect(() => {
-    if (token && !isTokenExpired()) {
-    
-      navigate("/dashboard");
-    } else {
-     
-      localStorage.removeItem("token");
-      localStorage.removeItem("id");
-      navigate("/"); 
-    }
-  }, [token, navigate, isTokenExpired]); 
   return (
     <UsuarioProvider>
          <PaisProvider>
          <CiudadProvider>
       <SnackbarProvider>
-
+      <BrowserRouter future={{ v7_relativeSplatPath: true }}>
       <Layout>
           <Routes>
               <Route path="/" element={<Login />} />
@@ -125,7 +103,7 @@ const App = () => {
           </Routes>
          
           </Layout>
-       
+        </BrowserRouter>
         </SnackbarProvider>
         </CiudadProvider>
         </PaisProvider>
