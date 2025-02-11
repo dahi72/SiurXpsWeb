@@ -1,13 +1,15 @@
 import React from 'react';
 import './App.css';
 import './estilos.css';
+import { useEffect,useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import NoEncontrado from './componentes/NoEncontrado';
 import Login from './componentes/Login'; 
 import Registro from './componentes/Registro'; 
 import CambiarContrasena from './componentes/CambioContrasena';
 import Logout from './componentes/Logout';
 import Dashboard from './componentes/Dashboard/Dashboard';
-import { BrowserRouter, Routes, Route} from 'react-router-dom'; 
+import { Routes, Route} from 'react-router-dom'; 
 import VerMisDatos from './componentes/VerMisDatos';
 import MisDatos from './componentes/MisDatos';
 import { UsuarioProvider } from './hooks/UsuarioContext';
@@ -48,18 +50,37 @@ import VerDatosViajero from './componentes/VerDatosViajeros';
 import CrearItinerario2 from './componentes/CrearItinerario2';
 import ListadoUsuariosDeActividadOpcional from './componentes/ListadoUsuariosDeActividadOpcional';
 
-
-
 const App = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
+  // Usar useCallback para asegurarnos de que la función no cambie en cada render
+  const isTokenExpired = useCallback(() => {
+    if (!token) return true;  // Si no hay token, está expirado
+    const tokenPayload = JSON.parse(atob(token.split('.')[1])); // Decodificar el token
+    const expirationDate = new Date(tokenPayload.exp * 1000); // Convertir a milisegundos
+    return expirationDate < new Date();  // Comparar si la fecha de expiración es menor a la actual
+  }, [token]);  // Dependemos de token, ya que si cambia, la función necesita actualizarse
+
+  useEffect(() => {
+    if (token && !isTokenExpired()) {
+      // Si el token es válido y no ha expirado, redirige al dashboard
+      navigate("/dashboard");
+    } else {
+      // Si el token está expirado o no existe, elimina el token y redirige al login
+      localStorage.removeItem("token"); // Eliminar el token del localStorage
+      localStorage.removeItem("id"); // También puedes eliminar el id si es necesario
+      navigate("/login"); // Redirigir al login
+    }
+  }, [token, navigate, isTokenExpired]); 
   return (
     <UsuarioProvider>
          <PaisProvider>
          <CiudadProvider>
       <SnackbarProvider>
-      <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+
       <Layout>
-              <Routes>
+          <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/404" element={<NoEncontrado />} />
               <Route path="*" element={<NoEncontrado />} />
@@ -100,10 +121,12 @@ const App = () => {
               <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
               <Route path="/verDatosViajero" element={<VerDatosViajero />} />
               <Route path="/usuariosActividadOpcional/:idItinerario" element={<ListadoUsuariosDeActividadOpcional />} />
+
+
           </Routes>
          
           </Layout>
-        </BrowserRouter>
+       
         </SnackbarProvider>
         </CiudadProvider>
         </PaisProvider>
