@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const baseUrl = process.env.REACT_APP_API_URL; 
-const token = localStorage.getItem("token"); 
+const token = localStorage.getItem('token'); 
 
 const AltaActividad = () => {
 const navigate = useNavigate();
@@ -30,17 +30,40 @@ const navigate = useNavigate();
       setPaises(paisesOrdenados);
     });
   }, []);
+  // useEffect(() => {
+  //   if (!formData.paisId) return; // Evitar ejecución innecesaria
+  
+  //   const paisSeleccionado = paises.find(p => p.id === Number(formData.paisId));
+  //   if (paisSeleccionado) {
+  //     // Solo actualizamos formData si el país seleccionado cambia
+  //     if (formData.paisId !== paisSeleccionado.id) {
+  //       setFormData(prev => ({
+  //         ...prev,
+  //         paisId: paisSeleccionado.id,   // Actualizamos el ID del país
+  //         pais: paisSeleccionado          // Actualizamos el objeto del país completo
+  //       }));
+  //     }
+  
+  //     // Obtener ciudades del país seleccionado
+  //     axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { 
+  //       headers: { Authorization: `Bearer ${token}` } 
+  //     }).then(response => {
+  //       setCiudades(response.data);
+  //     });
+  //   }
+  // }, [formData.paisId, paises]);  // Solo dependemos de paisId y paises para evitar loop
+  
   useEffect(() => {
     if (!formData.paisId) return; // Evitar ejecución innecesaria
-  
+    
     const paisSeleccionado = paises.find(p => p.id === Number(formData.paisId));
     if (paisSeleccionado) {
-      // Solo actualizamos formData si el país seleccionado cambia
-      if (formData.paisId !== paisSeleccionado.id) {
+      // Solo actualizamos si el país seleccionado cambió
+      if (!formData.pais || formData.pais !== paisSeleccionado) {
         setFormData(prev => ({
           ...prev,
-          paisId: paisSeleccionado.id,   // Actualizamos el ID del país
-          pais: paisSeleccionado          // Actualizamos el objeto del país completo
+          paisId: paisSeleccionado.id,   // Aseguramos que se mantenga el ID
+          pais: paisSeleccionado  
         }));
       }
   
@@ -51,7 +74,7 @@ const navigate = useNavigate();
         setCiudades(response.data);
       });
     }
-  }, [formData.paisId, paises]);  // Solo dependemos de paisId y paises para evitar loop
+  }, [formData.paisId, paises, formData.pais]);
   
   
   
