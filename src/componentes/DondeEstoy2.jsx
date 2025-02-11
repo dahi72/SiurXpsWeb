@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Box, Button, Typography, CircularProgress, Paper, Snackbar, Alert, Backdrop, MenuItem, InputLabel, FormControl, Select } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -92,31 +92,36 @@ const DondeEstoy2 = () => {
      
     console.log("itinerarios", itinerarios);
     
-    console.log("itinerariosSeleccionado", selectedItinerario);
-        const fetchItinerario = useCallback(async () => {
-            try {
-                const response = await fetch(`${baseUrl}/Itinerario/${selectedItinerario}/eventos`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+  console.log("itinerariosSeleccionado", selectedItinerario);
+
+useEffect(() => {
+  if (!selectedItinerario) return; 
+
+  const fetchItinerario = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/Itinerario/${selectedItinerario}/eventos`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setListaEventos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar los itinerarios:', error);
+    }
+  };
+
+  fetchItinerario();
+}, [baseUrl, token, selectedItinerario]);
+
  
-                if (!response.ok) {
-                    throw new Error(`${response.status}: ${response.statusText}`);
-                }
- 
-                const data = await response.json();
-                setListaEventos(Array.isArray(data) ? data : []);
-            } catch (error) {
-                console.error('Error al cargar los itinerarios:', error);
-            }
-        }, [baseUrl, token, selectedItinerario]);
- 
-        useEffect(() => {
-            fetchItinerario();
-        }, [fetchItinerario]);
         useEffect(() => {
             const cargarDatos = async () => {
                 try {
@@ -141,61 +146,72 @@ const DondeEstoy2 = () => {
 
      
         const eventos = useMemo(() => {
-            return listaEventos.flatMap((evento) => {
-                const ubicaciones = [];
-  
-                // Aeropuerto
-                if (evento.aeropuertoId) {
-                    const aeropuertoFiltrado = aeropuertos.find(aero => aero.id === evento.aeropuertoId);
-                    if (aeropuertoFiltrado) {
-                        ubicaciones.push({
-                            id: aeropuertoFiltrado.id,
-                            title: aeropuertoFiltrado.nombre,
-                            ubicacion: `${aeropuertoFiltrado.direccion}, ${aeropuertoFiltrado.ciudad.nombre}, ${aeropuertoFiltrado.pais.nombre}`,
-                        });
-                    }
-                }
-  
-                // Hotel
-                if (evento.hotelId) {
-                    const hotelFiltrado = hoteles.find(hotel => hotel.id === evento.hotelId);
-                    if (hotelFiltrado) {
-                        ubicaciones.push({
-                            id: hotelFiltrado.id,
-                            title: hotelFiltrado.nombre,
-                            ubicacion: `${hotelFiltrado.direccion}, ${hotelFiltrado.ciudad.nombre}, ${hotelFiltrado.pais.nombre}`,
-                        });
-                    }
-                }
-  
-                // Actividad
-                if (evento.actividadId) {
-                    const actividadFiltrada = actividades.find(act => act.id === evento.actividadId);
-                    if (actividadFiltrada) {
-                        ubicaciones.push({
-                            id: actividadFiltrada.id,
-                            title: actividadFiltrada.nombre,
-                            ubicacion: `${actividadFiltrada.ubicacion}, ${actividadFiltrada.ciudad.nombre}, ${actividadFiltrada.pais.nombre}`,
-                        });
-                    }
-                }
-  
-                // Traslado
-                if (evento.trasladoId) {
-                    const trasladoFiltrado = traslados.find(traslado => traslado.id === evento.trasladoId);
-                    if (trasladoFiltrado) {
-                        ubicaciones.push({
-                            id: trasladoFiltrado.id,
-                            title: trasladoFiltrado.nombre,
-                            ubicacion: `${trasladoFiltrado.lugarDeEncuentro}, ${trasladoFiltrado.ciudad.nombre}, ${trasladoFiltrado.pais.nombre}`,
-                        });
-                    }
-                }
-  
-                return ubicaciones; // Cada evento puede tener varias ubicaciones
-            });
+          return listaEventos.flatMap((evento) => {
+              const ubicaciones = [];
+        
+              // Aeropuerto
+              if (evento.aeropuertoId) {
+                  const aeropuertoFiltrado = aeropuertos.find(aero => aero.id === evento.aeropuertoId);
+                  if (aeropuertoFiltrado) {
+                      ubicaciones.push({
+                          id: aeropuertoFiltrado.id,
+                          title: aeropuertoFiltrado.nombre,
+                          ubicacion: `${aeropuertoFiltrado.direccion}, ${aeropuertoFiltrado.ciudad.nombre}, ${aeropuertoFiltrado.pais.nombre}`,
+                          fecha: evento.fechaYHora || "Fecha no disponible",
+                          paginaWeb: `${aeropuertoFiltrado.paginaWeb}` || "No disponible",
+                          duracion:  `${aeropuertoFiltrado.duracion}` || ""
+                      });
+                  }
+              }
+        
+              // Hotel
+              if (evento.hotelId) {
+                  const hotelFiltrado = hoteles.find(hotel => hotel.id === evento.hotelId);
+                  if (hotelFiltrado) {
+                      ubicaciones.push({
+                          id: hotelFiltrado.id,
+                          title: hotelFiltrado.nombre,
+                          ubicacion: `${hotelFiltrado.direccion}, ${hotelFiltrado.ciudad.nombre}, ${hotelFiltrado.pais.nombre}`,
+                          fecha: evento.fechaYHora || "Fecha no disponible",
+                          paginaWeb: `${hotelFiltrado.paginaWeb}` || "No disponible",
+                          duracion:  `${hotelFiltrado.duracion}` || ""
+                      });
+                  }
+              }
+        
+              // Actividad
+              if (evento.actividadId) {
+                  const actividadFiltrada = actividades.find(act => act.id === evento.actividadId);
+                  if (actividadFiltrada) {
+                      ubicaciones.push({
+                          id: actividadFiltrada.id,
+                          title: actividadFiltrada.nombre,
+                          ubicacion: `${actividadFiltrada.ubicacion}, ${actividadFiltrada.ciudad.nombre}, ${actividadFiltrada.pais.nombre}`,
+                          fecha: evento.fechaYHora || "Fecha no disponible",
+                          paginaWeb: `${actividadFiltrada.paginaWeb}` || "",
+                          duracion:  `${actividadFiltrada.duracion}` || "No disponible"
+                      });
+                  }
+              }
+        
+              // Traslado
+              if (evento.trasladoId) {
+                  const trasladoFiltrado = traslados.find(traslado => traslado.id === evento.trasladoId);
+                  if (trasladoFiltrado) {
+                      ubicaciones.push({
+                          id: trasladoFiltrado.id,
+                          title: trasladoFiltrado.nombre,
+                          ubicacion: `${trasladoFiltrado.lugarDeEncuentro}, ${trasladoFiltrado.ciudad.nombre}, ${trasladoFiltrado.pais.nombre}`,
+                          fecha: evento.fechaYHora || "Fecha no disponible",
+                          paginaWeb: `${trasladoFiltrado.paginaWeb}` || "",
+                          duracion:  `${trasladoFiltrado.horario}` || "No disponible"
+                      });
+                  }
+              }
+        
+              return ubicaciones; 
+          });
         }, [listaEventos, aeropuertos, hoteles, actividades, traslados]);
-    
     
   console.log("eventos", eventos); 
     
@@ -353,7 +369,15 @@ const DondeEstoy2 = () => {
  
               {showEventMarkers && eventMarkers.map((event, index) => (
                 <Marker key={index} position={[event.lat, event.lng]}>
-                  <Popup>{event.title}</Popup>
+                  <Popup>{event.title}
+                  <strong>{event.title}</strong>
+                    <br />
+                    <a href={event.paginaWeb} target="_blank" rel="noopener noreferrer">{event.paginaWeb}</a>
+                    <br />
+                     {event.duracion} 
+                    <br />
+                     {new Date(event.fechaYhora).toLocaleString()}
+                  </Popup>
                 </Marker>
               ))}
             </MapContainer>
