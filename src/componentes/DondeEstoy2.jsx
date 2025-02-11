@@ -157,9 +157,7 @@ useEffect(() => {
                           id: aeropuertoFiltrado.id,
                           title: aeropuertoFiltrado.nombre,
                           ubicacion: `${aeropuertoFiltrado.direccion}, ${aeropuertoFiltrado.ciudad.nombre}, ${aeropuertoFiltrado.pais.nombre}`,
-                          fecha: evento.fechaYHora || "Fecha no disponible",
-                          paginaWeb: `${aeropuertoFiltrado.paginaWeb}` || "No disponible",
-                          duracion:  `${aeropuertoFiltrado.duracion}` || ""
+                    
                       });
                   }
               }
@@ -172,9 +170,7 @@ useEffect(() => {
                           id: hotelFiltrado.id,
                           title: hotelFiltrado.nombre,
                           ubicacion: `${hotelFiltrado.direccion}, ${hotelFiltrado.ciudad.nombre}, ${hotelFiltrado.pais.nombre}`,
-                          fecha: evento.fechaYHora || "Fecha no disponible",
-                          paginaWeb: `${hotelFiltrado.paginaWeb}` || "No disponible",
-                          duracion:  `${hotelFiltrado.duracion}` || ""
+                          
                       });
                   }
               }
@@ -187,9 +183,7 @@ useEffect(() => {
                           id: actividadFiltrada.id,
                           title: actividadFiltrada.nombre,
                           ubicacion: `${actividadFiltrada.ubicacion}, ${actividadFiltrada.ciudad.nombre}, ${actividadFiltrada.pais.nombre}`,
-                          fecha: evento.fechaYHora || "Fecha no disponible",
-                          paginaWeb: `${actividadFiltrada.paginaWeb}` || "",
-                          duracion:  `${actividadFiltrada.duracion}` || "No disponible"
+                       
                       });
                   }
               }
@@ -202,9 +196,6 @@ useEffect(() => {
                           id: trasladoFiltrado.id,
                           title: trasladoFiltrado.nombre,
                           ubicacion: `${trasladoFiltrado.lugarDeEncuentro}, ${trasladoFiltrado.ciudad.nombre}, ${trasladoFiltrado.pais.nombre}`,
-                          fecha: evento.fechaYHora || "Fecha no disponible",
-                          paginaWeb: `${trasladoFiltrado.paginaWeb}` || "",
-                          duracion:  `${trasladoFiltrado.horario}` || "No disponible"
                       });
                   }
               }
@@ -371,12 +362,6 @@ useEffect(() => {
                 <Marker key={index} position={[event.lat, event.lng]}>
                   <Popup>
                   <strong>{event.title}</strong>
-                    <br />
-                    {event.paginaWeb}
-                    <br />
-                     {event.duracion} 
-                    <br />
-                     {event.fechaYhora}
                   </Popup>
                 </Marker>
               ))}

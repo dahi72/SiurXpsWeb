@@ -16,7 +16,9 @@ const navigate = useNavigate();
     opcional: false,
     paisId: "",
     ciudadId: "",
-    tips: ""
+    tips: "",
+    pais: null,
+    ciudad: null
   });
   
   const [paises, setPaises] = useState([]);
@@ -30,15 +32,16 @@ const navigate = useNavigate();
   }, []);
 
   useEffect(() => {
-    if (formData.paisId) {
+    if (formData.paisId ) {
       const paisSeleccionado = paises.find(p => p.id === formData.paisId);
       if (paisSeleccionado) {
+        formData.pais = paisSeleccionado;
         axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
           setCiudades(response.data);
         });
       }
     }
-  }, [formData.paisId, paises]);
+  }, [formData.paisId, paises, formData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -60,7 +63,7 @@ const navigate = useNavigate();
         })
         .then(response => {
             alert("Actividad creada con éxito");
-            navigate(-1); // Redirige a la página anterior
+            navigate(-1); 
           })
    
         .catch(error => {
@@ -100,9 +103,9 @@ const navigate = useNavigate();
         <Grid item xs={6}>
           <FormControl fullWidth>
             <InputLabel>Ciudad</InputLabel>
-            <Select name="ciudadId" value={formData.ciudadId} onChange={handleChange} required>
+            <Select name="ciudadId" value={formData.ciudad.id && formData.ciudad} onChange={handleChange} required>
               {ciudades.map(ciudad => (
-                <MenuItem key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</MenuItem>
+                <MenuItem key={ciudad.id} value={ciudad}>{ciudad.nombre}</MenuItem>
               ))}
             </Select>
           </FormControl>
