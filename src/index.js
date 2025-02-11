@@ -3,20 +3,22 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { BrowserRouter } from 'react-router-dom';  // Importa BrowserRouter
 
 const theme = createTheme({
     typography: {
-      fontFamily: 'Poppins, sans-serif', 
-        },
-  });
-  
+        fontFamily: 'Poppins, sans-serif',
+    },
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <App />
-        </ThemeProvider>
+        <BrowserRouter> {/* Envolvemos App con BrowserRouter */}
+            <ThemeProvider theme={theme}>
+                <App />
+            </ThemeProvider>
+        </BrowserRouter>
     </React.StrictMode>
 );// Registro del Service Worker
 if ('serviceWorker' in navigator) {
