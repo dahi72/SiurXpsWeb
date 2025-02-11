@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Box, Button, Typography, Snackbar, Alert, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
-import { useParams } from "react-router-dom";
+
+
 const ListadoUsuariosDeActividadOpcional = () => {
   const [actividades, setActividades] = useState([]);
   const [usuarios, setUsuarios] = useState({});
@@ -8,7 +9,7 @@ const ListadoUsuariosDeActividadOpcional = () => {
   const [mensaje, setMensaje] = useState("");
   const [tipoAlerta, setTipoAlerta] = useState("success");
   const baseUrl = process.env.REACT_APP_API_URL;
-  const { idItinerario } = useParams();
+
   useEffect(() => {
     fetch(`${baseUrl}/Actividad/opcionales`, {
       method: "GET",
