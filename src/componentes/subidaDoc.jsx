@@ -185,6 +185,12 @@ export default MisDatos;
 
 
 
+////////MAPA
+
+/////////////MAPA
+
+
+
 
 // import React, { useState, useContext } from 'react';
 // import { 
@@ -603,5 +609,3 @@ export default MisDatos;
 // };
 
 // export default MisDatos;
-
-export default ImageUploader;

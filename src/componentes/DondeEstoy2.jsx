@@ -369,14 +369,14 @@ useEffect(() => {
  
               {showEventMarkers && eventMarkers.map((event, index) => (
                 <Marker key={index} position={[event.lat, event.lng]}>
-                  <Popup>{event.title}
+                  <Popup>
                   <strong>{event.title}</strong>
                     <br />
-                    <a href={event.paginaWeb} target="_blank" rel="noopener noreferrer">{event.paginaWeb}</a>
+                    {event.paginaWeb}
                     <br />
                      {event.duracion} 
                     <br />
-                     {new Date(event.fechaYhora).toLocaleString()}
+                     {event.fechaYhora}
                   </Popup>
                 </Marker>
               ))}
