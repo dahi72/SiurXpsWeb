@@ -54,23 +54,22 @@ const App = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // Usar useCallback para asegurarnos de que la función no cambie en cada render
   const isTokenExpired = useCallback(() => {
-    if (!token) return true;  // Si no hay token, está expirado
-    const tokenPayload = JSON.parse(atob(token.split('.')[1])); // Decodificar el token
-    const expirationDate = new Date(tokenPayload.exp * 1000); // Convertir a milisegundos
-    return expirationDate < new Date();  // Comparar si la fecha de expiración es menor a la actual
-  }, [token]);  // Dependemos de token, ya que si cambia, la función necesita actualizarse
+    if (!token) return true;  
+    const tokenPayload = JSON.parse(atob(token.split('.')[1])); 
+    const expirationDate = new Date(tokenPayload.exp * 1000); 
+    return expirationDate < new Date();  
+  }, [token]); 
 
   useEffect(() => {
     if (token && !isTokenExpired()) {
-      // Si el token es válido y no ha expirado, redirige al dashboard
+    
       navigate("/dashboard");
     } else {
-      // Si el token está expirado o no existe, elimina el token y redirige al login
-      localStorage.removeItem("token"); // Eliminar el token del localStorage
-      localStorage.removeItem("id"); // También puedes eliminar el id si es necesario
-      navigate("/login"); // Redirigir al login
+     
+      localStorage.removeItem("token");
+      localStorage.removeItem("id");
+      navigate("/"); 
     }
   }, [token, navigate, isTokenExpired]); 
   return (
