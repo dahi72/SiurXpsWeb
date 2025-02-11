@@ -30,22 +30,47 @@ const navigate = useNavigate();
       setPaises(paisesOrdenados);
     });
   }, []);
-
   useEffect(() => {
-    if (formData.paisId ) {
-      const paisSeleccionado = paises.find(p => p.id === formData.paisId);
-      if (paisSeleccionado) {
+    if (!formData.paisId) return; // Evitar ejecución innecesaria
+  
+    const paisSeleccionado = paises.find(p => p.id === Number(formData.paisId));
+    if (paisSeleccionado) {
+      // Solo actualizamos formData si el país seleccionado cambia
+      if (formData.paisId !== paisSeleccionado.id) {
         setFormData(prev => ({
           ...prev,
-          paisId: paisSeleccionado.id, // Asegurarse de mantener paisId
-          pais: paisSeleccionado // Guardar el nombre del país
+          paisId: paisSeleccionado.id,   // Actualizamos el ID del país
+          pais: paisSeleccionado          // Actualizamos el objeto del país completo
         }));
-        axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
-          setCiudades(response.data);
-        });
       }
+  
+      // Obtener ciudades del país seleccionado
+      axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      }).then(response => {
+        setCiudades(response.data);
+      });
     }
-  }, [formData.paisId, paises, formData]);
+  }, [formData.paisId, paises]);  // Solo dependemos de paisId y paises para evitar loop
+  
+  
+  
+
+  // useEffect(() => {
+  //   if (formData.paisId ) {
+  //     const paisSeleccionado = paises.find(p => p.id === formData.paisId);
+  //     if (paisSeleccionado) {
+  //       setFormData(prev => ({
+  //         ...prev,
+  //         paisId: paisSeleccionado.id, // Asegurarse de mantener paisId
+  //         pais: paisSeleccionado // Guardar el nombre del país
+  //       }));
+  //       axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
+  //         setCiudades(response.data);
+  //       });
+  //     }
+  //   }
+  // }, [formData.paisId, paises, formData]);
 
   // const handleChange = (e) => {
   //   const { name, value, type, checked } = e.target;
