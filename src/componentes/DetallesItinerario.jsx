@@ -125,7 +125,11 @@ const DetallesItinerario = () => {
                     console.error("Invalid response format:", eventosData);
                     throw new Error("La respuesta no tiene el formato esperado");
                 }
-
+                if (eventosData.length === 0)
+                {
+                    alert("El itinerario no tiene eventos asociados");
+                    return;
+                }
                 setEventos(eventosData);
                 fetchedOnce.current = true;
 
