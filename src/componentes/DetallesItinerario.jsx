@@ -45,8 +45,12 @@ const DetallesItinerario = () => {
             console.log(`Fetching: ${url}`);
             const response = await fetch(url, { method: "GET", headers });
             const data = await response.json();
-
+            console.log("response", response);
             if (!response.ok) {
+                if (data.length === 0) {
+                    console.log("El itinerario no tiene eventos asociados");
+                    return;
+                }
                 if (response.status === 404) {
                     console.error("Not Found: La ruta solicitada no existe.");
                     throw new Error("No se encontró el recurso solicitado (404).");
@@ -124,11 +128,6 @@ const DetallesItinerario = () => {
                 if (!Array.isArray(eventosData)) {
                     console.error("Invalid response format:", eventosData);
                     throw new Error("La respuesta no tiene el formato esperado");
-                }
-                if (eventosData.length === 0)
-                {
-                    alert("El itinerario no tiene eventos asociados");
-                    return;
                 }
                 setEventos(eventosData);
                 fetchedOnce.current = true;
