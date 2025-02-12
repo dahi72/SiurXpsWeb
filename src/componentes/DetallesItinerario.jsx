@@ -45,7 +45,6 @@ const DetallesItinerario = () => {
             console.log(`Fetching: ${url}`);
             const response = await fetch(url, { method: "GET", headers });
             const data = await response.json();
-            console.log("response", response);
             if (!response.ok) {
                 if (data.length === 0) {
                     console.log("El itinerario no tiene eventos asociados");
@@ -129,6 +128,13 @@ const DetallesItinerario = () => {
                     console.error("Invalid response format:", eventosData);
                     throw new Error("La respuesta no tiene el formato esperado");
                 }
+
+                if (eventosData.length === 0) {
+                    console.warn("No tiene eventos para mostrar");
+                    setEventos([]); 
+                    return;
+                }
+
                 setEventos(eventosData);
                 fetchedOnce.current = true;
 
