@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { TextField, Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const baseUrl = process.env.REACT_APP_API_URL;
 
 const AltaActividad = () => {
   const navigate = useNavigate();
+  const baseUrl = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     id: 0,
     nombre: "",
@@ -31,9 +31,9 @@ const AltaActividad = () => {
   
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
-
+  const token = localStorage.getItem('token');
   useEffect(() => {
-    const token = localStorage.getItem('token');
+   
     if (!token) {
       navigate('/login');
       return;
@@ -58,11 +58,10 @@ const AltaActividad = () => {
           navigate('/login');
         }
       });
-  }, [navigate]);
+  }, [navigate, baseUrl, token]);
 
   useEffect(() => {
     if (formData.paisId) {
-      const token = localStorage.getItem('token');
       const paisSeleccionado = paises.find(p => p.id === Number(formData.paisId));
       
       if (paisSeleccionado) {
@@ -92,7 +91,7 @@ const AltaActividad = () => {
           });
       }
     }
-  }, [formData.paisId, paises]);
+  }, [formData.paisId, paises, baseUrl, token]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -121,7 +120,6 @@ const AltaActividad = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
     
     if (!token) {
       alert('No está autorizado. Por favor inicie sesión.');

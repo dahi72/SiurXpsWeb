@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { TextField, Select, MenuItem, FormControl, InputLabel, Button, Grid } from "@mui/material";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const baseUrl = process.env.REACT_APP_API_URL; 
@@ -15,31 +14,101 @@ const navigate = useNavigate();
     tipoDeTraslado: "",
     paisId: "",
     ciudadId: "",
-    tips:""
+    tips: "",
+    pais: {
+      id: 0,
+      nombre: "",
+      codigoIso: ""
+    },
+    ciudad: {
+      id: 0,
+      nombre: "",
+      paisId: 0,
+      paisCodigoIso: ""
+    }
   });
   
   const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
 
-  useEffect(() => {
-    axios.get(`${baseUrl}/Pais/listado`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
-      const paisesOrdenados = response.data.sort((a, b) => a.nombre.localeCompare(b.nombre));
-      setPaises(paisesOrdenados);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${baseUrl}/Pais/listado`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
+  //     const paisesOrdenados = response.data.sort((a, b) => a.nombre.localeCompare(b.nombre));
+  //     setPaises(paisesOrdenados);
+  //   });
+  // }, []);
+  // useEffect(() => {
+  //   if (formData.paisId) {
+  //     const paisSeleccionado = paises.find(p => p.id === formData.paisId);
+  //     if (paisSeleccionado) {
+  //       axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
+  //         setCiudades(response.data);
+  //       });
+  //     }
+  //   }
+  // }, [formData.paisId, paises]);
 
-  
-    
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    fetch(`${baseUrl}/Pais/listado`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch countries');
+        return response.json();
+      })
+      .then(data => {
+        const paisesOrdenados = data.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        setPaises(paisesOrdenados);
+      })
+      .catch(error => {
+        console.error("Error fetching countries:", error);
+        if (error.response?.status === 401) {
+          navigate('/login');
+        }
+      });
+  }, [navigate]);
+
+
   useEffect(() => {
     if (formData.paisId) {
-      const paisSeleccionado = paises.find(p => p.id === formData.paisId);
+      const paisSeleccionado = paises.find(p => p.id === Number(formData.paisId));
+      
       if (paisSeleccionado) {
-        axios.get(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
-          setCiudades(response.data);
-        });
+        setFormData(prev => ({
+          ...prev,
+          pais: {
+            id: paisSeleccionado.id,
+            nombre: paisSeleccionado.nombre,
+            codigoIso: paisSeleccionado.codigoIso
+          }
+        }));
+
+        fetch(`${baseUrl}/Ciudad/${paisSeleccionado.codigoIso}/ciudades`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch cities');
+            return response.json();
+          })
+          .then(data => {
+            setCiudades(data);
+          })
+          .catch(error => {
+            console.error("Error fetching cities:", error);
+          });
       }
     }
   }, [formData.paisId, paises]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,23 +118,54 @@ const navigate = useNavigate();
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    axios.post(`${baseUrl}/Traslado/altaTraslado`, JSON.stringify(formData), { 
-      headers: { 
-        Authorization: `Bearer ${token}`, 
-        "Content-Type": "application/json",
-      }
+    if (!token) {
+      alert('No está autorizado. Por favor inicie sesión.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+    const response = await fetch(`${baseUrl}/Traslado/altaTraslado`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      ...formData,
+      paisId: Number(formData.paisId),
+      ciudadId: Number(formData.ciudadId)
     })
-    .then(response => {
-        alert("Actividad creada con éxito");
-        navigate(-1); // Redirige a la página anterior
-      })
-    .catch(error => {
-      console.error("Error al crear traslado:", error.response?.data || error.message);
-    });
-  };
+  });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al crear el traslado');
+    }
+
+    const data = await response.json();
+    console.log(data);
+    alert("Traslado creado con éxito");
+    navigate(-1);
+  } catch (error) {
+    console.error("Error:", error);
+    alert(error.message || 'Error al crear el traslado');
+  }
+};
+    // axios.post(`${baseUrl}/Traslado/altaTraslado`, JSON.stringify(formData), { 
+    //   headers: { 
+    //     Authorization: `Bearer ${token}`, 
+    //     "Content-Type": "application/json",
+    //   }
+    // })
+    // .then(response => {
+    //     alert("Actividad creada con éxito");
+    //     navigate(-1); // Redirige a la página anterior
+    //   })
+    // .catch(error => {
+    //   console.error("Error al crear traslado:", error.response?.data || error.message);
+    // });
   
 
     return (
@@ -119,7 +219,7 @@ const navigate = useNavigate();
           <Button type="submit" variant="contained" color="primary">Crear Traslado</Button>
         </Grid>
       </Grid>
-            </form>
+      </form>
   );
 };
 
