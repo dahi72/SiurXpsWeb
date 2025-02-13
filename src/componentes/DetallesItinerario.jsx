@@ -191,6 +191,7 @@ const DetallesItinerario = () => {
                 mx: "auto",
             }}
         >
+            <Header />
             <Typography
                 variant="h4"
                 sx={{
