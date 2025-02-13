@@ -17,14 +17,11 @@ import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import EventIcon from '@mui/icons-material/Event';
 import { useParams } from 'react-router-dom';
 import Header from './Header';
-import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
 
 const DetallesItinerario = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
     const token = localStorage.getItem("token");
     const [eventos, setEventos] = useState([]);
     const [detalles, setDetalles] = useState([]);
