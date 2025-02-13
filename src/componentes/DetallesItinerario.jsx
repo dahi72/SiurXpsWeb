@@ -249,6 +249,8 @@ const DetallesItinerario = () => {
                             {detalles[index] &&
                                 Object.keys(detalles[index]).map((detailType, detailIndex) => {
                                     const detail = detalles[index][detailType];
+                                    console.log("detail", detail)
+                                    console.log("detailIndex", detailIndex)
                                     if (detail) {
                                         return (
                                             <TimelineItem key={detailIndex}>
@@ -282,7 +284,7 @@ const DetallesItinerario = () => {
                                                             margin: 0,
                                                         },
                                                         "& .MuiAccordionDetails-root": {
-                                                            padding: { xs: "8px", sm: "16px" }, // Reduce el padding en móviles
+                                                            padding: { xs: "8px", sm: "16px" }, 
                                                         },
                                                         }}>
                                                         <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{
@@ -302,7 +304,12 @@ const DetallesItinerario = () => {
                                                             </Typography>
                                                         </AccordionSummary>
 
-                                                        <AccordionDetails>
+                                                        <AccordionDetails sx={{
+                                                            display: "flex",
+                                                            flexDirection: "column",
+                                                            gap: "8px", 
+                                                            fontSize: { xs: "0.8rem", sm: "1rem" },
+                                                        }} >
                                                             {Object.keys(detail).map((key) => {
                                                                 if (!key.includes("id")) {
                                                                     const value = detail[key];
