@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Snackbar, Container, Grid, Typography, Paper } from '@mui/material';
-import FormularioActividad from './FormularioActividad';
+// import FormularioActividad from './FormularioActividad';
 import FormularioTraslado from './FormularioTraslado';
 import FormularioHotel from './FormularioHotel';
 import FormularioAeropuerto from './FormularioAeropuerto';
@@ -317,9 +317,9 @@ const EditarItinerario = () => {
                     </Grid>
                 </Grid>
     
-                {mostrarFormulario === 'actividad' && actividad && (
+                {/* {mostrarFormulario === 'actividad' && actividad && (
                     <FormularioActividad actividad={actividad} setActividad={setActividad} />
-                )}
+                )} */}
     
                 {mostrarFormulario === 'traslado' && traslado && (
                     <FormularioTraslado traslado={traslado} setTraslado={setTraslado} />

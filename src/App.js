@@ -37,7 +37,7 @@ import DetallesItinerario from './componentes/DetallesItinerario';
 import DondeEstoy2 from './componentes/DondeEstoy2';
 import EditarItinerario from './componentes/EditarItinerario';
 import Viajeros from './componentes/Viajeros';
-import FormularioActividad from './componentes/FormularioActividad';
+// import FormularioActividad from './componentes/FormularioActividad';
 import FormularioTraslado from './componentes/FormularioTraslado';
 import FormularioHotel from './componentes/FormularioHotel';
 import FormularioAeropuerto from './componentes/FormularioAeropuerto';
@@ -84,7 +84,7 @@ const App = () => {
               <Route path="/agregar-actividad/:itinerarioId" element={<AgregarActividad />} />
               <Route path="/agregar-traslado/:itinerarioId" element={<AgregarTraslado />} />
               <Route path="/itinerario/:id/eventos" element={<DetallesItinerario />} />
-              <Route path="/editar-actividad/:id" element={<FormularioActividad />} />
+              {/* <Route path="/editar-actividad/:id" element={<FormularioActividad />} /> */}
               <Route path="/editar-traslado/:id" element={<FormularioTraslado />} />
               <Route path="/editar-hotel/:id" element={<FormularioHotel />} />
               <Route path="/editar-aerolinea/:id" element={<FormularioAerolinea />} />
