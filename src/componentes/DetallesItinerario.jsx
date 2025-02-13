@@ -176,75 +176,215 @@ const DetallesItinerario = () => {
     });
 
     return (
-        <Box sx={{ backgroundColor: "rgba(255, 255, 255, 0.8)", borderRadius: "8px", padding: "20px", boxShadow: 3, position: "relative", zIndex: 1, minHeight: "100vh", marginTop: "20px" }}>
-            <Header />
-            <Typography variant="h4" sx={{ fontSize: { xs: "1.5rem", sm: "2rem" }, fontWeight: "bold" }} gutterBottom>
+        <Box
+            sx={{
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                borderRadius: "8px",
+                padding: { xs: "10px", sm: "20px" },
+                boxShadow: 3,
+                position: "relative",
+                zIndex: 1,
+                minHeight: "100vh",
+                marginTop: { xs: "10px", sm: "20px" },
+                width: "100%",
+                maxWidth: "900px",
+                mx: "auto",
+            }}
+        >
+            <Typography
+                variant="h4"
+                sx={{
+                    fontSize: { xs: "1.5rem", sm: "2rem" },
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    mb: 2,
+                }}
+                gutterBottom
+            >
                 Eventos del Itinerario
             </Typography>
-        
-        
+
             <Box sx={{ mb: 2 }}>
-                <TextField label="Filtrar eventos" variant="outlined" fullWidth value={filter} onChange={(e) => setFilter(e.target.value)} />
+                <TextField
+                    label="Filtrar eventos"
+                    variant="outlined"
+                    fullWidth
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                    sx={{ width: { xs: "100%", sm: "80%" }, mx: "auto" }}
+                />
             </Box>
-            
+
             {eventos.length === 0 ? (
                 <Typography variant="h6" color="textSecondary" align="center">
                     No hay eventos disponibles para este itinerario.
                 </Typography>
             ) : (
-                <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
+                <Timeline
+                    position="alternate"
+                    sx={{
+                        backgroundColor: "#d0daf4",
+                        padding: { xs: "10px", sm: "20px" },
+                        borderRadius: "8px",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                    }}
+                >
                     {filteredEvents.map((event, index) => (
                         <React.Fragment key={event.id}>
-                            <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" , fontWeight: "bold" }}>
-                                Evento número {event.id} del itinerario número {id}
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    marginTop: "20px",
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                                }}
+                            >
+                                Evento {event.id} del itinerario {id}
                             </Typography>
-                            {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
-                                const detail = detalles[index][detailType];
-                                if (detail) {
-                                    return (
-                                        <TimelineItem key={detailIndex}>
-                                            <TimelineOppositeContent>
-                                                <Typography variant="body2" color="textSecondary">
+
+                            {detalles[index] &&
+                                Object.keys(detalles[index]).map((detailType, detailIndex) => {
+                                    const detail = detalles[index][detailType];
+                                    if (detail) {
+                                        return (
+                                            <TimelineItem key={detailIndex}>
+                                                <TimelineOppositeContent
+                                                    sx={{
+                                                        fontSize: { xs: "0.8rem", sm: "1rem" },
+                                                        textAlign: { xs: "left", sm: "right" },
+                                                        width: { xs: "auto", sm: "180px" },
+                                                    }}
+                                                >
                                                     Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
-                                                </Typography>
-                                            </TimelineOppositeContent>
-                                            <TimelineSeparator>
-                                                <TimelineDot>{getEventIcon(detailType)}</TimelineDot>
-                                                <TimelineConnector />
-                                            </TimelineSeparator>
-                                            <TimelineContent>
-                                                <Accordion>
-                                                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                                        <Typography variant="h6">{getEventTitle(detailType)}</Typography>
-                                                    </AccordionSummary>
-                                                    <AccordionDetails>
-                                                        {Object.keys(detail).map((key) => {
-                                                            if (!key.includes('id')) {
-                                                                const value = detail[key];
-                                                                const renderValue = typeof value === 'object' ? JSON.stringify(value) : value;
-                                                                return (
-                                                                    <Typography variant="body2" key={key}>
-                                                                        {key}: {renderValue}
-                                                                    </Typography>
-                                                                );
-                                                            }
-                                                            return null;
-                                                        })}
-                                                    </AccordionDetails>
-                                                </Accordion>
-                                            </TimelineContent>
-                                        </TimelineItem>
-                                    );
-                                }
-                                return null;
-                            })}
+                                                </TimelineOppositeContent>
+
+                                                <TimelineSeparator>
+                                                    <TimelineDot>{getEventIcon(detailType)}</TimelineDot>
+                                                    <TimelineConnector />
+                                                </TimelineSeparator>
+
+                                                <TimelineContent
+                                                    sx={{
+                                                        flex: 1,
+                                                        minWidth: "250px",
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                    }}
+                                                >
+                                                    <Accordion sx={{ width: "100%", boxShadow: 2 }}>
+                                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                sx={{
+                                                                    fontSize: { xs: "1rem", sm: "1.2rem" },
+                                                                    fontWeight: "bold",
+                                                                }}
+                                                            >
+                                                                {getEventTitle(detailType)}
+                                                            </Typography>
+                                                        </AccordionSummary>
+
+                                                        <AccordionDetails>
+                                                            {Object.keys(detail).map((key) => {
+                                                                if (!key.includes("id")) {
+                                                                    const value = detail[key];
+                                                                    const renderValue = typeof value === "object" ? JSON.stringify(value) : value;
+                                                                    return (
+                                                                        <Typography
+                                                                            variant="body2"
+                                                                            key={key}
+                                                                            sx={{ fontSize: { xs: "0.9rem", sm: "1rem" } }}
+                                                                        >
+                                                                            {key}: {renderValue}
+                                                                        </Typography>
+                                                                    );
+                                                                }
+                                                                return null;
+                                                            })}
+                                                        </AccordionDetails>
+                                                    </Accordion>
+                                                </TimelineContent>
+                                            </TimelineItem>
+                                        );
+                                    }
+                                    return null;
+                                })}
                         </React.Fragment>
                     ))}
                 </Timeline>
             )}
         </Box>
-    );
-};
+            );
+        };
+        export default DetallesItinerario;
+        // <Box sx={{ backgroundColor: "rgba(255, 255, 255, 0.8)", borderRadius: "8px", padding: "20px", boxShadow: 3, position: "relative", zIndex: 1, minHeight: "100vh", marginTop: "20px" }}>
+        //     <Header />
+        //     <Typography variant="h4" sx={{ fontSize: { xs: "1.5rem", sm: "2rem" }, fontWeight: "bold" }} gutterBottom>
+        //         Eventos del Itinerario
+        //     </Typography>
+        
+        
+        //     <Box sx={{ mb: 2 }}>
+        //         <TextField label="Filtrar eventos" variant="outlined" fullWidth value={filter} onChange={(e) => setFilter(e.target.value)} />
+        //     </Box>
+            
+        //     {eventos.length === 0 ? (
+        //         <Typography variant="h6" color="textSecondary" align="center">
+        //             No hay eventos disponibles para este itinerario.
+        //         </Typography>
+        //     ) : (
+        //         <Timeline position="alternate" sx={{ backgroundColor: "#d0daf4", padding: "20px", borderRadius: "8px" }}>
+        //             {filteredEvents.map((event, index) => (
+        //                 <React.Fragment key={event.id}>
+        //                     <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" , fontWeight: "bold" }}>
+        //                         Evento número {event.id} del itinerario número {id}
+        //                     </Typography>
+        //                     {detalles[index] && Object.keys(detalles[index]).map((detailType, detailIndex) => {
+        //                         const detail = detalles[index][detailType];
+        //                         if (detail) {
+        //                             return (
+        //                                 <TimelineItem key={detailIndex}>
+        //                                     <TimelineOppositeContent>
+        //                                         <Typography variant="body2" color="textSecondary">
+        //                                             Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+        //                                         </Typography>
+        //                                     </TimelineOppositeContent>
+        //                                     <TimelineSeparator>
+        //                                         <TimelineDot>{getEventIcon(detailType)}</TimelineDot>
+        //                                         <TimelineConnector />
+        //                                     </TimelineSeparator>
+        //                                     <TimelineContent>
+        //                                         <Accordion>
+        //                                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        //                                                 <Typography variant="h6">{getEventTitle(detailType)}</Typography>
+        //                                             </AccordionSummary>
+        //                                             <AccordionDetails>
+        //                                                 {Object.keys(detail).map((key) => {
+        //                                                     if (!key.includes('id')) {
+        //                                                         const value = detail[key];
+        //                                                         const renderValue = typeof value === 'object' ? JSON.stringify(value) : value;
+        //                                                         return (
+        //                                                             <Typography variant="body2" key={key}>
+        //                                                                 {key}: {renderValue}
+        //                                                             </Typography>
+        //                                                         );
+        //                                                     }
+        //                                                     return null;
+        //                                                 })}
+        //                                             </AccordionDetails>
+        //                                         </Accordion>
+        //                                     </TimelineContent>
+        //                                 </TimelineItem>
+        //                             );
+        //                         }
+        //                         return null;
+        //                     })}
+        //                 </React.Fragment>
+        //             ))}
+        //         </Timeline>
+        //     )}
+        // </Box>
 
-
-export default DetallesItinerario;
