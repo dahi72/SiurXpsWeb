@@ -47,6 +47,8 @@ import ActividadOpcional from './componentes/ActividadOpcional';
 import VerDatosViajero from './componentes/VerDatosViajeros';
 import CrearItinerario2 from './componentes/CrearItinerario2';
 import ListadoUsuariosDeActividadOpcional from './componentes/ListadoUsuariosDeActividadOpcional';
+import VerItinerarioViajero from './componentes/VerItinerarioViajero';
+
 
 const App = () => {
 
@@ -98,6 +100,7 @@ const App = () => {
               <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
               <Route path="/verDatosViajero" element={<VerDatosViajero />} />
               <Route path="/usuariosActividadOpcional/:idItinerario" element={<ListadoUsuariosDeActividadOpcional />} />
+              <Route path="/VerItinerarioViajero" element={<VerItinerarioViajero />} />
 
 
           </Routes>
