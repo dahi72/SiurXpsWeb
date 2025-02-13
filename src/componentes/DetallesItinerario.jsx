@@ -312,7 +312,7 @@ const DetallesItinerario = () => {
                                                         }} >
                                                             
                                                             {Object.keys(detail).map((key) => {
-                                                                if (!key.includes("id")&& !key.includes("Pais") && !key.includes("ciudad")) {
+                                                                if (!key.includes("id")&& !key.includes("pais") && !key.includes("ciudad")) {
                                                                     const value = detail[key];
                                                                     const renderValue = typeof value === "object" ? JSON.stringify(value) : value;
                                                                     return (
