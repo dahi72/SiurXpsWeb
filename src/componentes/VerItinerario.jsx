@@ -11,12 +11,13 @@ import {
     CircularProgress,
    
 } from '@mui/material';
-import GroupIcon from '@mui/icons-material/Group';
 import { useNavigate } from 'react-router-dom';
+import GroupIcon from '@mui/icons-material/Group';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { format } from 'date-fns';
+
 const VerItinerario = () => {
     const [itinerarios, setItinerarios] = useState([]);
     const [gruposDeViaje, setGruposDeViaje] = useState([]);
@@ -26,7 +27,9 @@ const VerItinerario = () => {
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
     const baseUrl = process.env.REACT_APP_API_URL;
-    
+    const [openSnackbar, setOpenSnackbar] = useState(false);  
+    const [snackbarMessage, setSnackbarMessage] = useState(''); 
+
     const fetchGruposDeViaje = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
@@ -102,7 +105,48 @@ const VerItinerario = () => {
     };
 
     const formatFechaCorta = (fecha) => format(new Date(fecha), 'dd MMM yyyy');
-
+    const handleVerEventos = async (itinerarioId) => {
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch(`${baseUrl}/Itinerario/${itinerarioId}/eventos`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error('Error al obtener los eventos');
+            }
+    
+            // Comprobar si la respuesta está vacía antes de hacer .json()
+            const responseText = await response.text();  // Obtener la respuesta como texto
+    
+            if (responseText) {
+                // Si hay datos, parsearlos
+                const eventos = JSON.parse(responseText);
+                
+                if (eventos.length === 0) {
+                    setSnackbarMessage('Este itinerario no tiene eventos asociados aún. Para agregar eventos, haz clic en "Editar".');
+                    setOpenSnackbar(true);  
+                } else {
+                    navigate(`/itinerario/${itinerarioId}/eventos`);
+                }
+            } else {
+              
+                setSnackbarMessage('Este itinerario no tiene eventos asociados aún. Para agregar eventos, haz clic en "Editar".');
+                setOpenSnackbar(true);  
+            }
+    
+        } catch (error) {
+            console.error('Error al verificar eventos:', error);
+            setSnackbarMessage('El itinerario aún no tiene eventos asociados, para agregar haga click en editar');
+            setOpenSnackbar(true);  
+        }
+    };
+    
     return (
         <Container maxWidth="lg">
             <Box sx={{ 
@@ -168,18 +212,18 @@ const VerItinerario = () => {
                                     flexWrap: 'wrap',
                                     mt: 'auto' 
                                 }}>
-                                    <Button
-                                        variant="outlined"
-                                        startIcon={<VisibilityIcon />}
-                                        onClick={() => navigate(`/itinerario/${itinerario.id}/eventos`)}
-                                        size="small"
-                                        fullWidth
-                                        sx={{
-                                            '&:hover': { backgroundColor: 'primary.light', color: 'white' }
-                                        }}
-                                    >
-                                        Ver Eventos
-                                    </Button>
+                                   <Button
+    variant="outlined"
+    startIcon={<VisibilityIcon />}
+    onClick={() => handleVerEventos(itinerario.id)}  // Llamamos a la función aquí
+    size="small"
+    fullWidth
+    sx={{
+        '&:hover': { backgroundColor: 'primary.light', color: 'white' }
+    }}
+>
+    Ver Eventos
+</Button>
 
                                     <Button
                                         variant="outlined"
@@ -207,7 +251,7 @@ const VerItinerario = () => {
                                     >
                                         Eliminar
                                     </Button>
-                                      <Button
+                                    <Button
     variant="outlined"
     startIcon={<GroupIcon />}
     onClick={() => navigate(`/usuariosActividadOpcional/${itinerario.id}`)}
@@ -225,6 +269,16 @@ const VerItinerario = () => {
                     })}
                 </Box>
             )}
+            <Snackbar
+    open={openSnackbar} 
+    autoHideDuration={4000} 
+    onClose={() => setOpenSnackbar(false)}  
+>
+    <Alert onClose={() => setOpenSnackbar(false)} severity="info">
+        {snackbarMessage} 
+    </Alert>
+</Snackbar>
+
             <Snackbar 
                 open={success} 
                 autoHideDuration={3000} 
