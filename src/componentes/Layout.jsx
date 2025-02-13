@@ -49,7 +49,7 @@ export const Layout = ({ children }) => {
           overflow: 'auto', 
         }}
       >
-        {!isDashboard && isAuthenticated && location.pathname !== '/' && 
+        {!isDashboard && isAuthenticated && location.pathname !== '/' && location.pathname !== '/cambiar-contrasena' &&
           <Button 
               variant="outlined" 
               onClick={() => navigate(-1)} 
