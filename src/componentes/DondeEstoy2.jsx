@@ -92,7 +92,6 @@ const DondeEstoy2 = () => {
      
     console.log("itinerarios", itinerarios);
     
-  console.log("itinerariosSeleccionado", selectedItinerario);
 
 useEffect(() => {
   if (!selectedItinerario) return; 

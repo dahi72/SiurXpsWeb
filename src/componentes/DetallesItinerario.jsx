@@ -310,8 +310,9 @@ const DetallesItinerario = () => {
                                                             gap: "8px", 
                                                             fontSize: { xs: "0.8rem", sm: "1rem" },
                                                         }} >
+                                                            
                                                             {Object.keys(detail).map((key) => {
-                                                                if (!key.includes("id")) {
+                                                                if (!key.includes("id")&& !key.includes("Pais") && !key.includes("ciudad")) {
                                                                     const value = detail[key];
                                                                     const renderValue = typeof value === "object" ? JSON.stringify(value) : value;
                                                                     return (
