@@ -274,9 +274,23 @@ const DetallesItinerario = () => {
                                                         display: "flex",
                                                         flexDirection: "column",
                                                     }}
-                                                >
-                                                    <Accordion sx={{ width: "100%", boxShadow: 2 }}>
-                                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                     >
+                                                    <Accordion  sx={{
+                                                        width: "100%",
+                                                        boxShadow: 2,
+                                                        "& .MuiAccordionSummary-content": {
+                                                            margin: 0,
+                                                        },
+                                                        "& .MuiAccordionDetails-root": {
+                                                            padding: { xs: "8px", sm: "16px" }, // Reduce el padding en móviles
+                                                        },
+                                                        }}>
+                                                        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{
+                                                            display: "flex",
+                                                            flexDirection: "column",
+                                                            gap: "8px", 
+                                                            fontSize: { xs: "0.8rem", sm: "1rem" },
+                                                        }}>
                                                             <Typography
                                                                 variant="h6"
                                                                 sx={{
