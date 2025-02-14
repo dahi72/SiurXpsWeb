@@ -311,7 +311,7 @@ const DetallesItinerario = () => {
                                                             fontSize: { xs: "0.8rem", sm: "1rem" },
                                                         }} >
                                                              {Object.entries(detail)
-                                                                .filter(([key]) => key !== "ciudadId" && key !== "paisId") // Excluir ciudadId y paisId
+                                                                .filter(([key]) => key !== "ciudadId" && key !== "paisId" && key!=="id") // Excluir ciudadId y paisId
                                                                 .map(([key, value]) => {
                                                                     if (key === "ciudad" || key === "pais") {
                                                                         return `${key}: ${value.nombre}`;
