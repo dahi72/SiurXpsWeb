@@ -310,15 +310,14 @@ const DetallesItinerario = () => {
                                                             gap: "8px", 
                                                             fontSize: { xs: "0.8rem", sm: "1rem" },
                                                         }} >
-                                                             {Object.entries(detail)
-                                                                .filter(([key]) => key !== "ciudadId" && key !== "paisId" && key!=="id") // Excluir ciudadId y paisId
-                                                                .map(([key, value]) => {
-                                                                    if (key === "ciudad" || key === "pais") {
-                                                                        return `${key}: ${value.nombre}`;
-                                                                    }
-                                                                    return `${key}: ${typeof value === "object" ? JSON.stringify(value) : value}`;
-                                                                })
-                                                                     .join(" | ")} {/* Separador entre los valores */}
+                                                            {Object.entries(detail)
+                                                                .filter(([key]) => key !== "ciudadId" && key !== "paisId" && key !== "id") // Excluir ciudadId y paisId
+                                                                .map(([key, value]) => (
+                                                                    <span key={key}>
+                                                                        <b>{key}:</b> {key === "ciudad" || key === "pais" ? value.nombre : (typeof value === "object" ? JSON.stringify(value) : value)}
+                                                                        {"|"}
+                                                                    </span>
+                                                                ))}
                                                             
                                                             {/* {Object.keys(detail).map((key) => {
                                                                 if (!key.includes("id")&& !key.includes("pais") && !key.includes("ciudad")) {

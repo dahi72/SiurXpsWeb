@@ -330,8 +330,28 @@ useEffect(() => {
           </Typography>
         ) : (
             <Paper sx={{ height: '70vh', width: '100%', borderRadius: '10px', overflow: 'hidden', boxShadow: 3 }}>
-            <Box>
-            <FormControl fullWidth>
+              <Box>
+              <FormControl fullWidth sx={{ backgroundColor: "white", borderRadius: 2, boxShadow: 1, minWidth: 200 }}>
+                <InputLabel id="itinerario-label">Seleccionar Itinerario</InputLabel>
+                <Select
+                  labelId="itinerario-label"
+                  value={selectedItinerario}
+                  onChange={(e) => setSelectedItinerario(e.target.value)}
+                  displayEmpty
+                  sx={{
+                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "gray" },
+                    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "black" },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "blue" },
+                  }}
+                >
+                  {itinerarios.map((itinerario) => (
+                    <MenuItem key={itinerario.id} value={itinerario.id}>
+                      {itinerario.grupoDeViajeId}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            {/* <FormControl fullWidth>
             <InputLabel id="itinerario-label">Seleccionar Itinerario</InputLabel>
             <Select
                 labelId="itinerario-label"
@@ -341,7 +361,7 @@ useEffect(() => {
                 <MenuItem key={itinerario.id} value={itinerario.id}> {itinerario.grupoDeViajeId} </MenuItem>
             ))}
             </Select>
-            </FormControl>
+            </FormControl> */}
             </Box>
             <MapContainer
               center={center}
