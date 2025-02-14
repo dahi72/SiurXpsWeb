@@ -304,19 +304,30 @@ const DetallesItinerario = () => {
                                                             </Typography>
                                                         </AccordionSummary>
 
-                                                        <AccordionDetails sx={{
-                                                            display: "flex",
-                                                            flexDirection: "column",
-                                                            gap: "8px", 
-                                                            fontSize: { xs: "0.8rem", sm: "1rem" },
-                                                        }} >
+                                                        <AccordionDetails   sx={{
+                                                                    display: "flex",
+                                                                    flexDirection: "column",
+                                                                    gap: "8px",
+                                                                    fontSize: { xs: "0.8rem", sm: "1rem" },
+                                                                    width: "100%", // Asegura que ocupe todo el ancho disponible
+                                                                    wordWrap: "break-word", // Permite que las palabras largas se dividan
+                                                                    overflowWrap: "break-word", // Alternativa para forzar el quiebre de línea
+                                                                }} >
                                                             {Object.entries(detail)
                                                                 .filter(([key]) => key !== "ciudadId" && key !== "paisId" && key !== "id") // Excluir ciudadId y paisId
                                                                 .map(([key, value]) => (
-                                                                    <span key={key}>
+                                                                    <Typography
+                                                                    key={key}
+                                                                    variant="body2"
+                                                                    sx={{
+                                                                        fontSize: { xs: "0.9rem", sm: "1rem" },
+                                                                        display: "block", // Asegura que cada línea sea independiente
+                                                                        textAlign: "left", // Evita que el texto se centre
+                                                                        whiteSpace: "normal", // Permite el quiebre automático de líneas
+                                                                    }}
+                                                                >
                                                                         <b>{key}:</b> {key === "ciudad" || key === "pais" ? value.nombre : (typeof value === "object" ? JSON.stringify(value) : value)}
-                                                                        {"|"}
-                                                                    </span>
+                                                                    </Typography>
                                                                 ))}
                                                             
                                                             {/* {Object.keys(detail).map((key) => {
