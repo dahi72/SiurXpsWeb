@@ -189,13 +189,14 @@ const DetallesItinerario = () => {
             width: "100%",
             maxWidth: "900px",
             mx: "auto",
+            overflowX: "hidden", 
         }}
         >
             <Header />
             <Typography
                 variant="h4"
                 sx={{
-                    fontSize: { xs: "1.5rem", sm: "2rem" },
+                    fontSize: { xs: "1.3rem", sm: "2rem" },
                     fontWeight: "bold",
                     textAlign: "center",
                     mb: 2,
@@ -309,14 +310,13 @@ const DetallesItinerario = () => {
                                                         </AccordionSummary>
 
                                                         <AccordionDetails   sx={{
-                                                                    display: "flex",
-                                                                    flexDirection: "column",
-                                                                    gap: "8px",
-                                                                    fontSize: { xs: "0.8rem", sm: "1rem" },
-                                                                    width: "100%", // Asegura que ocupe todo el ancho disponible
-                                                                    wordWrap: "break-word", // Permite que las palabras largas se dividan
-                                                                    overflowWrap: "break-word", // Alternativa para forzar el quiebre de línea
-                                                                }} >
+                                                            display: "flex",
+                                                            flexDirection: "column",
+                                                            gap: "8px",
+                                                            fontSize: { xs: "0.8rem", sm: "1rem" },
+                                                            width: "100%",
+                                                            overflowWrap: "break-word",
+                                                        }} >
                                                             {Object.entries(detail)
                                                                 .filter(([key]) => key !== "ciudadId" && key !== "paisId" && key !== "id") // Excluir ciudadId y paisId
                                                                 .map(([key, value]) => (
@@ -324,10 +324,10 @@ const DetallesItinerario = () => {
                                                                     key={key}
                                                                     variant="body2"
                                                                     sx={{
-                                                                        fontSize: { xs: "0.9rem", sm: "1rem" },
-                                                                        display: "block", // Asegura que cada línea sea independiente
-                                                                        textAlign: "left", // Evita que el texto se centre
-                                                                        whiteSpace: "normal", // Permite el quiebre automático de líneas
+                                                                        fontSize: { xs: "0.8rem", sm: "1rem" },
+                                                                        display: "block",
+                                                                        textAlign: "left",
+                                                                        wordBreak: "break-word",
                                                                     }}
                                                                 >
                                                                         <b>{key}:</b> {key === "ciudad" || key === "pais" ? value.nombre : (typeof value === "object" ? JSON.stringify(value) : value)}
