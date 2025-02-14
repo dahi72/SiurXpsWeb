@@ -310,8 +310,17 @@ const DetallesItinerario = () => {
                                                             gap: "8px", 
                                                             fontSize: { xs: "0.8rem", sm: "1rem" },
                                                         }} >
+                                                             {Object.entries(detail)
+                                                                .filter(([key]) => key !== "ciudadId" && key !== "paisId") // Excluir ciudadId y paisId
+                                                                .map(([key, value]) => {
+                                                                    if (key === "ciudad" || key === "pais") {
+                                                                        return `${key}: ${value.nombre}`;
+                                                                    }
+                                                                    return `${key}: ${typeof value === "object" ? JSON.stringify(value) : value}`;
+                                                                })
+                                                                     .join(" | ")} {/* Separador entre los valores */}
                                                             
-                                                            {Object.keys(detail).map((key) => {
+                                                            {/* {Object.keys(detail).map((key) => {
                                                                 if (!key.includes("id")&& !key.includes("pais") && !key.includes("ciudad")) {
                                                                     const value = detail[key];
                                                                     const renderValue = typeof value === "object" ? JSON.stringify(value) : value;
@@ -326,7 +335,7 @@ const DetallesItinerario = () => {
                                                                     );
                                                                 }
                                                                 return null;
-                                                            })}
+                                                            })} */}
                                                         </AccordionDetails>
                                                     </Accordion>
                                                 </TimelineContent>
