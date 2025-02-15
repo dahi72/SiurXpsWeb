@@ -1,4 +1,6 @@
+
 import { Groups, LocationCity, TravelExplore, UploadFile } from "@mui/icons-material";
+import PersonIcon from '@mui/icons-material/Person';
 
 export const opcionesCoordinador = [
     { 
@@ -44,6 +46,11 @@ export const opcionesViajero = [
         label: 'Ver Itinerarios',
         action: '/VerItinerarioViajero',
         icon: <LocationCity sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
+    },
+    { 
+        label: 'Mis Datos',
+        action: '/verMisDatos',
+        icon:   <PersonIcon sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     }
    
 ];
