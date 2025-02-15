@@ -2,17 +2,17 @@ import { Groups, LocationCity, TravelExplore, UploadFile } from "@mui/icons-mate
 
 export const opcionesCoordinador = [
     { 
-        label: 'Crear grupo de Viaje',
+        label: 'Gestión de grupo de Viaje',
         action: '/crearGrupo',
         icon: <Groups sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     },
     { 
-        label: 'Crear Itinerario',
+        label: 'Gestión de Itinerario',
         action: '/crear-itinerario',
         icon: <LocationCity sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     },
     { 
-        label: 'Ver Itinerario',
+        label: 'Ver Itinerarios',
         action: '/VerItinerario',
         icon: <LocationCity sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     },
@@ -27,7 +27,7 @@ export const opcionesCoordinador = [
         icon: <Groups sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     },
     { 
-        label: 'Cargar catálogo',
+        label: 'Gestión de catálogo',
         action: '/catalogos',
         icon: <UploadFile sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     }
@@ -41,7 +41,7 @@ export const opcionesViajero = [
         icon: <TravelExplore sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     },
     { 
-        label: 'Ver Itinerario',
+        label: 'Ver Itinerarios',
         action: '/VerItinerarioViajero',
         icon: <LocationCity sx={{ fontSize: 40, color: '#1565C0', mb: 1 }} />
     }
