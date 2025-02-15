@@ -235,7 +235,7 @@ const VerItinerario = () => {
                                             '&:hover': { backgroundColor: 'info.light', color: 'white' }
                                         }}
                                     >
-                                        Editar
+                                        Nuevo Evento
                                     </Button>
 
                                     <Button
