@@ -3,12 +3,9 @@ const URLS_TO_CACHE = ["/", "/index.html"];
 
 // Instalación del Service Worker
 this.addEventListener("install", (event) => {
-  console.log("[Service Worker] Instalando...");
-
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("[Service Worker] Caché creado:", CACHE_NAME);
-      return cache.addAll(URLS_TO_CACHE);
+        return cache.addAll(URLS_TO_CACHE);
     }).catch((error) => console.error("[Service Worker] Error al cachear:", error))
   );
 
@@ -17,15 +14,12 @@ this.addEventListener("install", (event) => {
 
 // Activación y limpieza de caché viejo
 this.addEventListener("activate", (event) => {
-  console.log("[Service Worker] Activando...");
-
-  event.waitUntil(
+   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log("[Service Worker] Eliminando caché viejo:", cache);
-            return caches.delete(cache);
+                return caches.delete(cache);
           }
         })
       );
@@ -35,21 +29,25 @@ this.addEventListener("activate", (event) => {
   this.clients.claim(); // Reclama control sobre las pestañas abiertas
 });
 
-// Intercepción de peticiones para servir desde caché
+// Intercepción de peticiones para servir desde caché (solo GET)
 this.addEventListener("fetch", (event) => {
-  console.log("[Service Worker] Interceptando:", event.request.url);
+  if (event.request.method !== "GET") {
+    return; // Ignora métodos que no sean GET
+  }
 
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    }).catch(() => console.error("[Service Worker] Error en fetch:", event.request.url))
+    fetch(event.request)
+      .then((response) => {
+        const clonedResponse = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clonedResponse));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 
 // Manejo de notificaciones Push
 this.addEventListener("push", (event) => {
-  console.log("[Service Worker] Notificación push recibida.");
-
   if (event.data) {
     const data = event.data.json();
     const options = {
