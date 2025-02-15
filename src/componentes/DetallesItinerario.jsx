@@ -299,8 +299,8 @@ const DetallesItinerario = () => {
             zIndex: 1,
             minHeight: "100vh",
             marginTop: { xs: "10px", sm: "20px" },
-            width: "100%",
-            maxWidth: "900px",
+            width: "100vw", 
+            maxWidth: "none",  // 🔹 Elimina la restricción de ancho máximo
             mx: "auto",
             overflowX: "hidden", 
         }}
@@ -314,7 +314,8 @@ const DetallesItinerario = () => {
                     textAlign: "center",
                     mb: 2,
                 }}
-                gutterBottom
+                    gutterBottom
+                    fullWidth
             >
                 Eventos del Itinerario
             </Typography>
@@ -332,6 +333,7 @@ const DetallesItinerario = () => {
 
                 <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
                     <TextField 
+                        fullWidth
                         label="Filtrar eventos" 
                         variant="outlined"
                         value={filter} 
@@ -356,7 +358,8 @@ const DetallesItinerario = () => {
                     No hay eventos disponibles para este itinerario.
                 </Typography>
             ) : (
-                <Timeline
+                        <Timeline
+                        
                     position="alternate"
                     sx={{
                         backgroundColor: "#d0daf4",
@@ -365,14 +368,17 @@ const DetallesItinerario = () => {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        width: "100%", // Ajuste clave
-                        maxWidth: "900px",
+                        // width: "100%", // Ajuste clave
+                        // maxWidth: "900px",
                         mx: "auto",
+                        width: "100%",  // 🔹 Permite que el Timeline se expanda
+                        maxWidth: "none",
                     }}
                 >
                     {filteredEvents.map((event, index) => (
                         <React.Fragment key={event.id}>
                             <Typography
+                                fullWidth
                                 variant="h5"
                                 sx={{
                                     marginTop: "20px",
@@ -433,7 +439,8 @@ const DetallesItinerario = () => {
                                                             gap: "8px", 
                                                             fontSize: { xs: "0.8rem", sm: "1rem" },
                                                         }}>
-                                                            <Typography
+                                                                <Typography
+                                                                    fullWidth
                                                                 variant="h6"
                                                                 sx={{
                                                                     fontSize: { xs: "1rem", sm: "1.2rem" },
@@ -456,6 +463,7 @@ const DetallesItinerario = () => {
                                                                 .filter(([key]) => key !== "ciudadId" && key !== "paisId" && key !== "id") // Excluir ciudadId y paisId
                                                                 .map(([key, value]) => (
                                                                     <Typography
+                                                                    fullWidth
                                                                     key={key}
                                                                     variant="body2"
                                                                     sx={{
