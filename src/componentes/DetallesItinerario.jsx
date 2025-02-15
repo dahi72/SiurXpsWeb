@@ -413,6 +413,7 @@ const DetallesItinerario = () => {
                                                         flexDirection: "column",
                                                     }}
                                                 >
+                                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                                                     <Accordion  sx={{
                                                         width: "100%",
                                                         boxShadow: 2,
@@ -498,8 +499,9 @@ const DetallesItinerario = () => {
                                                                 <DeleteIcon color="error" />
                                                             </IconButton>
                                                         </Box>
-
+                                                    </Box>
                                                 </TimelineContent>
+                
                                             </TimelineItem>
                                         );
                                     }
