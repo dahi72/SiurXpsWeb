@@ -1,6 +1,6 @@
 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { Typography, Box, TextField, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Typography, Box, TextField, Accordion, AccordionSummary, AccordionDetails, MenuItem, FormControl, InputLabel, Select, IconButton, Snackbar, Alert, DialogActions, Button, DialogContent, DialogTitle, Dialog } from '@mui/material';
 import {
     Timeline,
     TimelineItem,
@@ -19,6 +19,8 @@ import { useParams } from 'react-router-dom';
 import Header from './Header';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
+import { DeleteIcon, EditIcon } from 'lucide-react';
+import { DateTimePicker } from '@mui/x-date-pickers';
 
 const DetallesItinerario = () => {
     const { id } = useParams();
@@ -27,8 +29,15 @@ const DetallesItinerario = () => {
     const [detalles, setDetalles] = useState([]);
     const [filter, setFilter] = useState("");
     const cargandoDetallesRef = useRef(false);
+    const [sortOrder, setSortOrder] = useState("asc");
     const fetchedOnce = useRef(false);
     const baseUrl = process.env.REACT_APP_API_URL;
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [newDateTime, setNewDateTime] = useState(null);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    
     
     const createHeaders = (token) => ({
         Authorization: `Bearer ${token}`,
@@ -36,6 +45,92 @@ const DetallesItinerario = () => {
     });
 
     const headers = createHeaders(token);
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
+
+    const showSnackbar = (message, severity = 'success') => {
+        setSnackbar({
+            open: true,
+            message,
+            severity
+        });
+    };
+
+    const handleEditClick = (event) => {
+        setSelectedEvent(event);
+        setNewDateTime(new Date(event.fechaYHora));
+        setOpenEditDialog(true);
+    };
+
+    const handleDeleteClick = (event) => {
+        setSelectedEvent(event);
+        setOpenDeleteDialog(true);
+    };
+
+    const handleEditClose = () => {
+        setOpenEditDialog(false);
+        setSelectedEvent(null);
+        setNewDateTime(null);
+    };
+
+    const handleDeleteClose = () => {
+        setOpenDeleteDialog(false);
+        setSelectedEvent(null);
+    };
+
+    const handleEditConfirm = async () => {
+        if (!selectedEvent || !newDateTime) return;
+
+        try {
+            const response = await fetch(`${baseUrl}/Itinerario/${id}/eventos/${selectedEvent.id}/horario`, {
+                method: 'PUT',
+                headers,
+                body: JSON.stringify(newDateTime.toISOString())
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();  
+                throw new Error(errorData.error || 'Error al modificar el horario'); 
+            }
+
+            const updatedEventos = eventos.map(evt => 
+                evt.id === selectedEvent.id ? { ...evt, fechaYHora: newDateTime } : evt
+            );
+            setEventos(updatedEventos);
+            showSnackbar('Horario actualizado exitosamente');
+        } catch (error) {
+            console.error('Error:', error);
+            showSnackbar(error.message || 'No se puede modificar un evento pasado');
+        }
+
+        handleEditClose();
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!selectedEvent) return;
+
+        try {
+            const response = await fetch(`${baseUrl}/Itinerario/${id}/eventos/${selectedEvent.id}`, {
+                method: 'DELETE',
+                headers
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al eliminar el evento');
+            }
+
+            const updatedEventos = eventos.filter(evt => evt.id !== selectedEvent.id);
+            setEventos(updatedEventos);
+            showSnackbar('Evento eliminado exitosamente');
+        } catch (error) {
+            console.error('Error:', error);
+            showSnackbar('No se puede eliminar un evento del pasado');
+        }
+
+        handleDeleteClose();
+    };
 
     const fetchWithErrorHandling = async (url, headers) => {
         try {
@@ -170,10 +265,25 @@ const DetallesItinerario = () => {
         }
     };
 
-    const filteredEvents = eventos.filter((event) => {
-        const title = getEventTitle(event) ?? "";
-        return title.toLowerCase().includes(filter.toLowerCase());
-    });
+    // const filteredEvents = eventos.filter((event) => {
+    //     const title = getEventTitle(event) ?? "";
+    //     return title.toLowerCase().includes(filter.toLowerCase());
+    // });
+
+    const handleSortOrderChange = (event) => {
+        setSortOrder(event.target.value);
+    };
+
+    const filteredEvents = eventos
+        .filter((event) => {
+            const title = getEventTitle(event) ?? "";
+            return title.toLowerCase().includes(filter.toLowerCase());
+        })
+        .sort((a, b) => {
+            const dateA = new Date(a.fechaYHora).getTime();
+            const dateB = new Date(b.fechaYHora).getTime();
+            return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+        });
 
     return (
         <Box
@@ -206,7 +316,7 @@ const DetallesItinerario = () => {
                 Eventos del Itinerario
             </Typography>
 
-            <Box sx={{ mb: 2 }}>
+            {/* <Box sx={{ mb: 2 }}>
                 <TextField
                     label="Filtrar eventos"
                     variant="outlined"
@@ -215,9 +325,30 @@ const DetallesItinerario = () => {
                     onChange={(e) => setFilter(e.target.value)}
                     sx={{ width: { xs: "100%", sm: "80%" }, mx: "auto" }}
                 />
-            </Box>
+            </Box> */}
 
-            {eventos.length === 0 ? (
+                <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
+                    <TextField 
+                        label="Filtrar eventos" 
+                        variant="outlined"
+                        value={filter} 
+                        onChange={(e) => setFilter(e.target.value)}
+                        sx={{ backgroundColor: 'white', flex: 1 }}
+                    />
+                    <FormControl sx={{ minWidth: 200, backgroundColor: 'white' }}>
+                        <InputLabel>Ordenar por fecha</InputLabel>
+                        <Select
+                            value={sortOrder}
+                            label="Ordenar por fecha"
+                            onChange={handleSortOrderChange}
+                        >
+                            <MenuItem value="asc">Más antiguos primero</MenuItem>
+                            <MenuItem value="desc">Más recientes primero</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+
+              {eventos.length === 0 ? (
                 <Typography variant="h6" color="textSecondary" align="center">
                     No hay eventos disponibles para este itinerario.
                 </Typography>
@@ -281,7 +412,7 @@ const DetallesItinerario = () => {
                                                         display: "flex",
                                                         flexDirection: "column",
                                                     }}
-                                                     >
+                                                >
                                                     <Accordion  sx={{
                                                         width: "100%",
                                                         boxShadow: 2,
@@ -335,6 +466,39 @@ const DetallesItinerario = () => {
                                                                 ))}
                                                         </AccordionDetails>
                                                     </Accordion>
+
+                                                    <Box sx={{ 
+                                                            display: 'flex', 
+                                                            flexDirection: 'column', 
+                                                            gap: 1,
+                                                            mt: 1
+                                                        }}>
+                                                            <IconButton 
+                                                                size="small" 
+                                                                onClick={() => handleEditClick(event)}
+                                                                sx={{ 
+                                                                    bgcolor: 'white',
+                                                                    '&:hover': {
+                                                                        bgcolor: 'rgba(25, 118, 210, 0.04)'
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <EditIcon color="primary" />
+                                                            </IconButton>
+                                                            <IconButton 
+                                                                size="small" 
+                                                                onClick={() => handleDeleteClick(event)}
+                                                                sx={{ 
+                                                                    bgcolor: 'white',
+                                                                    '&:hover': {
+                                                                        bgcolor: 'rgba(211, 47, 47, 0.04)'
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <DeleteIcon color="error" />
+                                                            </IconButton>
+                                                        </Box>
+
                                                 </TimelineContent>
                                             </TimelineItem>
                                         );
@@ -345,6 +509,50 @@ const DetallesItinerario = () => {
                     ))}
                 </Timeline>
             )}
+            <Dialog open={openEditDialog} onClose={handleEditClose}>
+                    <DialogTitle>Modificar Horario del Evento</DialogTitle>
+                    <DialogContent>
+                        <Box sx={{ mt: 2 }}>
+                            <DateTimePicker
+                                label="Nueva fecha y hora"
+                                value={newDateTime}
+                                onChange={setNewDateTime}
+                                sx={{ width: '100%' }}
+                            />
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleEditClose}>Cancelar</Button>
+                        <Button onClick={handleEditConfirm} variant="contained" color="primary">
+                            Guardar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                <Dialog open={openDeleteDialog} onClose={handleDeleteClose}>
+                    <DialogTitle>Eliminar Evento</DialogTitle>
+                    <DialogContent>
+                        <Typography>¿Está seguro que desea eliminar este evento?</Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleDeleteClose}>Cancelar</Button>
+                        <Button onClick={handleDeleteConfirm} variant="contained" color="error">
+                            Eliminar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                <Snackbar 
+                    open={snackbar.open} 
+                    autoHideDuration={6000} 
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
+
         </Box>
             );
         };
