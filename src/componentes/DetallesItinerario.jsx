@@ -21,6 +21,8 @@ import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
 import { DeleteIcon, EditIcon } from 'lucide-react';
 import { DateTimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const DetallesItinerario = () => {
     const { id } = useParams();
@@ -286,6 +288,7 @@ const DetallesItinerario = () => {
         });
 
     return (
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Box
         sx={{
             backgroundColor: "rgba(255, 255, 255, 0.8)",
@@ -555,8 +558,11 @@ const DetallesItinerario = () => {
                     </Alert>
                 </Snackbar>
 
-        </Box>
+            </Box>
+        </LocalizationProvider>
             );
+
         };
+            
         export default DetallesItinerario;
        
