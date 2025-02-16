@@ -21,7 +21,6 @@ import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
 //import { DeleteIcon, EditIcon } from 'lucide-react';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -303,8 +302,8 @@ const DetallesItinerario = () => {
             minHeight: "100vh",
             marginTop: { xs: "10px", sm: "20px" },
             width: "100vw", 
-            maxWidth: "none",  // 🔹 Elimina la restricción de ancho máximo
-            mx: "auto",
+            // maxWidth: "none",  // 🔹 Elimina la restricción de ancho máximo
+            // mx: "auto",
             overflowX: "hidden", 
         }}
         >
