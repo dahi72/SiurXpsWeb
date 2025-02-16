@@ -19,7 +19,10 @@ import { useParams } from 'react-router-dom';
 import Header from './Header';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
-import { DeleteIcon, EditIcon } from 'lucide-react';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+//import { DeleteIcon, EditIcon } from 'lucide-react';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
