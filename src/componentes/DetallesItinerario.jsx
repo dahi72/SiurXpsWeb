@@ -292,20 +292,20 @@ const DetallesItinerario = () => {
     return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Box
-        sx={{
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-            borderRadius: "8px",
-            padding: { xs: "10px", sm: "20px" },
-            boxShadow: 3,
-            position: "relative",
-            zIndex: 1,
-            minHeight: "100vh",
-            marginTop: { xs: "10px", sm: "20px" },
-            width: "100vw", 
-            // maxWidth: "none",  // 🔹 Elimina la restricción de ancho máximo
-            // mx: "auto",
-            overflowX: "hidden", 
-        }}
+       sx={{
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        borderRadius: "8px",
+        padding: { xs: "10px", sm: "20px" },
+        boxShadow: 3,
+        position: "relative",
+        zIndex: 1,
+        minHeight: "100vh",
+        marginTop: { xs: "10px", sm: "20px" },
+        width: "100%",
+        maxWidth: "900px",
+        mx: "auto",
+        overflowX: "hidden",
+    }}
         >
             <Header />
             <Typography
