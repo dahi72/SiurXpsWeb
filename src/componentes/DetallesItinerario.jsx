@@ -409,7 +409,9 @@ const DetallesItinerario = () => {
                                                         overflowWrap: "break-word", // 🔧 Mejora para textos largos
                                                     }}
                                                 >
-                                                    Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+                                                   <Typography variant="body2" color="textSecondary">
+                                                        Fecha y Hora: {new Date(event.fechaYHora).toLocaleString()}
+                                                    </Typography>
                                                 </TimelineOppositeContent>
 
                                                 <TimelineSeparator>
