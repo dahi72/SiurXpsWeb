@@ -60,6 +60,8 @@ const Login = () => {
           }
         } else {
           setMensaje("Usuario y/o contraseña incorrectos");
+          passwordRef.current.value = "";
+          pasaporteRef.current.value = "";
         }
       })
       .catch((error) => {
