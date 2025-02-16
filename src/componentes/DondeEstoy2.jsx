@@ -6,7 +6,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+//import { useParams } from 'react-router-dom';
  
 // Fix Leaflet default icon issue
 L.Icon.Default.imagePath = '/';
@@ -55,40 +55,77 @@ const DondeEstoy2 = () => {
   const [showEventMarkers, setShowEventMarkers] = useState(false);
   const [eventMarkers, setEventMarkers] = useState([]);
   const [listaEventos, setListaEventos] = useState([]);
-    const { idItinerario } = useParams();
+   // const { idItinerario } = useParams();
     const [aeropuertos, setAeropuertos] = useState([]);
     const [hoteles, setHoteles] = useState([]);
     const [actividades, setActividades] = useState([]);
     const [traslados, setTraslados] = useState([]);
   const token = localStorage.getItem('token');
   const baseUrl =  process.env.REACT_APP_API_URL;
- 
+  
   const [itinerarios, setItinerarios] = useState([]);
   const [selectedItinerario, setSelectedItinerario] = useState("");
 
-  useEffect(() => {
-      const cargarItinerarios = async () => {
-          try {
-              const response = await fetch(`${baseUrl}/Itinerario/listado`, {
-                  method: 'GET',
-                  headers: {
-                      'Authorization': `Bearer ${token}`,
-                      'Content-Type': 'application/json'
-                  }
-              });
-              if (!response.ok) {
-                  throw new Error(`${response.status}: ${response.statusText}`);
-              }
+  // useEffect(() => {
+  //     const cargarItinerarios = async () => {
+  //         try {
+  //             const response = await fetch(`${baseUrl}/Itinerario/listado`, {
+  //                 method: 'GET',
+  //                 headers: {
+  //                     'Authorization': `Bearer ${token}`,
+  //                     'Content-Type': 'application/json'
+  //                 }
+  //             });
+  //             if (!response.ok) {
+  //                 throw new Error(`${response.status}: ${response.statusText}`);
+  //             }
      
-              const data = await response.json();
-              setItinerarios(Array.isArray(data) ? data : []);
-          } catch (error) {
-              console.error('Error al cargar los hoteles:', error);
-          }
-      };
-      cargarItinerarios();
-      }, [baseUrl, token, idItinerario]);
-      
+  //             const data = await response.json();
+  //             setItinerarios(Array.isArray(data) ? data : []);
+  //         } catch (error) {
+  //             console.error('Error al cargar los hoteles:', error);
+  //         }
+  //     };
+  //     cargarItinerarios();
+  //     }, [baseUrl, token, idItinerario]);
+  useEffect(() => {
+    const cargarItinerarios = async () => {
+        try {
+            const rol = localStorage.getItem('rol'); // Suponiendo que guardas el rol en localStorage
+            const idUsuario = localStorage.getItem('id'); // Suponiendo que tienes el id del usuario
+
+            if (!rol || !idUsuario) {
+                throw new Error("No se encontró la información del usuario.");
+            }
+
+            // Determinar la URL según el rol
+            const url =
+                rol.toLowerCase() === "coordinador"
+                    ? `${baseUrl}/Itinerario/ItinerariosDeCoordinador/${idUsuario}`
+                    : `${baseUrl}/Itinerario/ItinerariosDeViajero/${idUsuario}`;
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            setItinerarios(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error('Error al cargar los itinerarios:', error);
+        }
+    };
+
+    cargarItinerarios();
+}, [baseUrl, token]);
+
      
     console.log("itinerarios", itinerarios);
     
@@ -346,7 +383,7 @@ useEffect(() => {
                 >
                   {itinerarios.map((itinerario) => (
                     <MenuItem key={itinerario.id} value={itinerario.id}>
-                      {itinerario.grupoDeViajeId}
+                      {itinerario.nombreGrupo}
                     </MenuItem>
                   ))}
                 </Select>
