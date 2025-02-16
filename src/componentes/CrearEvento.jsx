@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography } from '@mui/material';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography,Snackbar,Alert } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 
 
@@ -116,7 +116,7 @@ function CrearEvento() {
                 console.log('Evento creado exitosamente');
                 setMensajeExito(true);
                 setTimeout(() => {
-                    Navigate('/dashboard');
+                    Navigate('/VerItinerario');
                 }, 2000); 
             } else {
                 console.error('Error al crear el evento');
@@ -261,10 +261,16 @@ function CrearEvento() {
                 <Button type="submit" variant="contained" color="primary" disabled={isSubmitDisabled()} >
                     Crear Evento
                 </Button>
-                {mensajeExito && (
-                <Typography variant="body1" color="success" sx={{ marginTop: 2 }}>
-                    Evento creado exitosamente. Redirigiendo al dashboard...
-                </Typography>
+              {mensajeExito && (
+                <Snackbar
+                    open={mensajeExito}
+                    autoHideDuration={3000}
+                    onClose={() => setMensajeExito(false)}
+                >
+                    <Alert onClose={() => setMensajeExito(false)} severity="success" sx={{ width: '100%' }}>
+                        Evento creado exitosamente!
+                    </Alert>
+                </Snackbar>
             )}
             </form>
         </Box>
