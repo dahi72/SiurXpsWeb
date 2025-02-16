@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Box, Button, Typography, CircularProgress, Paper, Snackbar, Alert, Backdrop, MenuItem, InputLabel, FormControl, Select } from '@mui/material';
@@ -6,9 +5,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
-//import { useParams } from 'react-router-dom';
  
-// Fix Leaflet default icon issue
 L.Icon.Default.imagePath = '/';
 const defaultIcon = new L.Icon({
   iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
@@ -55,194 +52,174 @@ const DondeEstoy2 = () => {
   const [showEventMarkers, setShowEventMarkers] = useState(false);
   const [eventMarkers, setEventMarkers] = useState([]);
   const [listaEventos, setListaEventos] = useState([]);
-   // const { idItinerario } = useParams();
-    const [aeropuertos, setAeropuertos] = useState([]);
-    const [hoteles, setHoteles] = useState([]);
-    const [actividades, setActividades] = useState([]);
-    const [traslados, setTraslados] = useState([]);
+  const [aeropuertos, setAeropuertos] = useState([]);
+  const [hoteles, setHoteles] = useState([]);
+  const [actividades, setActividades] = useState([]);
+  const [traslados, setTraslados] = useState([]);
   const token = localStorage.getItem('token');
-  const baseUrl =  process.env.REACT_APP_API_URL;
-  
+  const baseUrl = process.env.REACT_APP_API_URL;
   const [itinerarios, setItinerarios] = useState([]);
   const [selectedItinerario, setSelectedItinerario] = useState("");
 
-  // useEffect(() => {
-  //     const cargarItinerarios = async () => {
-  //         try {
-  //             const response = await fetch(`${baseUrl}/Itinerario/listado`, {
-  //                 method: 'GET',
-  //                 headers: {
-  //                     'Authorization': `Bearer ${token}`,
-  //                     'Content-Type': 'application/json'
-  //                 }
-  //             });
-  //             if (!response.ok) {
-  //                 throw new Error(`${response.status}: ${response.statusText}`);
-  //             }
-     
-  //             const data = await response.json();
-  //             setItinerarios(Array.isArray(data) ? data : []);
-  //         } catch (error) {
-  //             console.error('Error al cargar los hoteles:', error);
-  //         }
-  //     };
-  //     cargarItinerarios();
-  //     }, [baseUrl, token, idItinerario]);
   useEffect(() => {
     const cargarItinerarios = async () => {
-        try {
-            const rol = localStorage.getItem('rol'); // Suponiendo que guardas el rol en localStorage
-            const idUsuario = localStorage.getItem('id'); // Suponiendo que tienes el id del usuario
+      try {
+        const rol = localStorage.getItem('rol');
+        const idUsuario = localStorage.getItem('id');
 
-            if (!rol || !idUsuario) {
-                throw new Error("No se encontró la información del usuario.");
-            }
-
-            // Determinar la URL según el rol
-            const url =
-                rol.toLowerCase() === "coordinador"
-                    ? `${baseUrl}/Itinerario/ItinerariosDeCoordinador/${idUsuario}`
-                    : `${baseUrl}/Itinerario/ItinerariosDeViajero/${idUsuario}`;
-
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            setItinerarios(Array.isArray(data) ? data : []);
-        } catch (error) {
-            console.error('Error al cargar los itinerarios:', error);
+        if (!rol || !idUsuario) {
+          throw new Error("No se encontró la información del usuario.");
         }
+
+        const url = rol.toLowerCase() === "coordinador"
+          ? `${baseUrl}/Itinerario/ItinerariosDeCoordinador/${idUsuario}`
+          : `${baseUrl}/Itinerario/ItinerariosDeViajero/${idUsuario}`;
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setItinerarios(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error al cargar los itinerarios:', error);
+      }
     };
 
     cargarItinerarios();
-}, [baseUrl, token]);
+  }, [baseUrl, token]);
 
-     
-    console.log("itinerarios", itinerarios);
-    
+  useEffect(() => {
+    if (!selectedItinerario) return;
 
-useEffect(() => {
-  if (!selectedItinerario) return; 
+    const fetchItinerario = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/Itinerario/${selectedItinerario}/eventos`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-  const fetchItinerario = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/Itinerario/${selectedItinerario}/eventos`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+        if (!response.ok) {
+          throw new Error(`${response.status}: ${response.statusText}`);
         }
-      });
 
-      if (!response.ok) {
-        throw new Error(`${response.status}: ${response.statusText}`);
+        const data = await response.json();
+        setListaEventos(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error al cargar los itinerarios:', error);
       }
+    };
 
-      const data = await response.json();
-      setListaEventos(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error al cargar los itinerarios:', error);
-    }
+    fetchItinerario();
+  }, [baseUrl, token, selectedItinerario]);
+
+  useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const [trasladosRes, aeropuertosRes, actividadesRes, hotelesRes] = await Promise.all([
+          fetch(`${baseUrl}/Traslado/listado`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+          fetch(`${baseUrl}/Aeropuerto/aeropuertos`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+          fetch(`${baseUrl}/Actividad/listado`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+          fetch(`${baseUrl}/Hotel/hoteles`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
+        ]);
+
+        setTraslados(Array.isArray(trasladosRes) ? trasladosRes : []);
+        setAeropuertos(Array.isArray(aeropuertosRes) ? aeropuertosRes : []);
+        setActividades(Array.isArray(actividadesRes) ? actividadesRes : []);
+        setHoteles(Array.isArray(hotelesRes) ? hotelesRes : []);
+      } catch (error) {
+        console.error('Error al cargar los datos:', error);
+      }
+    };
+
+    cargarDatos();
+  }, [baseUrl, token]);
+
+  const formatearFecha = (fecha) => {
+    return new Date(fecha).toLocaleString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
-  fetchItinerario();
-}, [baseUrl, token, selectedItinerario]);
+  const eventos = useMemo(() => {
+    return listaEventos.flatMap((evento) => {
+      const ubicaciones = [];
 
- 
-        useEffect(() => {
-            const cargarDatos = async () => {
-                try {
-                    const [trasladosRes, aeropuertosRes, actividadesRes, hotelesRes] = await Promise.all([
-                        fetch(`${baseUrl}/Traslado/listado`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
-                        fetch(`${baseUrl}/Aeropuerto/aeropuertos`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
-                        fetch(`${baseUrl}/Actividad/listado`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
-                        fetch(`${baseUrl}/Hotel/hoteles`, { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.json()),
-                    ]);
-
-                    setTraslados(Array.isArray(trasladosRes) ? trasladosRes : []);
-                    setAeropuertos(Array.isArray(aeropuertosRes) ? aeropuertosRes : []);
-                    setActividades(Array.isArray(actividadesRes) ? actividadesRes : []);
-                    setHoteles(Array.isArray(hotelesRes) ? hotelesRes : []);
-                } catch (error) {
-                    console.error('Error al cargar los datos:', error);
-                }
-            };
-
-            cargarDatos();
-        }, [baseUrl, token]);
-
-     
-        const eventos = useMemo(() => {
-          return listaEventos.flatMap((evento) => {
-              const ubicaciones = [];
-        
-              // Aeropuerto
-              if (evento.aeropuertoId) {
-                  const aeropuertoFiltrado = aeropuertos.find(aero => aero.id === evento.aeropuertoId);
-                  if (aeropuertoFiltrado) {
-                      ubicaciones.push({
-                          id: aeropuertoFiltrado.id,
-                          title: aeropuertoFiltrado.nombre,
-                          ubicacion: `${aeropuertoFiltrado.direccion}, ${aeropuertoFiltrado.ciudad.nombre}, ${aeropuertoFiltrado.pais.nombre}`,
-                    
-                      });
-                  }
-              }
-        
-              // Hotel
-              if (evento.hotelId) {
-                  const hotelFiltrado = hoteles.find(hotel => hotel.id === evento.hotelId);
-                  if (hotelFiltrado) {
-                      ubicaciones.push({
-                          id: hotelFiltrado.id,
-                          title: hotelFiltrado.nombre,
-                          ubicacion: `${hotelFiltrado.direccion}, ${hotelFiltrado.ciudad.nombre}, ${hotelFiltrado.pais.nombre}`,
-                          
-                      });
-                  }
-              }
-        
-              // Actividad
-              if (evento.actividadId) {
-                  const actividadFiltrada = actividades.find(act => act.id === evento.actividadId);
-                  if (actividadFiltrada) {
-                      ubicaciones.push({
-                          id: actividadFiltrada.id,
-                          title: actividadFiltrada.nombre,
-                          ubicacion: `${actividadFiltrada.ubicacion}, ${actividadFiltrada.ciudad.nombre}, ${actividadFiltrada.pais.nombre}`,
-                       
-                      });
-                  }
-              }
-        
-              // Traslado
-              if (evento.trasladoId) {
-                  const trasladoFiltrado = traslados.find(traslado => traslado.id === evento.trasladoId);
-                  if (trasladoFiltrado) {
-                      ubicaciones.push({
-                          id: trasladoFiltrado.id,
-                          title: trasladoFiltrado.nombre,
-                          ubicacion: `${trasladoFiltrado.lugarDeEncuentro}, ${trasladoFiltrado.ciudad.nombre}, ${trasladoFiltrado.pais.nombre}`,
-                      });
-                  }
-              }
-        
-              return ubicaciones; 
+      // Aeropuerto
+      if (evento.aeropuertoId) {
+        const aeropuertoFiltrado = aeropuertos.find(aero => aero.id === evento.aeropuertoId);
+        if (aeropuertoFiltrado) {
+          ubicaciones.push({
+            id: aeropuertoFiltrado.id,
+            title: aeropuertoFiltrado.nombre,
+            ubicacion: `${aeropuertoFiltrado.direccion}, ${aeropuertoFiltrado.ciudad.nombre}, ${aeropuertoFiltrado.pais.nombre}`,
+            fechaYHora: formatearFecha(evento.fechaYHora),
+            tipo: 'Aeropuerto'
           });
-        }, [listaEventos, aeropuertos, hoteles, actividades, traslados]);
-    
-  console.log("eventos", eventos); 
-    
- 
+        }
+      }
+
+      // Hotel
+      if (evento.hotelId) {
+        const hotelFiltrado = hoteles.find(hotel => hotel.id === evento.hotelId);
+        if (hotelFiltrado) {
+          ubicaciones.push({
+            id: hotelFiltrado.id,
+            title: hotelFiltrado.nombre,
+            ubicacion: `${hotelFiltrado.direccion}, ${hotelFiltrado.ciudad.nombre}, ${hotelFiltrado.pais.nombre}`,
+            fechaYHora: formatearFecha(evento.fechaYHora),
+            tipo: 'Hotel'
+          });
+        }
+      }
+
+      // Actividad
+      if (evento.actividadId) {
+        const actividadFiltrada = actividades.find(act => act.id === evento.actividadId);
+        if (actividadFiltrada) {
+          ubicaciones.push({
+            id: actividadFiltrada.id,
+            title: actividadFiltrada.nombre,
+            ubicacion: `${actividadFiltrada.ubicacion}, ${actividadFiltrada.ciudad.nombre}, ${actividadFiltrada.pais.nombre}`,
+            fechaYHora: formatearFecha(evento.fechaYHora),
+            tipo: 'Actividad'
+          });
+        }
+      }
+
+      // Traslado
+      if (evento.trasladoId) {
+        const trasladoFiltrado = traslados.find(traslado => traslado.id === evento.trasladoId);
+        if (trasladoFiltrado) {
+          ubicaciones.push({
+            id: trasladoFiltrado.id,
+            title: trasladoFiltrado.nombre,
+            ubicacion: `${trasladoFiltrado.lugarDeEncuentro}, ${trasladoFiltrado.ciudad.nombre}, ${trasladoFiltrado.pais.nombre}`,
+            fechaYHora: formatearFecha(evento.fechaYHora),
+            tipo: 'Traslado'
+          });
+        }
+      }
+
+      return ubicaciones;
+    });
+  }, [listaEventos, aeropuertos, hoteles, actividades, traslados]);
+
   const geocodeLocation = async (address) => {
     const apiKey = 'ffe0407498914865a2e38a5418e8a482';
     try {
@@ -258,45 +235,43 @@ useEffect(() => {
     }
     return null;
   };
-    
+
   useEffect(() => {
     const fetchEventMarkers = async () => {
       if (!eventos || eventos.length === 0) return;
-  
-      // Mapear cada evento y geocodificar su dirección
+
       const markers = await Promise.all(
         eventos.map(async (evento) => {
-          // Determinar cuál atributo usar para la dirección
-          const direccion = 
-            evento.ubicacion || 
-            evento.lugarDeEncuentro || 
-            evento.direccion;
-  
-          if (!direccion) return null; // Ignorar si no tiene dirección
-  
+          const direccion = evento.ubicacion;
+          if (!direccion) return null;
+
           const location = await geocodeLocation(direccion);
           if (location) {
-            return { lat: location.lat, lng: location.lng, title: evento.title };
+            return {
+              lat: location.lat,
+              lng: location.lng,
+              title: evento.title,
+              fechaYHora: evento.fechaYHora,
+              tipo: evento.tipo
+            };
           }
-          return null; // Devolver null si no se puede obtener la ubicación
+          return null;
         })
       );
-  
-      // Filtrar los nulls (eventos sin ubicación) y establecer los marcadores
+
       setEventMarkers(markers.filter(marker => marker !== null));
     };
-  
-    fetchEventMarkers();
-  }, [eventos]); // Ejecutar cuando el array `eventos` cambie
 
- 
+    fetchEventMarkers();
+  }, [eventos]);
+
   useEffect(() => {
     if (!navigator.geolocation) {
       setError('Tu navegador no soporta geolocalización');
       setLoading(false);
       return;
     }
- 
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setCenter([position.coords.latitude, position.coords.longitude]);
@@ -327,11 +302,11 @@ useEffect(() => {
       }
     );
   }, []);
- 
+
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
- 
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -342,7 +317,7 @@ useEffect(() => {
       </Box>
     );
   }
- 
+
   return (
     <>
       <Snackbar
@@ -355,19 +330,19 @@ useEffect(() => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
- 
+
       <Backdrop open={loading} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <CircularProgress color="inherit" />
       </Backdrop>
- 
+
       <Box sx={{ p: 2 }}>
         {error ? (
           <Typography color="error" sx={{ mb: 2 }}>
             {error}
           </Typography>
         ) : (
-            <Paper sx={{ height: '70vh', width: '100%', borderRadius: '10px', overflow: 'hidden', boxShadow: 3 }}>
-              <Box>
+          <Paper sx={{ height: '70vh', width: '100%', borderRadius: '10px', overflow: 'hidden', boxShadow: 3 }}>
+            <Box sx={{ p: 2 }}>
               <FormControl fullWidth sx={{ backgroundColor: "white", borderRadius: 2, boxShadow: 1, minWidth: 200 }}>
                 <InputLabel id="itinerario-label">Seleccionar Itinerario</InputLabel>
                 <Select
@@ -388,22 +363,11 @@ useEffect(() => {
                   ))}
                 </Select>
               </FormControl>
-            {/* <FormControl fullWidth>
-            <InputLabel id="itinerario-label">Seleccionar Itinerario</InputLabel>
-            <Select
-                labelId="itinerario-label"
-                value={selectedItinerario}
-                onChange={(e) => setSelectedItinerario(e.target.value)}>
-                    {itinerarios.map((itinerario) => (
-                <MenuItem key={itinerario.id} value={itinerario.id}> {itinerario.grupoDeViajeId} </MenuItem>
-            ))}
-            </Select>
-            </FormControl> */}
             </Box>
             <MapContainer
               center={center}
               zoom={13}
-              style={{ height: '100%', width: '100%' }}
+              style={{ height: 'calc(100% - 80px)', width: '100%' }}
               scrollWheelZoom={true}
               doubleClickZoom={true}
               zoomControl={true}
@@ -413,18 +377,28 @@ useEffect(() => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
               <LocationMarker />
- 
+
               {showEventMarkers && eventMarkers.map((event, index) => (
                 <Marker key={index} position={[event.lat, event.lng]}>
                   <Popup>
-                  <strong>{event.title}</strong>
+                    <div style={{ minWidth: '200px' }}>
+                      <Typography variant="h6" style={{ marginBottom: '8px' }}>
+                        {event.title}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" style={{ marginBottom: '4px' }}>
+                        <strong>Tipo:</strong> {event.tipo}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        <strong>Fecha y Hora:</strong> {event.fechaYHora}
+                      </Typography>
+                    </div>
                   </Popup>
                 </Marker>
               ))}
             </MapContainer>
           </Paper>
         )}
- 
+
         <Button
           onClick={() => {
             setShowEventMarkers(!showEventMarkers);
@@ -446,7 +420,5 @@ useEffect(() => {
     </>
   );
 };
- 
+
 export default DondeEstoy2;
-
-

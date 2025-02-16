@@ -84,7 +84,7 @@ const DetallesItinerario = () => {
         setSelectedEvent(null);
     };
 
-    const handleEditConfirm = async () => {
+   const handleEditConfirm = async () => {
         if (!selectedEvent || !newDateTime) return;
 
         try {
@@ -96,7 +96,7 @@ const DetallesItinerario = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();  
-                throw new Error(errorData.error || 'Error al modificar el horario'); 
+                throw new Error(errorData.mensaje || 'Error al modificar el horario'); 
             }
 
             const updatedEventos = eventos.map(evt => 
@@ -106,35 +106,37 @@ const DetallesItinerario = () => {
             showSnackbar('Horario actualizado exitosamente');
         } catch (error) {
             console.error('Error:', error);
-            showSnackbar(error.message || 'No se puede modificar un evento pasado');
+            showSnackbar(error.mensaje || 'No se puede modificar un evento pasado');
         }
 
         handleEditClose();
     };
 
-    const handleDeleteConfirm = async () => {
+   const handleDeleteConfirm = async () => {
         if (!selectedEvent) return;
-
+    
         try {
             const response = await fetch(`${baseUrl}/Itinerario/${id}/eventos/${selectedEvent.id}`, {
                 method: 'DELETE',
                 headers
             });
-
+    
             if (!response.ok) {
-                throw new Error('Error al eliminar el evento');
+                const errorData = await response.json();  // Captura el mensaje de error del backend
+                throw new Error(errorData.mensaje || 'Error al eliminar el evento'); // Aquí extraes el mensaje de error
             }
-
+    
             const updatedEventos = eventos.filter(evt => evt.id !== selectedEvent.id);
             setEventos(updatedEventos);
             showSnackbar('Evento eliminado exitosamente');
         } catch (error) {
-            console.error('Error:', error);
-            showSnackbar('No se puede eliminar un evento del pasado');
+            console.error('Error:', error.message);  // Mostrar el mensaje de error correctamente
+            showSnackbar(error.message || 'No se pudo eliminar el evento');
         }
-
+    
         handleDeleteClose();
     };
+    
 
     const fetchWithErrorHandling = async (url, headers) => {
         try {
