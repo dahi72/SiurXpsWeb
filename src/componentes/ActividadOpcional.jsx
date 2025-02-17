@@ -3,7 +3,7 @@ import { Box, Button, Typography, Snackbar, Alert, CircularProgress, Select, Men
 import { useParams } from "react-router-dom";
 
 function ActividadOpcional() {
-  const { viajeroId } = useParams();
+  const { grupoId, viajeroId } = useParams(); 
   const [actividadesOpcionales, setActividadesOpcionales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedActividad, setSelectedActividad] = useState('');
@@ -15,18 +15,18 @@ function ActividadOpcional() {
   const baseUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchActividades = async () => {
       try {
         if (!token) {
           throw new Error('No hay sesión activa.');
         }
 
-        const response = await fetch(`${baseUrl}/Actividad/opcionales`, {
+        const response = await fetch(`${baseUrl}/Actividad/actividadesDelGrupo/${grupoId}`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
 
         if (!response.ok) {
-          throw new Error('Error al cargar actividades opcionales.');
+          throw new Error('Error al cargar las actividades del grupo.');
         }
 
         const data = await response.json();
@@ -40,8 +40,8 @@ function ActividadOpcional() {
       }
     };
 
-    fetchData();
-  }, [baseUrl, token]);
+    fetchActividades();
+  }, [grupoId, baseUrl, token]);
 
   const handleInscribir = async () => {
     if (!selectedActividad) {
@@ -67,7 +67,6 @@ function ActividadOpcional() {
       });
 
       if (!response.ok) {
-       
         throw new Error('El usuario ya está inscrito en esta actividad.');
       }
 
@@ -106,8 +105,7 @@ function ActividadOpcional() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "El usuario no está inscrito en esta actividad.");
+        throw new Error("El usuario no está inscrito en esta actividad.");
       }
 
       setSuccessMessage("Usuario desinscrito correctamente.");
@@ -132,7 +130,7 @@ function ActividadOpcional() {
   return (
     <Box sx={{ padding: "2rem", backgroundColor: "background.default" }}>
       <Typography variant="h4" align="center" gutterBottom>
-        Gestión de Actividades Opcionales
+        Gestión de Actividades Opcionales para el Grupo
       </Typography>
 
       <Box sx={{ backgroundColor: "white", borderRadius: "10px", padding: "2rem", boxShadow: 3 }}>
