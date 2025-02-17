@@ -36,7 +36,7 @@ import DetallesItinerario from './componentes/DetallesItinerario';
 import DondeEstoy2 from './componentes/DondeEstoy2';
 import EditarItinerario from './componentes/EditarItinerario';
 import Viajeros from './componentes/Viajeros';
-import FormularioActividad from './componentes/FormularioActividad';
+//import FormularioActividad from './componentes/FormularioActividad';
 import FormularioTraslado from './componentes/FormularioTraslado';
 import FormularioHotel from './componentes/FormularioHotel';
 import FormularioAeropuerto from './componentes/FormularioAeropuerto';
@@ -138,10 +138,7 @@ const App = () => {
                     path="/itinerario/:id/eventos"
                     element={isAuthenticated ? <DetallesItinerario /> : <Navigate to="/" />}
                   />
-                  <Route
-                    path="/editar-actividad/:id"
-                    element={isAuthenticated ? <FormularioActividad /> : <Navigate to="/" />}
-                  />
+                 
                   <Route
                     path="/editar-traslado/:id"
                     element={isAuthenticated ? <FormularioTraslado /> : <Navigate to="/" />}
