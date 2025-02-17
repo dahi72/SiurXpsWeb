@@ -7,7 +7,7 @@ import Registro from './componentes/Registro';
 import CambiarContrasena from './componentes/CambioContrasena';
 import Logout from './componentes/Logout';
 import Dashboard from './componentes/Dashboard/Dashboard';
-import { BrowserRouter, Routes, Route} from 'react-router-dom'; 
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; 
 import VerMisDatos from './componentes/VerMisDatos';
 import MisDatos from './componentes/MisDatos';
 import { UsuarioProvider } from './hooks/UsuarioContext';
@@ -25,7 +25,6 @@ import Aerolineas from './componentes/Aerolineas';
 import Traslados from './componentes/Traslados';
 import AgregarViajeroAGrupo from './componentes/AgregarViajeroAGrupo';
 import DondeEstoy from './componentes/DondeEstoy';
-//import CrearItinerario from './componentes/CrearItinerario';
 import VerItinerario from './componentes/VerItinerario';
 import RecuperarContrasena from './componentes/RecuperarContrasena'; 
 import { Layout } from './componentes/Layout';
@@ -37,7 +36,7 @@ import DetallesItinerario from './componentes/DetallesItinerario';
 import DondeEstoy2 from './componentes/DondeEstoy2';
 import EditarItinerario from './componentes/EditarItinerario';
 import Viajeros from './componentes/Viajeros';
-// import FormularioActividad from './componentes/FormularioActividad';
+import FormularioActividad from './componentes/FormularioActividad';
 import FormularioTraslado from './componentes/FormularioTraslado';
 import FormularioHotel from './componentes/FormularioHotel';
 import FormularioAeropuerto from './componentes/FormularioAeropuerto';
@@ -49,67 +48,170 @@ import CrearItinerario2 from './componentes/CrearItinerario2';
 import ListadoUsuariosDeActividadOpcional from './componentes/ListadoUsuariosDeActividadOpcional';
 import VerItinerarioViajero from './componentes/VerItinerarioViajero';
 
-
 const App = () => {
+  const isAuthenticated = localStorage.getItem("token") || localStorage.getItem("id");
 
   return (
     <UsuarioProvider>
-         <PaisProvider>
-         <CiudadProvider>
-      <SnackbarProvider>
-      <BrowserRouter future={{ v7_relativeSplatPath: true }}>
-      <Layout>
-          <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/404" element={<NoEncontrado />} />
-              <Route path="*" element={<NoEncontrado />} />
-              <Route path="/politicaDePrivacidad" element={<PoliticaDePrivacidad />} />
-              <Route path="/terminos" element={<TerminosYCondiciones />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/verMisDatos" element={<VerMisDatos />} />
-              <Route path="/misDatos" element={<MisDatos />} />
-              <Route path="/logout" element={<Logout />} />
-              <Route path="/misGrupos" element={<MisGrupos />} />
-              <Route path="/catalogos" element={<Catalogos />} />
-              <Route path="/donde-estoy" element={<DondeEstoy />} />
-              <Route path="/hoteles" element={<Hoteles />} />
-              <Route path="/aeropuertos" element={<Aeropuertos />} />
-              <Route path="/vuelos" element={<Vuelos />} />
-              <Route path="/aerolineas" element={<Aerolineas />} />
-              <Route path="/traslados" element={<Traslados />} />
-              <Route path="/crear-itinerario" element={<CrearItinerario2 />} />
-              <Route path="/VerItinerario" element={<VerItinerario/>} />
-              <Route path="/crear-eventos/:itinerarioId" element={<CrearEvento />} />
-              <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
-              <Route path="/agregar-actividad/:itinerarioId" element={<AgregarActividad />} />
-              <Route path="/agregar-traslado/:itinerarioId" element={<AgregarTraslado />} />
-              <Route path="/itinerario/:id/eventos" element={<DetallesItinerario />} />
-              {/* <Route path="/editar-actividad/:id" element={<FormularioActividad />} /> */}
-              <Route path="/editar-traslado/:id" element={<FormularioTraslado />} />
-              <Route path="/editar-hotel/:id" element={<FormularioHotel />} />
-              <Route path="/editar-aerolinea/:id" element={<FormularioAerolinea />} />
-              <Route path="/editar-vuelo/:id" element={<FormularioVuelo />} />
-              <Route path="/editar-aeropuerto/:id" element={<FormularioAeropuerto />} />
-              <Route path="/crearGrupo" element={<CrearGrupoDeViaje /> } />                           
-              <Route path="/viajeros/:grupoId" element={<Viajeros />} />
-              <Route path="/itinerario/:id/editarItinerario" element={<EditarItinerario />} /> 
-              <Route path="/donde-estoy2" element={<DondeEstoy2 />} /> 
-              <Route path="/cambiar-contrasena" element={<CambiarContrasena />} />
-              <Route path="/registro" element={<Registro />} />
-              <Route path="/agregarViajeroAGrupo/:grupoId" element={<AgregarViajeroAGrupo />} />
-              <Route path="/actividad-opcional/:viajeroId" element={<ActividadOpcional/>} />
-              <Route path="/verDatosViajero" element={<VerDatosViajero />} />
-              <Route path="/usuariosActividadOpcional/:idItinerario" element={<ListadoUsuariosDeActividadOpcional />} />
-              <Route path="/VerItinerarioViajero" element={<VerItinerarioViajero />} />
+      <PaisProvider>
+        <CiudadProvider>
+          <SnackbarProvider>
+            <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+              <Layout>
+                <Routes>
+                  {/* Public routes */}
+                  <Route path="/politicaDePrivacidad" element={<PoliticaDePrivacidad />} />
+                  <Route path="/terminos" element={<TerminosYCondiciones />} />
+                  <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
+                  
+                  {/* Authentication routes */}
+                  <Route path="/" element={<Login />} />
+                  <Route path="/registro" element={isAuthenticated ? <Registro />: <Navigate to="/" />} />
+                  <Route path="/logout" element={<Logout />} />
 
+                  {/* Protected routes */}
+                  <Route
+                    path="/dashboard"
+                    element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/verMisDatos"
+                    element={isAuthenticated ? <VerMisDatos /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/misDatos"
+                    element={isAuthenticated ? <MisDatos /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/misGrupos"
+                    element={isAuthenticated ? <MisGrupos /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/catalogos"
+                    element={isAuthenticated ? <Catalogos /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/donde-estoy"
+                    element={isAuthenticated ? <DondeEstoy /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/hoteles"
+                    element={isAuthenticated ? <Hoteles /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/aeropuertos"
+                    element={isAuthenticated ? <Aeropuertos /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/vuelos"
+                    element={isAuthenticated ? <Vuelos /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/aerolineas"
+                    element={isAuthenticated ? <Aerolineas /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/traslados"
+                    element={isAuthenticated ? <Traslados /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/crear-itinerario"
+                    element={isAuthenticated ? <CrearItinerario2 /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/VerItinerario"
+                    element={isAuthenticated ? <VerItinerario /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/crear-eventos/:itinerarioId"
+                    element={isAuthenticated ? <CrearEvento /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/agregar-actividad/:itinerarioId"
+                    element={isAuthenticated ? <AgregarActividad /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/agregar-traslado/:itinerarioId"
+                    element={isAuthenticated ? <AgregarTraslado /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/itinerario/:id/eventos"
+                    element={isAuthenticated ? <DetallesItinerario /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/editar-actividad/:id"
+                    element={isAuthenticated ? <FormularioActividad /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/editar-traslado/:id"
+                    element={isAuthenticated ? <FormularioTraslado /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/editar-hotel/:id"
+                    element={isAuthenticated ? <FormularioHotel /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/editar-aerolinea/:id"
+                    element={isAuthenticated ? <FormularioAerolinea /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/editar-vuelo/:id"
+                    element={isAuthenticated ? <FormularioVuelo /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/editar-aeropuerto/:id"
+                    element={isAuthenticated ? <FormularioAeropuerto /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/crearGrupo"
+                    element={isAuthenticated ? <CrearGrupoDeViaje /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/viajeros/:grupoId"
+                    element={isAuthenticated ? <Viajeros /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/itinerario/:id/editarItinerario"
+                    element={isAuthenticated ? <EditarItinerario /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/donde-estoy2"
+                    element={isAuthenticated ? <DondeEstoy2 /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/cambiar-contrasena"
+                    element={isAuthenticated ? <CambiarContrasena /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/agregarViajeroAGrupo/:grupoId"
+                    element={isAuthenticated ? <AgregarViajeroAGrupo /> : <Navigate to="/" />}
+                  />
+                 <Route
+                    path="/actividad-opcional/:grupoId/:viajeroId"
+                    element={isAuthenticated ? <ActividadOpcional /> : <Navigate to="/" />}
+                  />
 
-          </Routes>
-         
-          </Layout>
-        </BrowserRouter>
-        </SnackbarProvider>
+                  <Route
+                    path="/verDatosViajero"
+                    element={isAuthenticated ? <VerDatosViajero /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/usuariosActividadOpcional/:itinerarioId"
+                    element={isAuthenticated ? <ListadoUsuariosDeActividadOpcional /> : <Navigate to="/" />}
+                  />
+                  <Route
+                    path="/VerItinerarioViajero"
+                    element={isAuthenticated ? <VerItinerarioViajero /> : <Navigate to="/" />}
+                  />
+
+                  {/* 404 route */}
+                  <Route path="*" element={<NoEncontrado />} />
+                </Routes>
+              </Layout>
+            </BrowserRouter>
+          </SnackbarProvider>
         </CiudadProvider>
-        </PaisProvider>
+      </PaisProvider>
     </UsuarioProvider>
   );
 }
