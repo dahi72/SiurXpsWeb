@@ -42,7 +42,7 @@ export const UsuarioProvider = ({ children }) => {
               primerNombre: data.primerNombre,
               segundoNombre: data.segundoNombre,               
               primerApellido: data.primerApellido,
-              segundoApellido: data.SegundoApellido,               
+              segundoApellido: data.segundoApellido,               
                estado: data.estado,
                pasaporte: data.pasaporte,
                email: data.email,
