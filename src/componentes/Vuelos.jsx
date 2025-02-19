@@ -96,18 +96,28 @@ const handleCloseSnackbar = (_, reason) => {
   const handleEliminar = async (id) => {
     const confirmacion = window.confirm("¿Está seguro de que desea eliminar este vuelo?");
     if (!confirmacion) return;
+  
     try {
       const response = await fetch(`${baseUrl}/Vuelo/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
       });
-      if (!response.ok) throw new Error('Error al eliminar el vuelo');
+  
+      if (!response.ok) {
+        // Si la respuesta no es OK, intentamos extraer el mensaje de error del cuerpo de la respuesta
+        const errorData = await response.json();  // Extraemos el cuerpo del error
+        throw new Error(errorData.message || 'Error al eliminar el vuelo');  // Usamos el mensaje si existe
+      }
+  
+      // Si la respuesta es exitosa, actualizamos la lista de vuelos
       setVuelos(vuelos.filter(vuelo => vuelo.id !== id));
       mostrarMensaje('Vuelo eliminado correctamente', 'success');
     } catch (error) {
-      mostrarMensaje('Error al eliminar el vuelo', 'error');
+      // En el caso de un error, mostramos el mensaje que viene del backend
+      mostrarMensaje(error.message || 'Hubo un error al eliminar el vuelo', 'error');
     }
   };
+  
 
   const handleEditar = (vuelo) => {
     setVueloEditando(vuelo);
@@ -212,19 +222,22 @@ const handleCloseSnackbar = (_, reason) => {
               >
                 {vueloEditando ? 'Actualizar' : 'Cargar'}
               </Button>
-            </Box>
+              <Button 
+                                variant="outlined" 
+                                color="primary" 
+                                onClick={() => {
+                                  setNombre('');
+                                  setHorario('');
+                                  setVueloEditando(null);
+                                  setTabValue(0);
+                                }}
+                              >
+                                Cancelar
+                              </Button>
+                  </Box>
           </form>
   
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={() => navigate('/catalogos')}
-            sx={{ mt: 2 }}
-          >
-            Volver a Catálogos
-          </Button>
-        </Box>
+         </Box>
       )}
     </Box>
   );
