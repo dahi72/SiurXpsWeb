@@ -20,10 +20,8 @@ import {
   MenuItem
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import { useNavigate } from "react-router-dom"; 
 
 const Aeropuertos = () => {
-  const navigate = useNavigate(); 
   const [tabValue, setTabValue] = useState(0);
   const [aeropuertos, setAeropuertos] = useState([]);
   const [paises, setPaises] = useState([]);
@@ -50,7 +48,6 @@ const Aeropuertos = () => {
     );
   };
 
- 
   const cargarAeropuertos = useCallback(async () => {
     try {
       const response = await fetch(`${baseUrl}/Aeropuerto/aeropuertos`, {
@@ -60,20 +57,19 @@ const Aeropuertos = () => {
           'Content-Type': 'application/json'
         }
       });
-      if(!response.ok){
+      if (!response.ok) {
         const errorData = await response.json(); 
-        throw new Error(errorData.message ||  'Error al obtener los aeropuertos');
-        }
-
+        throw new Error(errorData.message || 'Error al obtener los aeropuertos');
+      }
 
       const data = await response.json();
       setAeropuertos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error al cargar los aeropuertos:', error);
+      alert(error.message || 'Hubo un error al cargar los aeropuertos');
     }
   }, [baseUrl, token]);
-    
-  
+
   useEffect(() => {
     cargarAeropuertos();
   }, [cargarAeropuertos]);
@@ -88,22 +84,17 @@ const Aeropuertos = () => {
             'Content-Type': 'application/json'
           }
         });
-        if(!response.ok){
+        if (!response.ok) {
           const errorData = await response.json(); 
-          throw new Error(errorData.message ||  'Error al obtener los países');
-          }
-  
-       
-        const data = await response.json();
-        const paisesOrdenados = data.sort((a, b) => {
-          if (a.nombre < b.nombre) return -1;
-          if (a.nombre > b.nombre) return 1;
-          return 0;
-        });
+          throw new Error(errorData.message || 'Error al obtener los países');
+        }
 
+        const data = await response.json();
+        const paisesOrdenados = data.sort((a, b) => a.nombre.localeCompare(b.nombre));
         setPaises(paisesOrdenados);
       } catch (error) {
         console.error('Error al cargar los países:', error);
+        alert(error.message || 'Hubo un error al cargar los países');
       }
     };
 
@@ -122,20 +113,17 @@ const Aeropuertos = () => {
             }
           });
 
-          if(!response.ok){
+          if (!response.ok) {
             const errorData = await response.json(); 
-            throw new Error(errorData.message ||  'Error al obtener las ciudades');
-            }
-          const data = await response.json();
-          const ciudadesOrdenadas = data.sort((a, b) => {
-            if (a.nombre < b.nombre) return -1;
-            if (a.nombre > b.nombre) return 1;
-            return 0;
-          });
+            throw new Error(errorData.message || 'Error al obtener las ciudades');
+          }
 
+          const data = await response.json();
+          const ciudadesOrdenadas = data.sort((a, b) => a.nombre.localeCompare(b.nombre));
           setCiudades(ciudadesOrdenadas);
         } catch (error) {
           console.error('Error al cargar las ciudades:', error);
+          alert(error.message || 'Hubo un error al cargar las ciudades');
         }
       } else {
         setCiudades([]);
@@ -153,7 +141,7 @@ const Aeropuertos = () => {
     e.preventDefault();
     const url = aeropuertoEditando ? `${baseUrl}/Aeropuerto/${aeropuertoEditando.id}` : `${baseUrl}/Aeropuerto/altaAeropuerto`;
     const method = aeropuertoEditando ? 'PUT' : 'POST';
-
+  
     const aeropuertoData = {
       nombre,
       paginaWeb,
@@ -162,7 +150,7 @@ const Aeropuertos = () => {
       direccion,
       tips
     };
-
+  
     try {
       const response = await fetch(url, {
         method,
@@ -172,13 +160,19 @@ const Aeropuertos = () => {
         },
         body: JSON.stringify(aeropuertoData),
       });
-
+  
       if (response.ok) {
-        const mensaje = await response.json();
-        console.log('Mensaje de la API:', mensaje);
+        // Si la respuesta es exitosa, y no hay contenido
+        if (response.status === 204) {
+          console.log('Operación exitosa pero sin contenido.');
+        } else {
+          const mensaje = await response.json();
+          console.log('Mensaje de la API:', mensaje);
+        }
 
         await cargarAeropuertos();
-
+  
+        // Limpiar los valores del formulario
         setNombre('');
         setPaginaWeb('');
         setPaisId('');
@@ -189,11 +183,11 @@ const Aeropuertos = () => {
         setTabValue(0);
       } else {
         const errorData = await response.json();
-              throw new Error(errorData.message ||  'Error al dar de alta un aeropuerto');
-          
+        throw new Error(errorData.message || 'Error al dar de alta un aeropuerto');
       }
     } catch (error) {
       console.error('Error de red:', error);
+      alert(error.message || 'Hubo un error al dar de alta el aeropuerto');
     }
   };
 
@@ -215,29 +209,38 @@ const Aeropuertos = () => {
   };
 
   const handleEliminar = async (id) => {
-    try {
-      const response = await fetch(`${baseUrl}/Aeropuerto/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-      });
-
-      if (response.ok) {
-        setAeropuertos(aeropuertos.filter(aeropuerto => aeropuerto.id !== id));
-      } else  if(!response.ok){
-        const errorData = await response.json(); 
-        throw new Error(errorData.message ||  'Hubo un error al eliminar el aeropuerto');
+    // Mostrar alerta de confirmación antes de eliminar
+    const confirmar = window.confirm('¿Está seguro que desea eliminar este aeropuerto?');
+  
+    if (confirmar) {
+      try {
+        const response = await fetch(`${baseUrl}/Aeropuerto/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+  
+        if (response.ok) {
+          setAeropuertos(aeropuertos.filter(aeropuerto => aeropuerto.id !== id));
+        } else {
+          const errorData = await response.json(); 
+          throw new Error(errorData.message || 'Hubo un error al eliminar el aeropuerto');
         }
-    } catch (error) {
-      console.error('Error de red:', error);
+      } catch (error) {
+        console.error('Error al eliminar aeropuerto:', error);
+        alert(error.message || 'Hubo un error al eliminar el aeropuerto');
+      }
+    } else {
+      console.log('Eliminación cancelada');
     }
   };
 
   const filteredAeropuertos = (aeropuertos ?? []).filter(aeropuerto =>
     aeropuerto?.nombre?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
   );
+
   return (
     <Box
       sx={{
@@ -248,7 +251,6 @@ const Aeropuertos = () => {
         padding: { xs: '1rem', sm: '2rem' } 
       }}
     >
-     
       <Box
         sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -372,7 +374,7 @@ const Aeropuertos = () => {
                   <FormControl fullWidth>
                     <InputLabel>País</InputLabel>
                     <Select
-                     value={paisId || ''}
+                      value={paisId || ''}
                       onChange={(e) => {
                         const selectedPais = paises.find(pais => pais.id === parseInt(e.target.value));
                         setPaisId(Number(e.target.value));
@@ -426,32 +428,34 @@ const Aeropuertos = () => {
                 <Button 
                   variant="contained" 
                   color="primary" 
-                  type="submit" 
+                  type="submit"
                   disabled={!isFormComplete()}
                 >
-                  {aeropuertoEditando ? 'Actualizar' : 'Cargar'}
+                  {aeropuertoEditando ? "Actualizar" : "Crear"} Aeropuerto
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  color="primary" 
+                  onClick={() => {
+                    setNombre('');
+                    setPaginaWeb('');
+                    setPaisId('');
+                    setCiudadId('');
+                    setDireccion('');
+                    setTips('');
+                    setAeropuertoEditando(null);
+                    setTabValue(0);
+                  }}
+                >
+                  Cancelar
                 </Button>
               </Box>
             </form>
           </Box>
         )}
       </Box>
-      <Box>
-        <Button 
-          variant="contained" 
-          onClick={() => navigate('/catalogos')} 
-          sx={{ 
-            mb: 2, 
-            backgroundColor: 'rgb(227, 242, 253)', 
-            color: '#1976d2'
-          }}
-        >
-          Volver a Catálogos
-        </Button>
-      </Box>
     </Box>
   );
-  
 };
 
 export default Aeropuertos;
