@@ -1,11 +1,9 @@
 import React, { useState, useEffect,useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Tabs, Tab, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Grid  } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Snackbar, Alert } from '@mui/material';
 
 const Vuelos = () => {
-  const navigate = useNavigate();
   const [vuelos, setVuelos] = useState([]);
   const [nombre, setNombre] = useState('');
   const [horario, setHorario] = useState('');

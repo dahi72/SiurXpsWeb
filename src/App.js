@@ -177,7 +177,9 @@ const App = () => {
                   />
                   <Route
                     path="/cambiar-contrasena"
-                    element={isAuthenticated ? <CambiarContrasena /> : <Navigate to="/" />}
+                    element={
+                      (console.log("isAuthenticated en cambiar-contrasena:", isAuthenticated),
+                      isAuthenticated ? <CambiarContrasena /> : <Navigate to="/" />)}
                   />
                   <Route
                     path="/agregarViajeroAGrupo/:grupoId"
