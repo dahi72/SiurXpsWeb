@@ -12,7 +12,7 @@ export const Layout = ({ children }) => {
     const location = useLocation(); // Obtiene la ubicación actual
 
     // Array de rutas donde no quieres mostrar el botón "Volver"
-    const rutasSinBotonVolver = ['/', '/cambiar-contraena', '/dashboard']; // Agrega aquí las rutas que necesites
+    const rutasSinBotonVolver = ['/', '/cambiar-contrasena', '/dashboard']; // Agrega aquí las rutas que necesites
 
     return (
       <Box sx={{
