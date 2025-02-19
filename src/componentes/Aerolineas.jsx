@@ -309,6 +309,18 @@ const Aerolineas = () => {
                 >
                   {aerolineaEditando ? 'Actualizar Aerolínea' : 'Agregar Aerolínea'}
                 </Button>
+                 <Button 
+                                                variant="outlined" 
+                                                color="primary" 
+                                                onClick={() => {
+                                                  setNombre('');
+                                                  setPaginaWeb('');
+                                                  setAerolineaEditando(null);
+                                                  setTabValue(0);
+                                                }}
+                                              >
+                                                Cancelar
+                                              </Button>
               </Box>
             </form>
           </Box>
