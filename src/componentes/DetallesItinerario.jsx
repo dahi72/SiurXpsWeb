@@ -499,6 +499,8 @@ const DetallesItinerario = () => {
                                                             gap: 1,
                                                             mt: 1
                                                         }}>
+                                                        {rol !== "Viajero" && (
+                                                            <>
                                                             <IconButton 
                                                                 size="small" 
                                                                 onClick={() => handleEditClick(event)}
@@ -522,7 +524,9 @@ const DetallesItinerario = () => {
                                                                 }}
                                                             >
                                                                 <DeleteIcon color="error" />
-                                                            </IconButton>
+                                                                    </IconButton>
+                                                                    </>
+                                                                    )}
                                                         </Box>
                                                     </Box>
                                                 </TimelineContent>
@@ -536,8 +540,7 @@ const DetallesItinerario = () => {
                     ))}
                 </Timeline>
                 )}
-                {rol !== "Viajero" && (
-                    <>
+                
                    <Dialog open={openEditDialog} onClose={handleEditClose}>
                     <DialogTitle>Modificar Horario del Evento</DialogTitle>
                     <DialogContent>
@@ -570,8 +573,7 @@ const DetallesItinerario = () => {
                         </Button>
                     </DialogActions>
                         </Dialog>
-                        </>
-                        )}
+                        
                 <Snackbar 
                     open={snackbar.open} 
                     autoHideDuration={6000} 
