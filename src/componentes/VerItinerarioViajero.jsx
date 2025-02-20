@@ -196,6 +196,25 @@ const VerItinerarioViajero = () => {
                                     >
                                         Ver Eventos
                                     </Button>
+                                     <Button
+                                        variant="outlined"
+                                        startIcon={<GroupIcon />}
+                                        onClick={() => {
+                                            if (itinerario.id) {
+                                                navigate(`/usuariosActividadOpcional/${itinerario.id}`);
+                                            } else {
+                                                setSnackbarMessage("El itinerario no tiene un ID válido.");
+                                                setOpenSnackbar(true);
+                                            }
+                                        }}
+                                        size="small"
+                                        fullWidth
+                                        sx={{
+                                            '&:hover': { backgroundColor: 'secondary.light', color: 'white' }
+                                        }}
+                                    >
+                                        Actividades Opcionales
+                             </Button>
                                 </Box>
                             </Paper>
                         );
