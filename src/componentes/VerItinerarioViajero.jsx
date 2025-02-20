@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { format } from 'date-fns';
+import { GroupIcon } from 'lucide-react';
 
 const VerItinerarioViajero = () => {
     const [itinerarios, setItinerarios] = useState([]);
