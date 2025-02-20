@@ -5,7 +5,6 @@ import {
   DialogContentText, DialogTitle
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import GroupIcon from '@mui/icons-material/Group';
 
 
 const Viajeros = () => {
@@ -66,7 +65,9 @@ const Viajeros = () => {
     setSelectedViajero(viajero);
     setOpenDialog(true);
   };
-
+  const handleActividadOpcional = (viajeroId) => {
+    navigate(`/actividad-opcional/${grupoId}/${viajeroId}`); 
+  }
   const handleDeleteConfirm = async () => {
     if (!selectedViajero) return;
 
@@ -135,17 +136,17 @@ const Viajeros = () => {
                     <TableCell>{viajero.email}</TableCell>
                     <TableCell>
                     <Button
-                      variant="outlined"
-                      startIcon={<GroupIcon />}
-                      onClick={() => navigate(`/actividad-opcional/${viajero.id}`)}
-                      size="small"
-                      fullWidth
-                      sx={{
-                          '&:hover': { backgroundColor: 'secondary.light', color: 'white' }
-                      }}
-                  >
-                      Actividades Opcionales
-                  </Button>
+                        variant="contained"
+                        color="info"
+                        size="small"
+                        sx={{ 
+                          mr: 4, 
+                          fontSize: "0.85rem" 
+                        }}
+                        onClick={() => handleActividadOpcional(viajero.id)}
+                      >
+                        Inscribir/Describir a actividad opcional
+                      </Button>
                       <Button variant="contained" color="info"  onClick={() => handleDatosViajero(viajero)}  size="small"
                         sx={{ 
                           mr: 4,
