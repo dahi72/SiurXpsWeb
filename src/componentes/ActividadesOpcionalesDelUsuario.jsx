@@ -13,7 +13,7 @@ const ActividadesOpcionalesDelUsuario = ({ itinerario }) => {
   useEffect(() => {
     const obtenerActividades = async () => {
       try {
-        const respuesta = await fetch(`${baseUrl}/Actividad/opcionales/${itinerario.GrupoDeViajeId}`
+        const respuesta = await fetch(`${baseUrl}/Actividad/opcionales/${itinerario.grupoDeViajeId}`
         );
 
         if (!respuesta.ok) {
@@ -35,11 +35,12 @@ const ActividadesOpcionalesDelUsuario = ({ itinerario }) => {
       }
     };
 
-    if (itinerario?.GrupoDeViajeId && usuario) {
+    if (itinerario?.grupoDeViajeId && usuario) {
       obtenerActividades();
     }
-  }, [itinerario?.GrupoDeViajeId, usuario, baseUrl]);
-
+  }, [itinerario?.grupoDeViajeId, usuario, baseUrl]);
+    console.log("actividades", usuario.actividades)
+    console.log("grupoID", itinerario.grupoDeViajeId )
   if (cargando) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {error}</Typography>;
 
