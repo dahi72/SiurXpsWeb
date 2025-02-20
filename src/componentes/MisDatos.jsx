@@ -128,8 +128,8 @@ const MisDatos = () => {
 
       if (!response.ok) {
         const data = await response.json();
-        if (response.status === 400) 
-          throw new Error(data.message || 'Los datos proporcionados son incorrectos.');
+        // if (response.status === 400) 
+        //   throw new Error(data.message || 'Los datos proporcionados son incorrectos.');
         if (response.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("pasaporte");

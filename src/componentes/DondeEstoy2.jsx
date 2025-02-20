@@ -71,7 +71,7 @@ const DondeEstoy2 = () => {
           throw new Error("No se encontró la información del usuario.");
         }
 
-        const url = rol.toLowerCase() === "coordinador"
+        const url = rol === "Coordinador"
           ? `${baseUrl}/Itinerario/ItinerariosDeCoordinador/${idUsuario}`
           : `${baseUrl}/Itinerario/ItinerariosDeViajero/${idUsuario}`;
 
