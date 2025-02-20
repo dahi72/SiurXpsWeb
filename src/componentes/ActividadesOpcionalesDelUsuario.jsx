@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { useUsuario } from "../hooks/UsuarioContext";
 import { Grid } from "lucide-react";
 import { Card, CardContent, CircularProgress, Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
 
-const ActividadesOpcionalesDelUsuario = ({ itinerario }) => {
+const ActividadesOpcionalesDelUsuario = () => {
   const [actividades, setActividades] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const { usuario } = useUsuario();
   const baseUrl = process.env.REACT_APP_API_URL;
-
+  const { grupoDeViajeId } = useParams(); 
   useEffect(() => {
     const obtenerActividades = async () => {
       try {
-        const respuesta = await fetch(`${baseUrl}/Actividad/opcionales/${itinerario.grupoDeViajeId}`
+        const respuesta = await fetch(`${baseUrl}/Actividad/opcionales/${grupoDeViajeId}`
         );
 
         if (!respuesta.ok) {
@@ -35,12 +36,13 @@ const ActividadesOpcionalesDelUsuario = ({ itinerario }) => {
       }
     };
 
-    if (itinerario?.grupoDeViajeId && usuario) {
+    if (grupoDeViajeId && usuario) {
       obtenerActividades();
     }
-  }, [itinerario?.grupoDeViajeId, usuario, baseUrl]);
+  }, [ grupoDeViajeId,usuario, baseUrl]);
     console.log("actividades", usuario.actividades)
-    console.log("grupoID", itinerario.grupoDeViajeId )
+    console.log("grupoID", grupoDeViajeId)
+    
   if (cargando) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {error}</Typography>;
 
