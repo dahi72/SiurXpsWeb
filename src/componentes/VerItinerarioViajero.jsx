@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { format } from 'date-fns';
+import { GroupIcon } from 'lucide-react';
 
 const VerItinerarioViajero = () => {
     const [itinerarios, setItinerarios] = useState([]);
@@ -200,12 +201,7 @@ const VerItinerarioViajero = () => {
                                         variant="outlined"
                                         startIcon={<GroupIcon />}
                                         onClick={() => {
-                                            if (itinerario.id) {
-                                                navigate(`/usuariosActividadOpcional/${itinerario.id}`);
-                                            } else {
-                                                setSnackbarMessage("El itinerario no tiene un ID válido.");
-                                                setOpenSnackbar(true);
-                                            }
+                                            navigate(`/actividadesOpcionalesDelUsuario/${itinerario.grupoDeViajeId}`);
                                         }}
                                         size="small"
                                         fullWidth
@@ -214,7 +210,7 @@ const VerItinerarioViajero = () => {
                                         }}
                                     >
                                         Actividades Opcionales
-                             </Button>
+                                    </Button>
                                 </Box>
                             </Paper>
                         );
