@@ -46,7 +46,7 @@ export const UsuarioProvider = ({ children }) => {
                estado: data.estado,
                pasaporte: data.pasaporte,
                email: data.email,
-               pasaporteDocumentoRuta: data.pasaporteDocumentoRuta,
+               pasaporteDocumentoRuta: data.pasaporteDocumentoBase64,
                visaDocumentoRuta:data.visaDocumentoRuta,
                seguroDeViajeDocumentoRuta:data.seguroDeViajeDocumentoRuta,
                vacunasDocumentoRuta:data.vacunasDocumentoRuta,
