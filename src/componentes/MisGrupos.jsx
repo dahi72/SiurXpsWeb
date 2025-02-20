@@ -139,7 +139,7 @@ const MisGrupos = () => {
 
     const tieneViajeros = (grupo) => grupo.viajerosIds && grupo.viajerosIds.length > 0;
     const formatFechaCorta = (fecha) => format(new Date(fecha), 'dd MMM yyyy');
-    const isGrupoEnViaje = (fechaInicio, fechaFin) => new Date(fechaInicio) <= new Date() && new Date(fechaFin) < new Date();
+    const isGrupoEnViaje = (fechaInicio, fechaFin) => new Date(fechaInicio) <= new Date() && new Date(fechaFin) > new Date();
  
 
 
@@ -244,7 +244,7 @@ const MisGrupos = () => {
                                         startIcon={<DeleteIcon />}
                                         color="error"
                                         onClick={() => handleDelete(grupo.id)}
-                                        disabled={isGrupoEnViaje(grupo.fechaInicio)}
+                                        disabled={isGrupoEnViaje(grupo.fechaInicio, grupo.fechaFin)}
                                         size="small"
                                         fullWidth
                                         sx={{
