@@ -39,20 +39,22 @@ export const UsuarioProvider = ({ children }) => {
            
              setUsuario({
               ...usuario,
-              primerNombre: data.primerNombre,
+           primerNombre: data.primerNombre,
               segundoNombre: data.segundoNombre,               
               primerApellido: data.primerApellido,
               segundoApellido: data.segundoApellido,               
                estado: data.estado,
                pasaporte: data.pasaporte,
                email: data.email,
-               pasaporteDocumentoRuta: data.pasaporteDocumentoBase64,
-               visaDocumentoRuta:data.visaDocumentoRuta,
-               seguroDeViajeDocumentoRuta:data.seguroDeViajeDocumentoRuta,
-               vacunasDocumentoRuta:data.vacunasDocumentoRuta,
+               pasaporteDocumentoBase64: data.pasaporteDocumentoBase64,
+               visaDocumentoBase64:data.visaDocumentoBase64,
+               seguroDeViajeDocumentoBase64:data.seguroDeViajeDocumentoBase64,
+               vacunasDocumentoBase64:data.vacunasDocumentoBase64,
                telefono: data.telefono,
                fechaNac: data.fechaNac,
-               
+               actividades:data.actividades,
+               gruposcomoviajero: data.gruposcomoviajero,
+               gruposcomocoordinador: data.gruposcomocoordinador
              });
            } else {
              throw new Error("Estructura de datos inesperada");
