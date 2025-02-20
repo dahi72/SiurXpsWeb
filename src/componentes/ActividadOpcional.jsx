@@ -30,7 +30,8 @@ function ActividadOpcional() {
         }
 
         const data = await response.json();
-        setActividadesOpcionales(data);
+     
+        setActividadesOpcionales(data.map(actividad => actividad.opcional ? actividad : null).filter(Boolean));
       } catch (err) {
         setError(err.message);
         setSuccess(false);
