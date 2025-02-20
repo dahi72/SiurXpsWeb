@@ -486,7 +486,7 @@ const DetallesItinerario = () => {
             }
             {/* Mostrar "opcional" aquí si existe */}
             {key === "opcional" && (
-                <span> ({value ? "Sí" : "No"})</span>
+                <span> {value ? "Sí" : "No"}</span>
             )}
         </Typography>
                                                                 ))}
