@@ -201,7 +201,7 @@ const VerItinerarioViajero = () => {
                                         variant="outlined"
                                         startIcon={<GroupIcon />}
                                         onClick={() => {
-                                            navigate(`/actividadesOpcionalesDelUsuario/${itinerario.grupoDeViajeId}`);
+                                            navigate(`/ActividadesOpcionalesDelUsuario/${itinerario.grupoDeViajeId}`);
                                         }}
                                         size="small"
                                         fullWidth
