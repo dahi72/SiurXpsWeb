@@ -1,5 +1,5 @@
-import { useEffect, useState, useContext } from "react";
-import { UsuarioContext } from "../context/UsuarioContext";
+import { useEffect, useState } from "react";
+import { useUsuario } from "../hooks/UsuarioContext";
 import { Grid } from "lucide-react";
 import { Card, CardContent, CircularProgress, Typography } from "@mui/material";
 
@@ -7,7 +7,7 @@ const ActividadesOpcionalesDelUsuario = ({ itinerario }) => {
   const [actividades, setActividades] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
-  const { usuario } = useContext(UsuarioContext);
+  const { usuario } = useUsuario();
   const baseUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {

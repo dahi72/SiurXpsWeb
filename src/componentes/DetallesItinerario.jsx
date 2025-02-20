@@ -41,7 +41,7 @@ const DetallesItinerario = () => {
     const [newDateTime, setNewDateTime] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-    
+    const rol = localStorage.getItem('rol');
     
     const createHeaders = (token) => ({
         Authorization: `Bearer ${token}`,
@@ -469,26 +469,26 @@ const DetallesItinerario = () => {
                                                                 .filter(([key]) => key !== "ciudadId" && key !== "paisId" && key !== "id") // Excluir ciudadId y paisId
                                                                 .map(([key, value]) => (
                                                              <Typography
-            fullWidth
-            key={key}
-            variant="body2"
-            sx={{
-                fontSize: { xs: "0.8rem", sm: "1rem" },
-                display: "block",
-                textAlign: "left",
-                wordBreak: "break-word",
-            }}
-        >
-            <b>{key}:</b> 
-            {key === "ciudad" || key === "pais" ? 
-                value.nombre : 
-                (typeof value === "object" ? JSON.stringify(value) : value)
-            }
-            {/* Mostrar "opcional" aquí si existe */}
-            {key === "opcional" && (
-                <span> {value ? "Sí" : "No"}</span>
-            )}
-        </Typography>
+                                                                fullWidth
+                                                                key={key}
+                                                                variant="body2"
+                                                                sx={{
+                                                                    fontSize: { xs: "0.8rem", sm: "1rem" },
+                                                                    display: "block",
+                                                                    textAlign: "left",
+                                                                    wordBreak: "break-word",
+                                                                }}
+                                                                >
+                                                                <b>{key}:</b> 
+                                                                {key === "ciudad" || key === "pais" ? 
+                                                                    value.nombre : 
+                                                                    (typeof value === "object" ? JSON.stringify(value) : value)
+                                                                }
+                                                                {/* Mostrar "opcional" aquí si existe */}
+                                                                {key === "opcional" && (
+                                                                    <span> {value ? "Sí" : "No"}</span>
+                                                                )}
+                                                            </Typography>
                                                                 ))}
                                                         </AccordionDetails>
                                                     </Accordion>
@@ -535,8 +535,10 @@ const DetallesItinerario = () => {
                         </React.Fragment>
                     ))}
                 </Timeline>
-            )}
-            <Dialog open={openEditDialog} onClose={handleEditClose}>
+                )}
+                {rol !== "Viajero" && (
+                    <>
+                   <Dialog open={openEditDialog} onClose={handleEditClose}>
                     <DialogTitle>Modificar Horario del Evento</DialogTitle>
                     <DialogContent>
                         <Box sx={{ mt: 2 }}>
@@ -567,8 +569,9 @@ const DetallesItinerario = () => {
                             Eliminar
                         </Button>
                     </DialogActions>
-                </Dialog>
-
+                        </Dialog>
+                        </>
+                        )}
                 <Snackbar 
                     open={snackbar.open} 
                     autoHideDuration={6000} 

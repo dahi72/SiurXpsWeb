@@ -47,7 +47,7 @@ import VerDatosViajero from './componentes/VerDatosViajeros';
 import CrearItinerario2 from './componentes/CrearItinerario2';
 import ListadoUsuariosDeActividadOpcional from './componentes/ListadoUsuariosDeActividadOpcional';
 import VerItinerarioViajero from './componentes/VerItinerarioViajero';
-
+import ActividadesOpcionalesDelUsuario from './componentes/ActividadesOpcionalesDelUsuario';
 const App = () => {
   const isAuthenticated = localStorage.getItem("token") || localStorage.getItem("id");
 
@@ -178,8 +178,7 @@ const App = () => {
                   <Route
                     path="/cambiar-contrasena"
                     element={
-                      (console.log("isAuthenticated en cambiar-contrasena:", isAuthenticated),
-                      isAuthenticated ? <CambiarContrasena /> : <Navigate to="/" />)}
+                      isAuthenticated ? <CambiarContrasena /> : <Navigate to="/" />}
                   />
                   <Route
                     path="/agregarViajeroAGrupo/:grupoId"
@@ -201,6 +200,10 @@ const App = () => {
                   <Route
                     path="/VerItinerarioViajero"
                     element={isAuthenticated ? <VerItinerarioViajero /> : <Navigate to="/" />}
+                  />
+                   <Route
+                    path="/ActividadesOpcionalesDelUsuario/:grupoDeViajeId"
+                    element={isAuthenticated ? <ActividadesOpcionalesDelUsuario /> : <Navigate to="/" />}
                   />
 
                   {/* 404 route */}
