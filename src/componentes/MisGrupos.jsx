@@ -139,7 +139,9 @@ const MisGrupos = () => {
 
     const tieneViajeros = (grupo) => grupo.viajerosIds && grupo.viajerosIds.length > 0;
     const formatFechaCorta = (fecha) => format(new Date(fecha), 'dd MMM yyyy');
-    const isGrupoEnViaje = (fechaInicio) => new Date(fechaInicio) <= new Date();
+    const isGrupoEnViaje = (fechaInicio, fechaFin) => new Date(fechaInicio) <= new Date() && new Date(fechaFin) < new Date();
+ 
+
 
     return (
         <Container maxWidth="lg">
