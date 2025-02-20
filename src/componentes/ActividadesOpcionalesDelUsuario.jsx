@@ -11,11 +11,17 @@ const ActividadesOpcionalesDelUsuario = () => {
   const { usuario } = useUsuario();
   const baseUrl = process.env.REACT_APP_API_URL;
   const { grupoDeViajeId } = useParams(); 
+    const token = localStorage.getItem('token'); 
   useEffect(() => {
     const obtenerActividades = async () => {
-      try {
-        const respuesta = await fetch(`${baseUrl}/Actividad/opcionales/${grupoDeViajeId}`
-        );
+        try {
+          const respuesta = await fetch(`${baseUrl}/Actividad/opcionales/${grupoDeViajeId}`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,  
+              "Content-Type": "application/json"
+            }
+          });
 
         if (!respuesta.ok) {
           throw new Error("Error al obtener las actividades opcionales.");
@@ -23,7 +29,6 @@ const ActividadesOpcionalesDelUsuario = () => {
 
         const datos = await respuesta.json();
 
-        // Filtrar actividades en las que el usuario no está inscripto
         const actividadesFiltradas = datos.actividades.filter(
           (actividad) => !usuario.actividades.some((a) => a.id === actividad.id)
         );
@@ -39,7 +44,7 @@ const ActividadesOpcionalesDelUsuario = () => {
     if (grupoDeViajeId && usuario) {
       obtenerActividades();
     }
-  }, [ grupoDeViajeId,usuario, baseUrl]);
+  }, [ token, grupoDeViajeId,usuario, baseUrl]);
     console.log("actividades", usuario.actividades)
     console.log("grupoID", grupoDeViajeId)
     
