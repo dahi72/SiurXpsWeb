@@ -468,19 +468,27 @@ const DetallesItinerario = () => {
                                                             {Object.entries(detail)
                                                                 .filter(([key]) => key !== "ciudadId" && key !== "paisId" && key !== "id") // Excluir ciudadId y paisId
                                                                 .map(([key, value]) => (
-                                                                    <Typography
-                                                                    fullWidth
-                                                                    key={key}
-                                                                    variant="body2"
-                                                                    sx={{
-                                                                        fontSize: { xs: "0.8rem", sm: "1rem" },
-                                                                        display: "block",
-                                                                        textAlign: "left",
-                                                                        wordBreak: "break-word",
-                                                                    }}
-                                                                >
-                                                                        <b>{key}:</b> {key === "ciudad" || key === "pais" ? value.nombre : (typeof value === "object" ? JSON.stringify(value) : value)}
-                                                                    </Typography>
+                                                             <Typography
+            fullWidth
+            key={key}
+            variant="body2"
+            sx={{
+                fontSize: { xs: "0.8rem", sm: "1rem" },
+                display: "block",
+                textAlign: "left",
+                wordBreak: "break-word",
+            }}
+        >
+            <b>{key}:</b> 
+            {key === "ciudad" || key === "pais" ? 
+                value.nombre : 
+                (typeof value === "object" ? JSON.stringify(value) : value)
+            }
+            {/* Mostrar "opcional" aquí si existe */}
+            {key === "opcional" && (
+                <span> ({value ? "Sí" : "No"})</span>
+            )}
+        </Typography>
                                                                 ))}
                                                         </AccordionDetails>
                                                     </Accordion>
