@@ -6,7 +6,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { UsuarioContext } from '../hooks/UsuarioContext';
 
 
-const Login = () => {
+const Login = ({ setIsAuthenticated })  => {
   const passwordRef = useRef(null);
   const pasaporteRef = useRef(null);  
   const navigate = useNavigate();
@@ -18,22 +18,24 @@ const Login = () => {
   const { setUsuario } = useContext(UsuarioContext);
 
 
-  const ingresar = (e) => {
+  const ingresar = (e) => { 
     e.preventDefault(); 
     const password = passwordRef.current.value;
     const pasaporte = pasaporteRef.current.value;  
-
+  
     if (!password || !pasaporte) {
       setMensaje("Debe proporcionar pasaporte y contraseña");
+      setTimeout(() => {
+        setMensaje(""); // Limpiar el mensaje después de 3 segundos
+      }, 3000);
       return;
     }
-
+  
     fetch(`${baseUrl}/Usuario/login`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer  ${localStorage.getItem('token')}`, 
-        'Content-Type': 'application/json'
-    },
+         'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         password,
         pasaporte,
@@ -41,11 +43,11 @@ const Login = () => {
     })
       .then((response) => response.json())  
       .then((data) => {
-       
         if (data.token) {  
           localStorage.setItem("token", data.token);
           localStorage.setItem("id", data.id);
           localStorage.setItem("rol", data.rol);
+          setIsAuthenticated(true);
           setUsuario({
             token: data.token,
             pasaporte: data.pasaporte,
@@ -60,19 +62,20 @@ const Login = () => {
           }
         } else {
           setMensaje("Usuario y/o contraseña incorrectos");
+          setTimeout(() => {
+            setMensaje(""); 
+          }, 3000);
           passwordRef.current.value = "";
           pasaporteRef.current.value = "";
         }
       })
       .catch((error) => {
-        if (error.message === "Failed to fetch") {
-          setMensaje("Ocurrió un error en el servidor. Inténtelo de nuevo más tarde.");
-        } else {
-          setMensaje(`Error: ${error.message}`);
-        }
+        setMensaje("Ocurrió un error. Intenta nuevamente.");
+        setTimeout(() => {
+          setMensaje(""); 
+        }, 3000);
       });
   };
-
   const handleMostrarContrasena = () => {
     setMostrarContrasena(!mostrarContrasena);
   };
