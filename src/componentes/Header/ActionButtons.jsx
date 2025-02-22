@@ -1,9 +1,10 @@
 import { AccountCircle } from "@mui/icons-material";
-import { Badge, Box, IconButton, Menu, MenuItem, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Badge, Box, IconButton, Menu, MenuItem, Typography, CircularProgress } from "@mui/material";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUsuario } from "../../hooks/UsuarioContext";
 import { useSnackbar } from "../../hooks/useSnackbar";
+import Logout from "../Logout"; // Importa el componente Logout
 
 const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -13,50 +14,39 @@ export const ActionButtons = () => {
     const navigate = useNavigate();
     const { setSnackbarMessage, setSnackbarSeverity, setOpenSnackbar } = useSnackbar();
     const [anchorEl, setAnchorEl] = useState(null);
-    const { usuario, setUsuario } = useUsuario();
-
+    const { usuario,setUsuario, loading: usuarioLoading } = useUsuario(); // Usamos el estado loading del contexto
+    const [estadoCoordinador, setEstadoCoordinador] = useState(usuario?.estado);
+    const [isLoading, setIsLoading] = useState(false); // Estado para controlar la carga del estado
 
     const nombreUsuario = usuario
-    ? `${usuario.primerNombre} ${usuario.primerApellido}`
-        : "";
-    
+        ? `${usuario.primerNombre} ${usuario.primerApellido}`
+        : "Invitado";
+
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
+
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
-
-    const [estadoCoordinador, setEstadoCoordinador] = useState();
-
-    useEffect(() => {
-       
-        if (!usuario) return;
-        setEstadoCoordinador(usuario.estado)
-    }, [usuario, estadoCoordinador]);
-
-    const menuItems = [
-        { label: 'Mis datos', action: '/verMisDatos' },
-        { label: 'Cambiar contraseña', action: '/cambiar-contrasena' },
-        { label: 'Registrar coordinador', action: '/registro', rolesPermitidos: ['Coordinador'] }
-    ];
 
     const getEstadoColor = () => {
         return estadoCoordinador ? '#4CAF50' : '#f44336';
     };
 
     const toggleEstado = async () => {
+        setIsLoading(true);
         try {
             const nuevoEstado = !estadoCoordinador;
-            
+
             const response = await fetch(`${baseUrl}/Usuario/${id}/estado`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ 
-                    estado: nuevoEstado 
+                body: JSON.stringify({
+                    estado: nuevoEstado
                 })
             });
 
@@ -66,7 +56,7 @@ export const ActionButtons = () => {
             }
 
             setEstadoCoordinador(nuevoEstado);
-            setUsuario(usu => ({ ...usu, estado: nuevoEstado}))
+            setUsuario(usu => ({ ...usu, estado: nuevoEstado }));
             setSnackbarMessage('Estado actualizado correctamente');
             setSnackbarSeverity('success');
             setOpenSnackbar(true);
@@ -82,19 +72,37 @@ export const ActionButtons = () => {
             setTimeout(() => {
                 setOpenSnackbar(false);
             }, 3000);
+        } finally {
+            setIsLoading(false); // Desactivar el estado de carga
         }
     };
 
-    // Filtrar los elementos del menú según el rol del usuario
+    const menuItems = [
+        { label: 'Mis datos', action: '/verMisDatos' },
+        { label: 'Cambiar contraseña', action: '/cambiar-contrasena' },
+        { label: 'Ir al Dashboard', action: '/dashboard' },
+        { label: 'Registrar coordinador', action: '/registro', rolesPermitidos: ['Coordinador'] }
+    ];
+
     const filteredMenuItems = menuItems.filter(item => {
-        if (!item.rolesPermitidos) return true; // Si no hay roles definidos, incluir el ítem
-        return item.rolesPermitidos.includes(usuario.rol); // Verificar si el rol del usuario está permitido
+        if (!item.rolesPermitidos) return true;
+        return item.rolesPermitidos.includes(usuario?.rol);
     });
 
     return (
         <>
-            <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between" gap={2} >
-                <Typography>{nombreUsuario}</Typography>
+            <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between" gap={2}>
+                {/* Mostrar un spinner si el usuario está cargando */}
+                {usuarioLoading ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <CircularProgress size={20} sx={{ color: 'white' }} /> {/* Spinner de carga */}
+                        <Typography variant="body1" sx={{ color: 'white' }}>
+                            Cargando...
+                        </Typography>
+                    </Box>
+                ) : (
+                    <Typography>{nombreUsuario}</Typography>
+                )}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Badge
                         overlap="circular"
@@ -113,52 +121,57 @@ export const ActionButtons = () => {
                     </Typography>
                 </Box>
             </Box>
-                <IconButton
-                    size="large"
-                    edge="end"
-                    color="inherit"
-                    onClick={handleMenuOpen}
-                >
-                    <AccountCircle />
-                </IconButton>
+            <IconButton
+                size="large"
+                edge="end"
+                color="inherit"
+                onClick={handleMenuOpen}
+            >
+                <AccountCircle />
+            </IconButton>
 
-                <Menu
-    anchorEl={anchorEl}
-    open={Boolean(anchorEl)}
-    onClose={handleMenuClose}
->
-    <MenuItem sx={{ pointerEvents: 'none' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Badge
-                overlap="circular"
-                variant="dot"
-                sx={{
-                    '& .MuiBadge-badge': {
-                        backgroundColor: getEstadoColor(),
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                    }
-                }}
-            />
-            <Typography>
-                Estado: {estadoCoordinador ? 'Activo' : 'Inactivo'}
-            </Typography>
-        </Box>
-    </MenuItem>
-    <MenuItem onClick={toggleEstado}>
-        Cambiar a {estadoCoordinador ? 'Inactivo' : 'Activo'}
-    </MenuItem>
-    {/* Cambié esto para usar filteredMenuItems en lugar de menuItems */}
-    {filteredMenuItems.map((item, index) => (
-        <MenuItem key={index} onClick={() => { handleMenuClose(); navigate(item.action); }}>
-            {item.label}
-        </MenuItem>
-    ))}
-    <MenuItem onClick={() => { handleMenuClose(); navigate("/dashboard"); }}>
-        Dashboard
-    </MenuItem>
-</Menu>
-
-    </>);
-}
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+            >
+                <MenuItem sx={{ pointerEvents: 'none' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Badge
+                            overlap="circular"
+                            variant="dot"
+                            sx={{
+                                '& .MuiBadge-badge': {
+                                    backgroundColor: getEstadoColor(),
+                                    width: 8,
+                                    height: 8,
+                                    borderRadius: '50%',
+                                }
+                            }}
+                        />
+                        <Typography>
+                            Estado: {estadoCoordinador ? 'Activo' : 'Inactivo'}
+                        </Typography>
+                    </Box>
+                </MenuItem>
+                <MenuItem onClick={toggleEstado} disabled={isLoading}>
+                    {isLoading ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <CircularProgress size={20} /> {/* Spinner de carga */}
+                            <Typography>Cargando...</Typography>
+                        </Box>
+                    ) : (
+                        `Cambiar a ${estadoCoordinador ? 'Inactivo' : 'Activo'}`
+                    )}
+                </MenuItem>
+                {filteredMenuItems.map((item, index) => (
+                    <MenuItem key={index} onClick={() => { handleMenuClose(); navigate(item.action); }}>
+                        {item.label}
+                    </MenuItem>
+                ))}
+                {/* Integración de Logout */}
+                <Logout onLogout={handleMenuClose} />
+            </Menu>
+        </>
+    );
+};
