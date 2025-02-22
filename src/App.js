@@ -1,4 +1,4 @@
-import React from 'react';
+import { React,useEffect, useState}from 'react';
 import './App.css';
 import './estilos.css';
 import NoEncontrado from './componentes/NoEncontrado';
@@ -36,7 +36,7 @@ import DetallesItinerario from './componentes/DetallesItinerario';
 import DondeEstoy2 from './componentes/DondeEstoy2';
 import EditarItinerario from './componentes/EditarItinerario';
 import Viajeros from './componentes/Viajeros';
-//import FormularioActividad from './componentes/FormularioActividad';
+import FormularioActividad from './componentes/FormularioActividad';
 import FormularioTraslado from './componentes/FormularioTraslado';
 import FormularioHotel from './componentes/FormularioHotel';
 import FormularioAeropuerto from './componentes/FormularioAeropuerto';
@@ -48,8 +48,18 @@ import CrearItinerario2 from './componentes/CrearItinerario2';
 import ListadoUsuariosDeActividadOpcional from './componentes/ListadoUsuariosDeActividadOpcional';
 import VerItinerarioViajero from './componentes/VerItinerarioViajero';
 import ActividadesOpcionalesDelUsuario from './componentes/ActividadesOpcionalesDelUsuario';
+
 const App = () => {
-  const isAuthenticated = localStorage.getItem("token") || localStorage.getItem("id");
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("token") || localStorage.getItem("id")
+  );
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const id = localStorage.getItem("id");
+    setIsAuthenticated(!!(token || id));
+  }, []);
+
 
   return (
     <UsuarioProvider>
@@ -65,7 +75,7 @@ const App = () => {
                   <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
                   
                   {/* Authentication routes */}
-                  <Route path="/" element={<Login />} />
+                  <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
                   <Route path="/registro" element={isAuthenticated ? <Registro />: <Navigate to="/" />} />
                   <Route path="/logout" element={<Logout />} />
 
@@ -138,7 +148,10 @@ const App = () => {
                     path="/itinerario/:id/eventos"
                     element={isAuthenticated ? <DetallesItinerario /> : <Navigate to="/" />}
                   />
-                 
+                  <Route
+                    path="/editar-actividad/:id"
+                    element={isAuthenticated ? <FormularioActividad /> : <Navigate to="/" />}
+                  />
                   <Route
                     path="/editar-traslado/:id"
                     element={isAuthenticated ? <FormularioTraslado /> : <Navigate to="/" />}
@@ -177,8 +190,7 @@ const App = () => {
                   />
                   <Route
                     path="/cambiar-contrasena"
-                    element={
-                      isAuthenticated ? <CambiarContrasena /> : <Navigate to="/" />}
+                    element={isAuthenticated ? <CambiarContrasena /> : <Navigate to="/" />}
                   />
                   <Route
                     path="/agregarViajeroAGrupo/:grupoId"
