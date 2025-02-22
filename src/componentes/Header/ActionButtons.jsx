@@ -1,6 +1,6 @@
 import { AccountCircle } from "@mui/icons-material";
 import { Badge, Box, IconButton, Menu, MenuItem, Typography, CircularProgress } from "@mui/material";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUsuario } from "../../hooks/UsuarioContext";
 import { useSnackbar } from "../../hooks/useSnackbar";
@@ -14,14 +14,18 @@ export const ActionButtons = () => {
     const navigate = useNavigate();
     const { setSnackbarMessage, setSnackbarSeverity, setOpenSnackbar } = useSnackbar();
     const [anchorEl, setAnchorEl] = useState(null);
-    const { usuario,setUsuario, loading: usuarioLoading } = useUsuario(); // Usamos el estado loading del contexto
+    const { usuario, setUsuario, loading: usuarioLoading } = useUsuario(); // Usamos el estado loading del contexto
     const [estadoCoordinador, setEstadoCoordinador] = useState(usuario?.estado);
     const [isLoading, setIsLoading] = useState(false); // Estado para controlar la carga del estado
 
     const nombreUsuario = usuario
         ? `${usuario.primerNombre} ${usuario.primerApellido}`
-        : "Invitado";
-
+        : "";
+        useEffect(() => {
+            if (usuario && !usuarioLoading) {
+                navigate("/dashboard");
+            }
+        }, [usuario, usuarioLoading, navigate]);
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -35,7 +39,7 @@ export const ActionButtons = () => {
     };
 
     const toggleEstado = async () => {
-        setIsLoading(true);
+        setIsLoading(true); // Activar el estado de carga
         try {
             const nuevoEstado = !estadoCoordinador;
 
@@ -101,7 +105,7 @@ export const ActionButtons = () => {
                         </Typography>
                     </Box>
                 ) : (
-                    <Typography>{nombreUsuario}</Typography>
+                    <Typography sx={{ color: 'white' }}>{nombreUsuario}</Typography>
                 )}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Badge
