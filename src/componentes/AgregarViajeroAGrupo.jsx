@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Paper, Typography, Button, TextField, Alert, Container, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const AgregarViajeroAGrupo = () => {
   const { state } = useLocation();
   const { grupoId, grupoNombre } = state || {};
   const [grupoSeleccionado, setGrupoSeleccionado] = useState(grupoId || "");
   const [nombreGrupo, setNombreGrupo] = useState(grupoNombre || "");
-  const [viajero, setViajero] = useState({ primerNombre: "", primerApellido: "", pasaporte: "",  email: "", 
-    telefono: "" });
+  const [viajero, setViajero] = useState({ primerNombre: "", primerApellido: "", pasaporte: "", email: "", telefono: "" });
   const [grupos, setGrupos] = useState([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const baseUrl = process.env.REACT_APP_API_URL;
-  const navigate = useNavigate();
   const [errorPasaporte, setErrorPasaporte] = useState(null);
-const [isValidPasaporte, setIsValidPasaporte] = useState(false);
+  const [isValidPasaporte, setIsValidPasaporte] = useState(false);
+
   useEffect(() => {
     if (state?.grupoId) {
         setGrupos([{ id: state.grupoId, nombre: state.grupoNombre }]);
@@ -42,10 +41,9 @@ const [isValidPasaporte, setIsValidPasaporte] = useState(false);
                 setGrupos([]); 
             });
     }
-}, [state, baseUrl]); 
+  }, [state, baseUrl]);
 
   useEffect(() => {
-  
     if (grupoSeleccionado && grupos.length > 0) {
       const grupo = grupos.find(g => g.id === grupoSeleccionado);
       if (grupo) {
@@ -53,6 +51,7 @@ const [isValidPasaporte, setIsValidPasaporte] = useState(false);
       }
     }
   }, [grupoSeleccionado, grupos]);
+
   const handlePasaporteChange = (e) => {
     const value = e.target.value;
     const regex = /^[A-Za-z]\d{6}$/; 
@@ -67,6 +66,7 @@ const [isValidPasaporte, setIsValidPasaporte] = useState(false);
   
     setViajero({ ...viajero, pasaporte: value });
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!grupoSeleccionado) {
@@ -91,59 +91,62 @@ const [isValidPasaporte, setIsValidPasaporte] = useState(false);
         return response.json();
       })
       .then((data) => {
-        setSuccess(true);
-        setError(null);
-        setViajero({ primerNombre: "", primerApellido: "", pasaporte: "", email: "", telefono: "" });
+        if (data.message && data.message.includes("Ya existe un usuario con ese pasaporte")) {
+          setSuccess(true);
+          setError(null);
+          setViajero({ primerNombre: "", primerApellido: "", pasaporte: "", email: "", telefono: "" });
+          setErrorPasaporte(null);
+          setIsValidPasaporte(false);
+          setError("El viajero ya existía y ha sido agregado al grupo.");
+        } else {
+          setSuccess(true);
+          setError(null);
+          setViajero({ primerNombre: "", primerApellido: "", pasaporte: "", email: "", telefono: "" });
+        }
+
+        // Después de 3 segundos, limpiar el mensaje de éxito o error
+        setTimeout(() => {
+          setSuccess(false);
+          setError(null);
+        }, 3000);
       })
       .catch((error) => {
         setError(error.message);
         console.error("Error:", error);
       });
-    };
-
-  const handleBack = () => {
-    navigate(-1); 
-};
+  };
 
   return (
     <>
       <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Button 
-            variant="contained" 
-            color="secondary" 
-            onClick={handleBack}
-            sx={{ margin: 2 }}
-        >
-            Volver a grupos
-        </Button>
         <Paper sx={{ p: 4 }}>
           <Typography variant="h5" gutterBottom>
             Agregar Pasajero al Grupo: {nombreGrupo || 'Selecciona un grupo'}
           </Typography>
           <form onSubmit={handleSubmit}>
-          {!grupoSeleccionado && (
-    <FormControl fullWidth margin="normal" required>
-        <InputLabel>Grupo de Viaje</InputLabel>
-        <Select
-            value={grupoSeleccionado}
-            onChange={(e) => {
-                const seleccionado = e.target.value;
-                setGrupoSeleccionado(seleccionado);
-                const grupoSelec = grupos.find(g => g.id === seleccionado);
-                if (grupoSelec) {
-                    setNombreGrupo(grupoSelec.nombre);
-                }
-            }}
-            label="Grupo de Viaje"
-        >
-            {Array.isArray(grupos) && grupos.map((grupo) => (
-                <MenuItem key={grupo.id} value={grupo.id}>
-                    {grupo.nombre}
-                </MenuItem>
-            ))}
-        </Select>
-    </FormControl>
-)}
+            {!grupoSeleccionado && (
+              <FormControl fullWidth margin="normal" required>
+                <InputLabel>Grupo de Viaje</InputLabel>
+                <Select
+                  value={grupoSeleccionado}
+                  onChange={(e) => {
+                    const seleccionado = e.target.value;
+                    setGrupoSeleccionado(seleccionado);
+                    const grupoSelec = grupos.find(g => g.id === seleccionado);
+                    if (grupoSelec) {
+                      setNombreGrupo(grupoSelec.nombre);
+                    }
+                  }}
+                  label="Grupo de Viaje"
+                >
+                  {Array.isArray(grupos) && grupos.map((grupo) => (
+                    <MenuItem key={grupo.id} value={grupo.id}>
+                      {grupo.nombre}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
             <TextField
               fullWidth
               label="Primer Nombre"
@@ -161,22 +164,22 @@ const [isValidPasaporte, setIsValidPasaporte] = useState(false);
               margin="normal"
             />
             <TextField
-  fullWidth
-  label="Número de Pasaporte"
-  value={viajero.pasaporte}
-  onChange={handlePasaporteChange}
-  required
-  margin="normal"
-  helperText={errorPasaporte} // Muestra una advertencia en lugar de error
-/>
-             <TextField
+              fullWidth
+              label="Número de Pasaporte"
+              value={viajero.pasaporte}
+              onChange={handlePasaporteChange}
+              required
+              margin="normal"
+              helperText={errorPasaporte} // Muestra una advertencia en lugar de error
+            />
+            <TextField
               fullWidth
               label="Correo Electrónico"
               value={viajero.email}
               onChange={(e) => setViajero({ ...viajero, email: e.target.value })}
               required
               margin="normal"
-              type="email" // Asegúrate de que sea un campo de tipo email
+              type="email"
             />
             <TextField
               fullWidth
@@ -185,7 +188,7 @@ const [isValidPasaporte, setIsValidPasaporte] = useState(false);
               onChange={(e) => setViajero({ ...viajero, telefono: e.target.value })}
               required
               margin="normal"
-              type="tel" 
+              type="tel"
             />
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }} disabled={!isValidPasaporte}>
               Agregar Pasajero
