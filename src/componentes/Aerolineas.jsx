@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { 
   Box, 
   Button, 
@@ -20,7 +20,6 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 
 const Aerolineas = () => {
-
   const [tabValue, setTabValue] = useState(0);
   const [aerolineas, setAerolineas] = useState([]);
   const [nombre, setNombre] = useState('');
@@ -33,135 +32,106 @@ const Aerolineas = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [mensaje, setMensaje] = useState('');
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
-
-  const isFormComplete = () => {
-    return (
-      nombre &&
-      paginaWeb
-    );
-  };
-
   const mostrarMensaje = (texto, tipo = 'success') => {
     setMensaje(texto);
     setTipoAlerta(tipo);
     setOpenSnackbar(true);
   };
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
+  const handleCloseSnackbar = (_, reason) => {
+    if (reason === 'clickaway') return;
+    setOpenSnackbar(false);
   };
 
-  useEffect(() => {
-    const cargarAerolineas = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/Aerolinea/aerolineas`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`, 
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json(); 
-          throw new Error(errorData.mensaje || 'Error al obtener las aerolíneas');
-        }
-
-        const data = await response.json();
-        setAerolineas(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error al cargar las aerolíneas:', error);
-        mostrarMensaje(error.message, 'error');
-      }
-    };
-
-    cargarAerolineas();
+  const cargarAerolineas = useCallback(async () => {
+    try {
+      const response = await fetch(`${baseUrl}/Aerolinea/aerolineas`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) throw new Error('Error al obtener las aerolíneas');
+      const data = await response.json();
+      setAerolineas(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar las aerolíneas:', error);
+      mostrarMensaje(error.message, 'error');
+    }
   }, [baseUrl, token]);
+
+  useEffect(() => {
+    cargarAerolineas();
+  }, [cargarAerolineas]);
+
+  const isFormComplete = () => nombre.trim() !== '' && paginaWeb.trim() !== '';
+
+  const handleTabChange = (_, newValue) => setTabValue(newValue);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isFormComplete()) return mostrarMensaje('Nombre y página web son requeridos', 'error');
+
+    const url = aerolineaEditando ? `${baseUrl}/Aerolinea/${aerolineaEditando.id}` : `${baseUrl}/Aerolinea/altaAerolinea`;
+    const method = aerolineaEditando ? 'PUT' : 'POST';
+    const aerolineaData = { nombre, paginaWeb };
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(aerolineaData),
+      });
+
+      if (!response.ok) throw await response.json();
+
+      await cargarAerolineas();
+
+      setNombre('');
+      setPaginaWeb('');
+      setAerolineaEditando(null);
+      setTabValue(0);
+      mostrarMensaje(aerolineaEditando ? 'Aerolínea actualizada correctamente' : 'Aerolínea agregada correctamente', 'success');
+    } catch (error) {
+      mostrarMensaje('Error al guardar la aerolínea', 'error');
+    }
+  };
 
   const handleEliminar = async (id) => {
     const confirmacion = window.confirm("¿Está seguro de que desea eliminar esta aerolínea?");
-    if (confirmacion) {
+    if (!confirmacion) return;
+
     try {
       const response = await fetch(`${baseUrl}/Aerolinea/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`, 
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Authorization': `Bearer ${token}` },
       });
 
       if (!response.ok) {
-        const errorData = await response.json();  
+        const errorData = await response.json();
         throw new Error(errorData.message || 'Error al eliminar la aerolínea');
       }
 
       setAerolineas(aerolineas.filter(aerolinea => aerolinea.id !== id));
-      mostrarMensaje('Aerolinea eliminada correctamente', 'success');
+      mostrarMensaje('Aerolínea eliminada correctamente', 'success');
     } catch (error) {
-      console.error('Error al eliminar la aerolínea:', error);
       mostrarMensaje(error.message || 'Hubo un error al eliminar la aerolínea', 'error');
     }
-  }
   };
 
   const handleEditar = (aerolinea) => {
     setAerolineaEditando(aerolinea);
     setNombre(aerolinea.nombre);
     setPaginaWeb(aerolinea.paginaWeb);
-    setTabValue(1); 
+    setTabValue(1);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const url = aerolineaEditando ? `${baseUrl}/Aerolinea/${aerolineaEditando.id}` : `${baseUrl}/Aerolinea/altaAerolinea`;
-    const method = aerolineaEditando ? 'PUT' : 'POST';
-  
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer  ${token}`, 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ nombre, paginaWeb }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json(); 
-        throw new Error(errorData.message || 'Error al guardar la aerolínea');
-      }
-  
-      // Si la respuesta no tiene contenido (por ejemplo, NoContent en PUT), no intentamos leer JSON
-      if (response.status === 204) {
-        mostrarMensaje(aerolineaEditando ? 'Aerolinea actualizada correctamente' : 'Aerolinea agregada correctamente', 'success');
-      } else {
-        // Si hay contenido en la respuesta, lo procesamos como JSON
-        const data = await response.json();
-  
-        if (aerolineaEditando) {
-          setAerolineas(aerolineas.map(a => a.id === data.id ? data : a));
-        } else {
-          setAerolineas([...aerolineas, data]);
-        }
-  
-        setNombre('');
-        setPaginaWeb('');
-        setAerolineaEditando(null);
-        setTabValue(0);
-        mostrarMensaje(aerolineaEditando ? 'Aerolinea actualizada correctamente' : 'Aerolinea agregada correctamente', 'success');
-      }
-    } catch (error) {
-      console.error('Error al guardar la aerolínea:', error);
-      mostrarMensaje(error.message || 'Hubo un error al guardar la aerolínea', 'error');
-    }
-  };
-  
-
-  const filteredAerolineas = (aerolineas || []).filter(aerolinea =>
-    aerolinea.nombre && aerolinea.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredAerolineas = aerolineas.filter(aerolinea =>
+    aerolinea.nombre?.toLowerCase().includes(searchTerm?.toLowerCase() || "")
   );
 
   return (
@@ -201,10 +171,10 @@ const Aerolineas = () => {
           Gestión de Aerolíneas
         </Typography>
 
-        <Tabs 
-          value={tabValue} 
+        <Tabs
+          value={tabValue}
           onChange={handleTabChange}
-          sx={{ 
+          sx={{
             mb: 3,
             '& .MuiTab-root': {
               fontWeight: 'bold',
@@ -223,9 +193,9 @@ const Aerolineas = () => {
           <Box sx={{ mt: 3 }}>
             <Grid container spacing={2} sx={{ mb: 3 }}>
               <Grid item xs={12} sm={8}>
-                <TextField 
-                  fullWidth 
-                  label="Buscar aerolínea" 
+                <TextField
+                  fullWidth
+                  label="Buscar aerolínea"
                   variant="outlined"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -281,19 +251,19 @@ const Aerolineas = () => {
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    fullWidth 
-                    label="Nombre" 
-                    variant="outlined" 
+                  <TextField
+                    fullWidth
+                    label="Nombre"
+                    variant="outlined"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    fullWidth 
-                    label="Página Web" 
-                    variant="outlined" 
+                  <TextField
+                    fullWidth
+                    label="Página Web"
+                    variant="outlined"
                     value={paginaWeb}
                     onChange={(e) => setPaginaWeb(e.target.value)}
                   />
@@ -301,26 +271,26 @@ const Aerolineas = () => {
               </Grid>
 
               <Box sx={{ mt: 3 }}>
-                <Button 
-                  type="submit" 
-                  variant="contained" 
-                  color="primary" 
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
                   disabled={!isFormComplete()}
                 >
                   {aerolineaEditando ? 'Actualizar Aerolínea' : 'Agregar Aerolínea'}
                 </Button>
-                 <Button 
-                                                variant="outlined" 
-                                                color="primary" 
-                                                onClick={() => {
-                                                  setNombre('');
-                                                  setPaginaWeb('');
-                                                  setAerolineaEditando(null);
-                                                  setTabValue(0);
-                                                }}
-                                              >
-                                                Cancelar
-                                              </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => {
+                    setNombre('');
+                    setPaginaWeb('');
+                    setAerolineaEditando(null);
+                    setTabValue(0);
+                  }}
+                >
+                  Cancelar
+                </Button>
               </Box>
             </form>
           </Box>
