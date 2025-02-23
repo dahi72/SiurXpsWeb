@@ -95,9 +95,7 @@ const Viajeros = () => {
   const handleDatosViajero = (viajero) => {
     navigate('/verDatosViajero', { state: { viajero } });
   };
-  const handleBack = () => {
-    navigate(-1); 
-  };
+ 
 
   return (
     <Container maxWidth="lg">
@@ -195,7 +193,7 @@ const Viajeros = () => {
           </Alert>
         </Snackbar>
       </Box>
-  
+      
     </Container>
   );
 };
