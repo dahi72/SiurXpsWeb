@@ -103,16 +103,20 @@ const MisGrupos = () => {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-
-                if (!response.ok) throw new Error('Error al eliminar el grupo');
-
+    
+                if (!response.ok) {
+                    const errorData = await response.json(); // Obtener los datos de error del backend
+                    throw new Error(errorData.message || 'Error al eliminar el grupo');
+                }
+    
                 setSuccess(true);
                 cargarGrupos();
             } catch (error) {
-                setError('No se pudo eliminar el grupo');
+                setError(error.message); // Mostrar el error del backend
             }
         }
     };
+    
 
     const handleClick = (grupoId) => {
         navigate(`/viajeros/${grupoId}`);
