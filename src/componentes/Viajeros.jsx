@@ -195,15 +195,7 @@ const Viajeros = () => {
           </Alert>
         </Snackbar>
       </Box>
-      <Button 
-        fullWidth
-        color="primary"
-        variant="contained"
-        onClick={handleBack} 
-        sx={{ mb: 4, fontSize: "0.85rem" }}
-        >
-          Volver a grupos
-        </Button>
+  
     </Container>
   );
 };
