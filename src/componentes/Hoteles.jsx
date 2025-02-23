@@ -153,7 +153,7 @@ const Hoteles = () => {
       ciudadId: parseInt(ciudadId),
       tips: tips || null
     };
-
+  
     try {
       const response = await fetch(url, {
         method,
@@ -163,16 +163,21 @@ const Hoteles = () => {
         },
         body: JSON.stringify(hotelData),
       });
-
-      if (response.status === 204) {
-        console.log('Operación exitosa pero sin contenido.');
-      } else {
-        const mensaje = await response.json();
-        console.log('Mensaje de la API:', mensaje);
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al guardar el hotel');
       }
-
+  
+      // Mensaje de éxito
+      const mensajeExito = hotelEditando ? 'Hotel actualizado correctamente' : 'Hotel creado correctamente';
+      setMensaje(mensajeExito);
+      setOpenSnackbar(true);
+  
+      // Recargar la lista de hoteles
       await cargarHoteles();
-
+  
+      // Limpiar el formulario
       setNombre('');
       setCheckIn('');
       setCheckOut('');
@@ -185,7 +190,8 @@ const Hoteles = () => {
       setTabValue(0);
     } catch (error) {
       console.error('Error de red:', error);
-      alert(error.message || 'Hubo un error al dar de alta el hotel');
+      setMensaje(error.message || 'Hubo un error al guardar el hotel');
+      setOpenSnackbar(true);
     }
   };
 
