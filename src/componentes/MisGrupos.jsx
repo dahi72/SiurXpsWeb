@@ -257,18 +257,18 @@ const MisGrupos = () => {
                                     >
                                         Eliminar
                                     </Button> 
-                                    <Button
-                                        variant="outlined"
-                                        onClick={() => handleConfirmarGrupo(grupo.id)}
-                                        disabled={isGrupoEnViaje(grupo.fechaInicio)|| !tieneViajeros(grupo)}
-                                        size="small"
-                                        fullWidth
-                                        sx={{
-                                            '&:hover': { backgroundColor: 'success.light', color: 'white' }
-                                        }}
-                                    >
-                                        Confirmar grupo
-                                    </Button>            
+                                                              <Button
+    variant="outlined"
+    onClick={() => handleConfirmarGrupo(grupo.id)}
+    disabled={isGrupoEnViaje(grupo.fechaInicio) || !tieneViajeros(grupo) || new Date(grupo.fechaFin) < new Date()}
+    size="small"
+    fullWidth
+    sx={{
+        '&:hover': { backgroundColor: 'success.light', color: 'white' }
+    }}
+>
+    Confirmar grupo
+</Button>           
                                 </Box> 
                             </Paper>
                         );
