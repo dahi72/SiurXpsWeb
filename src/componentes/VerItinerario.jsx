@@ -129,14 +129,14 @@ const VerItinerario = () => {
                 const eventos = JSON.parse(responseText);
                 
                 if (eventos.length === 0) {
-                    setSnackbarMessage('Este itinerario no tiene eventos asociados aún. Para agregar eventos, haz clic en "Editar".');
+                    setSnackbarMessage('Este itinerario no tiene eventos asociados aún. Para agregar eventos, haz clic en "Nuevo Evento".');
                     setOpenSnackbar(true);  
                 } else {
                     navigate(`/itinerario/${itinerarioId}/eventos`);
                 }
             } else {
               
-                setSnackbarMessage('Este itinerario no tiene eventos asociados aún. Para agregar eventos, haz clic en "Editar".');
+                setSnackbarMessage('Este itinerario no tiene eventos asociados aún. Para agregar eventos, haz clic en "Nuevo Evento".');
                 setOpenSnackbar(true);  
             }
     
