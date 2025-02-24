@@ -120,30 +120,8 @@ export const ActionButtons = () => {
         <>
             <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between" gap={2}>
                 <Typography>{nombreUsuario}</Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Badge
-                        overlap="circular"
-                        variant="dot"
-                        sx={{
-                            "& .MuiBadge-badge": {
-                                backgroundColor: getEstadoColor(),
-                                width: 10,
-                                height: 10,
-                                borderRadius: "50%",
-                            },
-                        }}
-                    />
-                    <Typography variant="body2" sx={{ color: "white" }}>
-                        {estadoCoordinador ? "Activo" : "Inactivo"}
-                    </Typography>
-                </Box>
-            </Box>
-            <IconButton size="large" edge="end" color="inherit" onClick={handleMenuOpen}>
-                <AccountCircle />
-            </IconButton>
-
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                <MenuItem sx={{ pointerEvents: "none" }}>
+                {/* Mostrar estado solo si el rol no es Viajero */}
+                {usuario.rol !== "Viajero" && (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Badge
                             overlap="circular"
@@ -151,18 +129,49 @@ export const ActionButtons = () => {
                             sx={{
                                 "& .MuiBadge-badge": {
                                     backgroundColor: getEstadoColor(),
-                                    width: 8,
-                                    height: 8,
+                                    width: 10,
+                                    height: 10,
                                     borderRadius: "50%",
                                 },
                             }}
                         />
-                        <Typography>Estado: {estadoCoordinador ? "Activo" : "Inactivo"}</Typography>
+                        <Typography variant="body2" sx={{ color: "white" }}>
+                            {estadoCoordinador ? "Activo" : "Inactivo"}
+                        </Typography>
                     </Box>
-                </MenuItem>
-                <MenuItem onClick={toggleEstado}>
-                    Cambiar a {estadoCoordinador ? "Inactivo" : "Activo"}
-                </MenuItem>
+                )}
+            </Box>
+            <IconButton size="large" edge="end" color="inherit" onClick={handleMenuOpen}>
+                <AccountCircle />
+            </IconButton>
+
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                {/* Mostrar estado solo si el rol no es Viajero */}
+                {usuario.rol !== "Viajero" && (
+                    <MenuItem sx={{ pointerEvents: "none" }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <Badge
+                                overlap="circular"
+                                variant="dot"
+                                sx={{
+                                    "& .MuiBadge-badge": {
+                                        backgroundColor: getEstadoColor(),
+                                        width: 8,
+                                        height: 8,
+                                        borderRadius: "50%",
+                                    },
+                                }}
+                            />
+                            <Typography>Estado: {estadoCoordinador ? "Activo" : "Inactivo"}</Typography>
+                        </Box>
+                    </MenuItem>
+                )}
+                {/* Mostrar opción de cambiar estado solo si el rol no es Viajero */}
+                {usuario.rol !== "Viajero" && (
+                    <MenuItem onClick={toggleEstado}>
+                        Cambiar a {estadoCoordinador ? "Inactivo" : "Activo"}
+                    </MenuItem>
+                )}
                 {filteredMenuItems.map((item, index) => (
                     <MenuItem key={index} onClick={() => { 
                         handleMenuClose(); 
