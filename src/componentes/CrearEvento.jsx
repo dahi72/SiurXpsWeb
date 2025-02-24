@@ -202,7 +202,7 @@ function CrearEvento() {
     return (
         <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: 4, borderRadius: 2, boxShadow: 3 }}>
             <Typography variant="h4" gutterBottom sx={{ color: 'black' }}>
-                Crear Evento para Itinerario {itinerarioId}
+                Crear Evento para el Itinerario 
             </Typography>
 
             <form onSubmit={handleSubmit}>
