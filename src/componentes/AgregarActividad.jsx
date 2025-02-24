@@ -197,7 +197,7 @@ const AltaActividad = () => {
         <Grid item xs={6}>
           <TextField 
             fullWidth 
-            label="Duración (minutos)" 
+            label="Duración (horas)" 
             name="duracion" 
             type="number" 
             value={formData.duracion} 
