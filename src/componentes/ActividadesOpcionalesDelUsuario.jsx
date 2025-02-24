@@ -12,6 +12,7 @@ const ActividadesOpcionalesDelUsuario = () => {
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
 
+  // Obtener el usuario
   const obtenerUsuario = useCallback(async () => {
     try {
       const respuesta = await fetch(`${baseUrl}/Usuario/${id}`, {
@@ -34,50 +35,61 @@ const ActividadesOpcionalesDelUsuario = () => {
     }
   }, [baseUrl, token, id]);
 
-  useEffect(() => {
-    if (!usuario) {
-      obtenerUsuario();
-    }
-  }, [usuario, obtenerUsuario]);
+  // Obtener actividades opcionales
+  const obtenerActividades = useCallback(async () => {
+    try {
+      const respuesta = await fetch(`${baseUrl}/Actividad/opcionales/${grupoDeViajeId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-  useEffect(() => {
-    const obtenerActividades = async () => {
-      try {
-        const respuesta = await fetch(`${baseUrl}/Actividad/opcionales/${grupoDeViajeId}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!respuesta.ok) {
-          const errorData = await respuesta.json();
-          throw new Error(errorData.message || "Error al obtener las actividades opcionales.");
-        }
-
-        const datos = await respuesta.json();
-        console.log("Respuesta del backend (actividades opcionales):", datos);
-
-        if (usuario) {
-          const actividadesFiltradas = datos.filter(
-            (actividad) =>
-              Array.isArray(usuario.actividades) &&
-              !usuario.actividades.some((a) => Number(a.id) === Number(actividad.id))
-          );
-          setActividades(actividadesFiltradas);
-        }
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setCargando(false);
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json();
+        throw new Error(errorData.message || "Error al obtener las actividades opcionales.");
       }
-    };
 
-    if (grupoDeViajeId && usuario) {
-      obtenerActividades();
+      const datos = await respuesta.json();
+      console.log("Respuesta del backend (actividades opcionales):", datos);
+
+      // Filtrar actividades en las que el usuario está inscrito
+      if (usuario && Array.isArray(usuario.actividades)) {
+        const actividadesInscritas = datos.filter((actividad) =>
+          usuario.actividades.some((a) => Number(a.id) === Number(actividad.id))
+        );
+
+        if (actividadesInscritas.length === 0) {
+          // Si no está inscrito en ninguna actividad
+          setActividades([]); // No mostrar actividades
+          setError("El usuario no está inscrito en ninguna actividad opcional.");
+        } else {
+          // Mostrar solo las actividades en las que está inscrito
+          setActividades(actividadesInscritas);
+        }
+      } else {
+        // Si no hay usuario o no tiene actividades, mostrar mensaje
+        setActividades([]);
+        setError("El usuario no está inscrito en ninguna actividad opcional.");
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setCargando(false);
     }
   }, [grupoDeViajeId, usuario, token, baseUrl]);
+
+  // Cargar usuario y actividades
+  useEffect(() => {
+    obtenerUsuario();
+  }, [obtenerUsuario]);
+
+  useEffect(() => {
+    if (usuario && grupoDeViajeId) {
+      obtenerActividades();
+    }
+  }, [usuario, grupoDeViajeId, obtenerActividades]);
 
   if (cargando) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {error}</Typography>;
@@ -88,7 +100,9 @@ const ActividadesOpcionalesDelUsuario = () => {
         Actividades Opcionales
       </Typography>
       {actividades.length === 0 ? (
-        <p>No hay actividades opcionales disponibles para este grupo de viaje.</p>
+        <Typography variant="body1" color="textSecondary">
+          El usuario no está inscrito en ninguna actividad opcional.
+        </Typography>
       ) : (
         <Grid container spacing={2}>
           {actividades.map((actividad) => (
@@ -108,9 +122,13 @@ const ActividadesOpcionalesDelUsuario = () => {
                   <Typography>
                     <strong>Tips:</strong> {actividad.tips}
                   </Typography>
-                  <Typography><strong>País:</strong> {actividad.pais.nombre}</Typography>
-                  <Typography><strong>Ciudad:</strong> {actividad.ciudad.nombre}</Typography>
-                  </CardContent>
+                  <Typography>
+                    <strong>País:</strong> {actividad.pais?.nombre || "No disponible"}
+                  </Typography>
+                  <Typography>
+                    <strong>Ciudad:</strong> {actividad.ciudad?.nombre || "No disponible"}
+                  </Typography>
+                </CardContent>
               </Card>
             </Grid>
           ))}
