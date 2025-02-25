@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Grid, Card, CardContent, CircularProgress, Typography } from "@mui/material";
+import { Grid, Card, CardContent, CircularProgress, Typography, Box } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 const ActividadesOpcionalesDelUsuario = () => {
@@ -11,7 +11,7 @@ const ActividadesOpcionalesDelUsuario = () => {
   const { grupoDeViajeId } = useParams();
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
-
+console.log(error);
   // Obtener el usuario
   const obtenerUsuario = useCallback(async () => {
     try {
@@ -92,7 +92,6 @@ const ActividadesOpcionalesDelUsuario = () => {
   }, [usuario, grupoDeViajeId, obtenerActividades]);
 
   if (cargando) return <CircularProgress />;
-  if (error) return <Typography color="error">Error: {error}</Typography>;
 
   return (
     <div>
@@ -100,9 +99,22 @@ const ActividadesOpcionalesDelUsuario = () => {
         Actividades Opcionales
       </Typography>
       {actividades.length === 0 ? (
-        <Typography variant="body1" color="textSecondary">
-          El usuario no está inscrito en ninguna actividad opcional.
-        </Typography>
+        <Box
+          sx={{
+            backgroundColor: "white",
+            padding: "20px",
+            borderRadius: "8px",
+            textAlign: "center",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1" color="textSecondary">
+            No estás inscrito en ninguna actividad opcional.
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ marginTop: "10px" }}>
+            Si deseas inscribirte, por favor escríbele a tu coordinador.
+          </Typography>
+        </Box>
       ) : (
         <Grid container spacing={2}>
           {actividades.map((actividad) => (
